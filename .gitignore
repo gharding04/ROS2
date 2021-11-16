@@ -1,3 +1,7 @@
 skinny/log
 skinny/src/log
-
+skinny/src/zed_tracking/src/build
+skinny/src/zed_tracking/src/install
+skinny/src/zed_tracking/src/log
+latex
+html
