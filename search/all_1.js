@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['broadcastip_0',['broadcastIP',['../communication__node_8cpp.html#a7b8f256d906f6221368ac0894b5e34cc',1,'communication_node.cpp']]]
+  ['charucosubpixelparallel_0',['CharucoSubpixelParallel',['../classcv_1_1aruco_1_1CharucoSubpixelParallel.html',1,'cv::aruco']]],
+  ['communication_5fnode_2ecpp_1',['communication_node.cpp',['../communication__node_8cpp.html',1,'']]]
 ];
