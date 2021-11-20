@@ -1,5 +1,5 @@
 <map id="skinny/src/talon/src/talon_node.cpp" name="skinny/src/talon/src/talon_node.cpp">
-<area shape="rect" id="node1" title="Brief description of file Detailed description of file." alt="" coords="1087,5,1221,47"/>
+<area shape="rect" id="node1" title="Brief description of file Detailed description of file." alt="" coords="1189,5,1324,47"/>
 <area shape="rect" id="node2" title=" " alt="" coords="5,102,60,129"/>
 <area shape="rect" id="node3" title=" " alt="" coords="85,102,157,129"/>
 <area shape="rect" id="node4" title=" " alt="" coords="181,102,242,129"/>
@@ -24,5 +24,7 @@
 <area shape="rect" id="node23" title=" " alt="" coords="2415,102,2519,129"/>
 <area shape="rect" id="node24" title=" " alt="" coords="2544,95,2687,136"/>
 <area shape="rect" id="node25" title=" " alt="" coords="2711,95,2874,136"/>
-<area shape="rect" id="node26" title=" " alt="" coords="2899,95,3041,136"/>
+<area shape="rect" id="node26" title=" " alt="" coords="2898,95,3085,136"/>
+<area shape="rect" id="node27" title=" " alt="" coords="3109,95,3295,136"/>
+<area shape="rect" id="node28" title=" " alt="" coords="3319,95,3461,136"/>
 </map>
