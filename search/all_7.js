@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['logic_5fnode_2ecpp_0',['logic_node.cpp',['../logic__node_8cpp.html',1,'']]]
+  ['joystickaxiscallback_0',['joystickAxisCallback',['../logic__node_8cpp.html#a93a42d386374821388c30e3b8e3cd2cb',1,'logic_node.cpp']]],
+  ['joystickbuttoncallback_1',['joystickButtonCallback',['../logic__node_8cpp.html#a2e6bbe95c6993e758ed7ebec50013434',1,'logic_node.cpp']]],
+  ['joystickhatcallback_2',['joystickHatCallback',['../logic__node_8cpp.html#a01211abeffe8ccc672747e28fe1ef14e',1,'logic_node.cpp']]]
 ];
