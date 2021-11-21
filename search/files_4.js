@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['keystate_2emsg_0',['KeyState.msg',['../KeyState_8msg.html',1,'']]]
+  ['joystickcommand_2emsg_0',['JoystickCommand.msg',['../JoystickCommand_8msg.html',1,'']]]
 ];
