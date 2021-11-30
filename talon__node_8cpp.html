@@ -74,7 +74,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Brief description of file Detailed description of file.  
+<p>Node controlling one Talon motor.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;string&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
@@ -108,7 +108,7 @@ Include dependency graph for talon_node.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="talon__node_8cpp__incl.png" border="0" usemap="#askinny_2src_2talon_2src_2talon__node_8cpp" alt=""/></div>
 <map name="askinny_2src_2talon_2src_2talon__node_8cpp" id="askinny_2src_2talon_2src_2talon__node_8cpp">
-<area shape="rect" title="Brief description of file Detailed description of file." alt="" coords="1189,5,1324,47"/>
+<area shape="rect" title="Node controlling one Talon motor." alt="" coords="1189,5,1324,47"/>
 <area shape="rect" title=" " alt="" coords="5,102,60,129"/>
 <area shape="rect" title=" " alt="" coords="85,102,157,129"/>
 <area shape="rect" title=" " alt="" coords="181,102,242,129"/>
@@ -142,13 +142,13 @@ Include dependency graph for talon_node.cpp:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ab1e864b4db2bf6ec016a2d770fa3d1a0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="talon__node_8cpp.html#ab1e864b4db2bf6ec016a2d770fa3d1a0">stopCallback</a> (std_msgs::msg::Empty::SharedPtr empty)</td></tr>
-<tr class="memdesc:ab1e864b4db2bf6ec016a2d770fa3d1a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Brief description of function Detailed description of function.  <a href="talon__node_8cpp.html#ab1e864b4db2bf6ec016a2d770fa3d1a0">More...</a><br /></td></tr>
+<tr class="memdesc:ab1e864b4db2bf6ec016a2d770fa3d1a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">STOP Callback.  <a href="talon__node_8cpp.html#ab1e864b4db2bf6ec016a2d770fa3d1a0">More...</a><br /></td></tr>
 <tr class="separator:ab1e864b4db2bf6ec016a2d770fa3d1a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a96020b6787543d826dbba7ce88bf0d7c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="talon__node_8cpp.html#a96020b6787543d826dbba7ce88bf0d7c">goCallback</a> (std_msgs::msg::Empty::SharedPtr empty)</td></tr>
-<tr class="memdesc:a96020b6787543d826dbba7ce88bf0d7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Brief description of function Detailed description of function.  <a href="talon__node_8cpp.html#a96020b6787543d826dbba7ce88bf0d7c">More...</a><br /></td></tr>
+<tr class="memdesc:a96020b6787543d826dbba7ce88bf0d7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">GO Callback.  <a href="talon__node_8cpp.html#a96020b6787543d826dbba7ce88bf0d7c">More...</a><br /></td></tr>
 <tr class="separator:a96020b6787543d826dbba7ce88bf0d7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92f034499be43dd813c91feaf4d23d9d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="talon__node_8cpp.html#a92f034499be43dd813c91feaf4d23d9d">speedCallback</a> (const std_msgs::msg::Float32::SharedPtr speed)</td></tr>
-<tr class="memdesc:a92f034499be43dd813c91feaf4d23d9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Brief description of function Detailed description of function.  <a href="talon__node_8cpp.html#a92f034499be43dd813c91feaf4d23d9d">More...</a><br /></td></tr>
+<tr class="memdesc:a92f034499be43dd813c91feaf4d23d9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Speed Callback Function.  <a href="talon__node_8cpp.html#a92f034499be43dd813c91feaf4d23d9d">More...</a><br /></td></tr>
 <tr class="separator:a92f034499be43dd813c91feaf4d23d9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c04138a5bfe5d72780bb7e82a18e627"><td class="memItemLeft" align="right" valign="top"><a id="a3c04138a5bfe5d72780bb7e82a18e627" name="a3c04138a5bfe5d72780bb7e82a18e627"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>main</b> (int argc, char **argv)</td></tr>
@@ -176,7 +176,19 @@ TalonSRX *&#160;</td><td class="memItemRight" valign="bottom"><b>talonSRX</b></t
 <tr class="separator:ad29868bc2f6f1d615afbe4b1eb614f4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p >Brief description of file Detailed description of file. </p>
+<div class="textblock"><p >Node controlling one Talon motor. </p>
+<p >This node receives information published by the logic node, then transforms the data received into movement by the motor controlled by the Talon instance. The topics that the node subscribes to are as follows: </p><ul>
+<li><b>speed_topic</b> </li>
+<li><b>STOP</b> </li>
+<li><b>GO</b> </li>
+</ul>
+<p>The <b>speed_topic</b> topic is either <b>drive_left_speed</b> or <b>drive_right_speed</b> as defined in the parameters set in the launch file. To read more about the logic node or the launch file </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="logic__node_8cpp.html" title="Node handling logic for robot.">logic_node.cpp</a> </dd>
+<dd>
+<a class="el" href="launch_8py.html" title="Launch file that contains all the nodes necessary to run the robot.">launch.py</a></dd></dl>
+<p>The topics being published are as follows: </p><ul>
+<li><b>info_topic</b> </li>
+</ul>
+<p>This string has the general form talon_{motorNumber}_info and is defined by the user in the launch file. To read more about the launch file, </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="launch_8py.html" title="Launch file that contains all the nodes necessary to run the robot.">launch.py</a> </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a96020b6787543d826dbba7ce88bf0d7c" name="a96020b6787543d826dbba7ce88bf0d7c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a96020b6787543d826dbba7ce88bf0d7c">&#9670;&nbsp;</a></span>goCallback()</h2>
@@ -194,8 +206,8 @@ TalonSRX *&#160;</td><td class="memItemRight" valign="bottom"><b>talonSRX</b></t
       </table>
 </div><div class="memdoc">
 
-<p>Brief description of function Detailed description of function. </p>
-<dl class="params"><dt>Parameters</dt><dd>
+<p>GO Callback. </p>
+<p >Callback function triggered when the node receives a topic with the topic name of GO. This function sets a boolean value GO to true, which allows the robot to drive. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">empty</td><td></td></tr>
   </table>
@@ -221,8 +233,8 @@ TalonSRX *&#160;</td><td class="memItemRight" valign="bottom"><b>talonSRX</b></t
       </table>
 </div><div class="memdoc">
 
-<p>Brief description of function Detailed description of function. </p>
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Speed Callback Function. </p>
+<p >Callback function triggered when the node receives a topic with the topic name of drive_left_speed or drive_right_speed. This function takes the data from the topic and sets the motor to the speed specified. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">speed</td><td></td></tr>
   </table>
@@ -248,8 +260,8 @@ TalonSRX *&#160;</td><td class="memItemRight" valign="bottom"><b>talonSRX</b></t
       </table>
 </div><div class="memdoc">
 
-<p>Brief description of function Detailed description of function. </p>
-<dl class="params"><dt>Parameters</dt><dd>
+<p>STOP Callback. </p>
+<p >Callback function triggered when the node receives a topic with the topic name of STOP. This function sets a boolean value GO to false, which prevents the robot from moving. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">empty</td><td></td></tr>
   </table>
