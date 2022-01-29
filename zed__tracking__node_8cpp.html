@@ -73,7 +73,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Brief description of file.  
+<p>Node handling Zed camera.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;rclcpp/rclcpp.hpp&gt;</code><br />
 <code>#include &lt;sl/Camera.hpp&gt;</code><br />
@@ -85,7 +85,7 @@ Include dependency graph for zed_tracking_node.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="zed__tracking__node_8cpp__incl.png" border="0" usemap="#askinny_2src_2zed__tracking_2src_2zed__tracking__node_8cpp" alt=""/></div>
 <map name="askinny_2src_2zed__tracking_2src_2zed__tracking__node_8cpp" id="askinny_2src_2zed__tracking_2src_2zed__tracking__node_8cpp">
-<area shape="rect" title="Brief description of file." alt="" coords="229,5,409,47"/>
+<area shape="rect" title="Node handling Zed camera." alt="" coords="229,5,409,47"/>
 <area shape="rect" title=" " alt="" coords="5,95,125,121"/>
 <area shape="rect" title=" " alt="" coords="150,95,255,121"/>
 <area shape="rect" title=" " alt="" coords="279,95,358,121"/>
@@ -107,8 +107,15 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>main</b> (int argc, ch
 <tr class="separator:a3c04138a5bfe5d72780bb7e82a18e627"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p >Brief description of file. </p>
-<p >Detailed description of file </p>
+<div class="textblock"><p >Node handling Zed camera. </p>
+<p >This node does not receive any information from other nodes, therefore, it does not subscribe to any node. Current purpose is to utilize the "ArUco Positional Tracking sample" with the Zed camera and publishes topics relating to it. Node contains no other functions, only main. </p><dl class="section see"><dt>See also</dt><dd>aruco.cpp</dd></dl>
+<p>The topics that are being published are as follows: </p><ul>
+<li><b>zedPosition</b> "zedPosition" contains the variables x, y, z, ox, oy, oz, ow, and aruco_visible.</li>
+</ul>
+<p>The variables x, y, and z are the translation vectors. To learn more about the translation vectors, see <a href="https://en.wikipedia.org/wiki/Translation_(geometry)">https://en.wikipedia.org/wiki/Translation_(geometry)</a></p>
+<p >The variables ox, oy, oz, and ow are the orientation vectors. The orientation data is also known as "quaternion" data. These vectors help with calculating three-dimensional rotations. To learn more about quaternion, see <a href="https://en.wikipedia.org/wiki/Quaternion">https://en.wikipedia.org/wiki/Quaternion</a> </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="ZedPosition_8msg.html">ZedPosition.msg</a></dd></dl>
+<p>The variable "aruco_visible" tells whether or not that at least one marker is detected.</p>
+<p >To read more about the nodes that subscribe to this one </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="logic__node_8cpp.html" title="Node handling logic for robot.">logic_node.cpp</a> </dd></dl>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
