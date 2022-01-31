@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['joystickaxiscallback_0',['joystickAxisCallback',['../logic__node_8cpp.html#a93a42d386374821388c30e3b8e3cd2cb',1,'logic_node.cpp']]],
-  ['joystickbuttoncallback_1',['joystickButtonCallback',['../logic__node_8cpp.html#a2e6bbe95c6993e758ed7ebec50013434',1,'logic_node.cpp']]],
-  ['joystickcommand_2emsg_2',['JoystickCommand.msg',['../JoystickCommand_8msg.html',1,'']]],
-  ['joystickhatcallback_3',['joystickHatCallback',['../logic__node_8cpp.html#a01211abeffe8ccc672747e28fe1ef14e',1,'logic_node.cpp']]]
+  ['identifycandidatesparallel_0',['IdentifyCandidatesParallel',['../classcv_1_1aruco_1_1IdentifyCandidatesParallel.html',1,'cv::aruco']]],
+  ['insert_1',['insert',['../communication__node_8cpp.html#aa1d1d7dc5b9267631230ec004aa791d8',1,'insert(float value, uint8_t *array):&#160;communication_node.cpp'],['../communication__node_8cpp.html#a136214bd6c2111a04dd81800b0855b98',1,'insert(int value, uint8_t *array):&#160;communication_node.cpp']]]
 ];
