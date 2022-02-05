@@ -69,49 +69,16 @@ $(function() {
 <h1><a class="anchor" id="autotoc_md1"></a>
 Overview</h1>
 <ul>
-<li><a href="https://github.com/Razorbotz/ROS2/tree/master#prerequisites---windows">Prerequisites</a></li>
 <li><a href="https://github.com/Razorbotz/ROS2/tree/master#installing-ros2">Installing ROS2</a></li>
 <li><a href="https://github.com/Razorbotz/ROS2/tree/master#understanding-the-codebase">Understanding the Codebase</a></li>
 <li><a href="https://github.com/Razorbotz/ROS2/tree/master#documentation">Documentation</a></li>
 <li><a href="https://github.com/Razorbotz/ROS2/tree/master#tutorials">Tutorials</a></li>
+<li><a href="https://github.com/Razorbotz/ROS2/tree/master#resources">Resources</a></li>
 </ul>
 <h1><a class="anchor" id="autotoc_md2"></a>
-Prerequisites - Windows</h1>
-<p >To begin the project, install VirtualBox or another virtualization software to your computer. If you are using Linux, disregard the VirtualBox installation.</p>
-<h2><a class="anchor" id="autotoc_md3"></a>
-Installing VirtualBox</h2>
-<p >To install VirtualBox, first download the software <a href="https://www.virtualbox.org/wiki/Downloads">here</a>. After downloading and installing VirtualBox, download an image of <a href="http://releases.ubuntu.com/20.04/">Ubuntu 20.04</a> and install Ubuntu. A tutorial on how to do so is located <a href="https://linuxhint.com/install_ubuntu_virtualbox_2004/">here</a>. To allows the virtual machine to be able to be full screen, enter the following commands in the terminal:</p>
-<div class="fragment"><div class="line">sudo apt update</div>
-<div class="line"> </div>
-<div class="line">sudo apt install virtualbox-guest-dkms virtualbox-guest-x11 virtualbox-guest-utils</div>
-</div><!-- fragment --><p >After executing the commands, click on the Devices drop down menu at the top of the virtual machine. Click on Insert Guest Additions Image, then click Run and enter the password when prompted. For any issues, please consult this <a href="https://linuxhint.com/install_ubuntu_virtualbox_2004/#:~:text=Installing%20VirtualBox%20Guest%20Additions%20on%20Ubuntu%2020.04%20LTS">installation guide</a>.</p>
-<h1><a class="anchor" id="autotoc_md4"></a>
 Installing ROS2</h1>
-<p >The project uses the Foxy distribution of ROS2. To build from source or install on other operating systems, refer to the <a href="https://docs.ros.org/en/foxy/Installation.html">Installation Page</a>. <b>To install the Foxy distribution of ROS2 using Debian packages, run the following Linux terminal commands inside the virtual machine or on a native Linux machine.</b></p>
-<h2><a class="anchor" id="autotoc_md5"></a>
-Set locale</h2>
-<div class="fragment"><div class="line">locale  # check for UTF-8</div>
-<div class="line"> </div>
-<div class="line">sudo apt update &amp;&amp; sudo apt install locales</div>
-<div class="line">sudo locale-gen en_US en_US.UTF-8</div>
-<div class="line">sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8</div>
-<div class="line">export LANG=en_US.UTF-8</div>
-<div class="line"> </div>
-<div class="line">locale  # verify settings</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md6"></a>
-Setup Sources</h2>
-<div class="fragment"><div class="line">sudo apt update &amp;&amp; sudo apt install curl gnupg2 lsb-release</div>
-<div class="line">sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -o /usr/share/keyrings/ros-archive-keyring.gpg</div>
-<div class="line"> </div>
-<div class="line">echo &quot;deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main&quot; | sudo tee /etc/apt/sources.list.d/ros2.list &gt; /dev/null</div>
-<div class="line"> </div>
-<div class="line">sudo sed -i -e &#39;s/ubuntu .* main/ubuntu focal main/g&#39; /etc/apt/sources.list.d/ros2.list</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md7"></a>
-Install ROS2 Packages</h2>
-<div class="fragment"><div class="line">sudo apt update</div>
-<div class="line"> </div>
-<div class="line">sudo apt install ros-foxy-desktop</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md8"></a>
+<p >To install ROS2 and begin the project, please refer to the <a href="https://github.com/Razorbotz/ROS2/tree/install">Razorbotz Installation Page</a>. After installing ROS2, please use the following commands to ensure ROS2 is installed correctly.</p>
+<h2><a class="anchor" id="autotoc_md3"></a>
 Run Some Examples</h2>
 <p ><b>Run the following commands in one terminal</b></p>
 <div class="fragment"><div class="line">source /opt/ros/foxy/setup.bash</div>
@@ -121,10 +88,9 @@ Run Some Examples</h2>
 <div class="fragment"><div class="line">source /opt/ros/foxy/setup.bash</div>
 <div class="line"> </div>
 <div class="line">ros2 run demo_nodes_py listener</div>
-</div><!-- fragment --><p >If you want to build from source or install on a different operating system, please refer to the <a href="https://docs.ros.org/en/foxy/Installation.html">installation guide</a>.</p>
-<h1><a class="anchor" id="autotoc_md9"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md4"></a>
 Understanding the Codebase</h1>
-<h2><a class="anchor" id="autotoc_md10"></a>
+<h2><a class="anchor" id="autotoc_md5"></a>
 Structure of the packages</h2>
 <p >ROS2 packages all contain the following:</p><ul>
 <li>src folder //contains the source code / node files</li>
@@ -141,10 +107,10 @@ Structure of the packages</h2>
 <li><a href="https://github.com/Razorbotz/ROS2/tree/master/skinny/src/talon">Talon</a></li>
 <li><a href="https://github.com/Razorbotz/ROS2/tree/master/skinny/src/zed_tracking">Zed Tracking</a></li>
 </ul>
-<h1><a class="anchor" id="autotoc_md11"></a>
+<h1><a class="anchor" id="autotoc_md6"></a>
 Documentation</h1>
 <p >This project uses <a href="https://www.doxygen.nl/index.html">Doxygen</a> to generate documentation for the files automatically. To learn more about the Doxygen formatting, please refer to the <a href="https://www.doxygen.nl/manual/docblocks.html">Documenting the code</a> section of the Doxygen docs. The documentation for this project can be found at the project website that is found <a href="https://razorbotz.github.io/ROS2/">here</a>.</p>
-<h2><a class="anchor" id="autotoc_md12"></a>
+<h2><a class="anchor" id="autotoc_md7"></a>
 Documentation Template</h2>
 <p >To standardize the documentation across multiple authors, the following documentation template will be used throughout the project. To see an example of how files should be commented to generate the documentation correctly, see <a href="https://github.com/Razorbotz/ROS2/blob/master/docs/Example.cpp">Example.cpp</a>.</p>
 <p ><b>Files</b></p><ul>
@@ -159,7 +125,7 @@ Documentation Template</h2>
 <li>Return values</li>
 <li>Related files and/or functions</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md13"></a>
+<h1><a class="anchor" id="autotoc_md8"></a>
 Tutorials</h1>
 <p >To gain a better understanding of ROS2, please refer to the following <a href="https://docs.ros.org/en/foxy/Tutorials.html">tutorials</a>.</p><ul>
 <li><a href="https://docs.ros.org/en/foxy/Tutorials/Configuring-ROS2-Environment.html">Configuring Your ROS 2 Environment</a></li>
@@ -174,7 +140,22 @@ Tutorials</h1>
 <li><a href="https://docs.ros.org/en/foxy/Tutorials/Custom-ROS2-Interfaces.html">Writing Custom ROS2 msg Files</a></li>
 <li><a href="https://docs.ros.org/en/foxy/Tutorials/Using-Parameters-In-A-Class-CPP.html">Using Parameters in a Class (C++)</a></li>
 <li><a href="https://docs.ros.org/en/foxy/Tutorials/Using-Parameters-In-A-Class-Python.html">Using Parameters in a Class (Python)</a></li>
-<li><a href="https://docs.ros.org/en/foxy/Tutorials/Launch-Files/Using-ROS2-Launch-For-Large-Projects.html">Using ROS2 Launch</a> </li>
+<li><a href="https://docs.ros.org/en/foxy/Tutorials/Launch-Files/Using-ROS2-Launch-For-Large-Projects.html">Using ROS2 Launch</a></li>
+</ul>
+<h1><a class="anchor" id="autotoc_md9"></a>
+Resources</h1>
+<p >General Reference Material:</p><ul>
+<li><a href="http://web.mit.edu/6.s096/www/standards.html">Coding Standards for C++</a></li>
+</ul>
+<p >Hardware Documentation: <br  />
+</p><ul>
+<li><a href="http://www.ctr-electronics.com/downloads/api/cpp/html/index.html">Talon Documenation</a></li>
+<li><a href="https://docs.revrobotics.com/sparkmax/">SparkMax Documenation</a></li>
+</ul>
+<p >C++ Reference Material:</p><ul>
+<li><a href="https://www.geeksforgeeks.org/namespace-in-c/">C++ Namespaces (sets 1 - 3)</a></li>
+<li><a href="https://www.cplusplus.com/doc/tutorial/operators/">C++ Operators reference</a></li>
+<li><a href="https://en.cppreference.com/w/cpp/language/operator_member_access">C++ Member Access Refresher</a> </li>
 </ul>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
