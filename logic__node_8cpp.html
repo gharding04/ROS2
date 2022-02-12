@@ -116,6 +116,9 @@ Include dependency graph for logic_node.cpp:</div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a8e8ab0346bf070fbeb647b182a54ce56"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="logic__node_8cpp.html#a8e8ab0346bf070fbeb647b182a54ce56">initSetSpeed</a> ()</td></tr>
+<tr class="memdesc:a8e8ab0346bf070fbeb647b182a54ce56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to update speed of the wheels.  <a href="logic__node_8cpp.html#a8e8ab0346bf070fbeb647b182a54ce56">More...</a><br /></td></tr>
+<tr class="separator:a8e8ab0346bf070fbeb647b182a54ce56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5eb179e09645dfb07c1de38710db0877"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="logic__node_8cpp.html#a5eb179e09645dfb07c1de38710db0877">updateSpeed</a> ()</td></tr>
 <tr class="memdesc:a5eb179e09645dfb07c1de38710db0877"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to update speed of the wheels.  <a href="logic__node_8cpp.html#a5eb179e09645dfb07c1de38710db0877">More...</a><br /></td></tr>
 <tr class="separator:a5eb179e09645dfb07c1de38710db0877"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -187,8 +190,30 @@ std::shared_ptr&lt; rclcpp::Publisher&lt; std_msgs::msg::Bool_&lt; std::allocato
 <li><b>drive_right_speed</b> </li>
 <li><b>drive_state</b> </li>
 </ul>
-<p>To read more about the nodes that subscribe to this one </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="talon__node_8cpp.html" title="Node controlling one Talon motor.">talon_node.cpp</a> </dd></dl>
+<p>To read more about the nodes that subscribe to this one </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="talon__node_8cpp.html" title="Node controlling one Talon motor.">talon_node.cpp</a></dd></dl>
+<p>This node uses ternary statements in the joystickAxisCallback function. To read more about how these operate, please read </p><dl class="section see"><dt>See also</dt><dd><a href="http://www.cplusplus.com/articles/1AUq5Di1/">http://www.cplusplus.com/articles/1AUq5Di1/</a> </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
+<a id="a8e8ab0346bf070fbeb647b182a54ce56" name="a8e8ab0346bf070fbeb647b182a54ce56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e8ab0346bf070fbeb647b182a54ce56">&#9670;&nbsp;</a></span>initSetSpeed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void initSetSpeed </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Function to update speed of the wheels. </p>
+<p >This function is called on the node startup to initialize the wheels to a speed of zero to prevent the random wheel rotations that would occur at certain times. <br  />
+ </p><dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
 <a id="a93a42d386374821388c30e3b8e3cd2cb" name="a93a42d386374821388c30e3b8e3cd2cb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a93a42d386374821388c30e3b8e3cd2cb">&#9670;&nbsp;</a></span>joystickAxisCallback()</h2>
 
