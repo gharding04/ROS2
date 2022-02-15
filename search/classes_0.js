@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['charucosubpixelparallel_0',['CharucoSubpixelParallel',['../classcv_1_1aruco_1_1CharucoSubpixelParallel.html',1,'cv::aruco']]]
+  ['automation_0',['Automation',['../classAutomation.html',1,'']]],
+  ['automation1_1',['Automation1',['../classAutomation1.html',1,'']]]
 ];

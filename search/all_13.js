@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['zed_5ftracking_5fnode_2ecpp_0',['zed_tracking_node.cpp',['../zed__tracking__node_8cpp.html',1,'']]],
-  ['zedposition_2emsg_1',['ZedPosition.msg',['../ZedPosition_8msg.html',1,'']]],
-  ['zedpositioncallback_2',['zedPositionCallback',['../logic__node_8cpp.html#a6bdfbba8ce53694e276f9685315a9775',1,'logic_node.cpp']]]
+  ['welcome_20to_20the_20razorbotz_20nasa_20robotic_20mining_20competition_20project_21_0',['Welcome to the Razorbotz NASA Robotic Mining Competition Project!',['../index.html',1,'']]]
 ];

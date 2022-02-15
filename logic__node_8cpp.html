@@ -88,29 +88,30 @@ $(function() {
 <code>#include &lt;messages/msg/axis_state.hpp&gt;</code><br />
 <code>#include &lt;messages/msg/key_state.hpp&gt;</code><br />
 <code>#include &lt;messages/msg/zed_position.hpp&gt;</code><br />
-<code>#include &quot;logic/Automation1.hpp&quot;</code><br />
-<code>#include &quot;logic/AutomationTypes.hpp&quot;</code><br />
+<code>#include &quot;<a class="el" href="Automation1_8hpp_source.html">logic/Automation1.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="AutomationTypes_8hpp_source.html">logic/AutomationTypes.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for logic_node.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="logic__node_8cpp__incl.png" border="0" usemap="#askinny_2src_2logic_2src_2logic__node_8cpp" alt=""/></div>
 <map name="askinny_2src_2logic_2src_2logic__node_8cpp" id="askinny_2src_2logic_2src_2logic__node_8cpp">
-<area shape="rect" title="Node handling logic for robot." alt="" coords="1086,5,1221,47"/>
+<area shape="rect" title="Node handling logic for robot." alt="" coords="697,5,831,47"/>
 <area shape="rect" title=" " alt="" coords="5,102,67,129"/>
 <area shape="rect" title=" " alt="" coords="91,102,149,129"/>
-<area shape="rect" title=" " alt="" coords="173,102,293,129"/>
-<area shape="rect" title=" " alt="" coords="317,102,477,129"/>
-<area shape="rect" title=" " alt="" coords="502,102,677,129"/>
-<area shape="rect" title=" " alt="" coords="701,102,859,129"/>
-<area shape="rect" title=" " alt="" coords="883,102,1053,129"/>
-<area shape="rect" title=" " alt="" coords="1078,95,1229,136"/>
-<area shape="rect" title=" " alt="" coords="1253,95,1403,136"/>
-<area shape="rect" title=" " alt="" coords="1427,102,1621,129"/>
-<area shape="rect" title=" " alt="" coords="1645,102,1843,129"/>
-<area shape="rect" title=" " alt="" coords="1868,102,2063,129"/>
-<area shape="rect" title=" " alt="" coords="2087,102,2297,129"/>
-<area shape="rect" title=" " alt="" coords="2322,102,2473,129"/>
-<area shape="rect" title=" " alt="" coords="2497,102,2676,129"/>
+<area shape="rect" title=" " alt="" coords="97,259,217,285"/>
+<area shape="rect" title=" " alt="" coords="501,102,661,129"/>
+<area shape="rect" title=" " alt="" coords="242,259,417,285"/>
+<area shape="rect" title=" " alt="" coords="685,102,843,129"/>
+<area shape="rect" title=" " alt="" coords="867,102,1037,129"/>
+<area shape="rect" title=" " alt="" coords="1062,95,1213,136"/>
+<area shape="rect" title=" " alt="" coords="1237,95,1387,136"/>
+<area shape="rect" title=" " alt="" coords="1411,102,1605,129"/>
+<area shape="rect" title=" " alt="" coords="1629,102,1827,129"/>
+<area shape="rect" title=" " alt="" coords="1852,102,2047,129"/>
+<area shape="rect" title=" " alt="" coords="2071,102,2281,129"/>
+<area shape="rect" href="Automation1_8hpp.html" title="Header file for Automation." alt="" coords="225,102,375,129"/>
+<area shape="rect" href="AutomationTypes_8hpp.html" title="Header file for AutomationTypes." alt="" coords="441,259,588,285"/>
+<area shape="rect" href="Automation_8hpp.html" title="Header file for Automation." alt="" coords="253,184,365,211"/>
 </map>
 </div>
 </div><table class="memberdecls">
@@ -162,7 +163,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>joystick1Throttle</b
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>automationGo</b> =false</td></tr>
 <tr class="separator:a74a83741cbc4f02ddcc0ddf5d6745894"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff11d375e996869baf9294238ded9cb9"><td class="memItemLeft" align="right" valign="top"><a id="aff11d375e996869baf9294238ded9cb9" name="aff11d375e996869baf9294238ded9cb9"></a>
-Automation *&#160;</td><td class="memItemRight" valign="bottom"><b>automation</b> =new Automation1()</td></tr>
+<a class="el" href="classAutomation.html">Automation</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>automation</b> =new <a class="el" href="classAutomation1.html">Automation1</a>()</td></tr>
 <tr class="separator:aff11d375e996869baf9294238ded9cb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8c57f683a5ae8e2761a887e291ee3010"><td class="memItemLeft" align="right" valign="top"><a id="a8c57f683a5ae8e2761a887e291ee3010" name="a8c57f683a5ae8e2761a887e291ee3010"></a>
 std::shared_ptr&lt; rclcpp::Publisher&lt; std_msgs::msg::Float32_&lt; std::allocator&lt; void &gt; &gt;, std::allocator&lt; void &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>driveLeftSpeedPublisher</b></td></tr>
@@ -368,7 +369,7 @@ std::shared_ptr&lt; rclcpp::Publisher&lt; std_msgs::msg::Bool_&lt; std::allocato
 
 <p>Callback function for the zedPosition. </p>
 <p >This function is caled when the node receives a topic with the name zed_position. This function extracts the information and calls the setPosition function from the automation problem. <br  />
- </p><dl class="section see"><dt>See also</dt><dd>.<a class="el" href="Automation_8cpp.html">Automation.cpp</a> </dd></dl>
+ </p><dl class="section see"><dt>See also</dt><dd>.<a class="el" href="Automation_8cpp.html" title="Defines functions used in Automation.hpp and AutomationTypes.hpp.">Automation.cpp</a> </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">zedPosition</td><td></td></tr>
