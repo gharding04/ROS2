@@ -113,11 +113,13 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>main</b> (int argc, ch
 <li><b>zedPosition</b> "zedPosition" contains the variables x, y, z, ox, oy, oz, ow, and aruco_visible.</li>
 </ul>
 <p>The variables x, y, and z are the translation vectors. To learn more about the translation vectors, see <a href="https://en.wikipedia.org/wiki/Translation_(geometry)">https://en.wikipedia.org/wiki/Translation_(geometry)</a></p>
-<p >The variables ox, oy, oz, and ow are the orientation vectors. The orientation data is also known as "quaternion" data. These vectors help with calculating three-dimensional rotations. To learn more about quaternion, see <a href="https://en.wikipedia.org/wiki/Quaternion">https://en.wikipedia.org/wiki/Quaternion</a> </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="ZedPosition_8msg.html">ZedPosition.msg</a></dd></dl>
-<p>The variable "aruco_visible" tells whether or not that at least one marker is detected.</p>
-<p >To read more about the nodes that subscribe to this one </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="logic__node_8cpp.html" title="Node handling logic for robot.">logic_node.cpp</a> </dd>
+<p >The variables ox, oy, oz, and ow are the orientation vectors. The orientation data is also known as "quaternion" data. These vectors help with calculating three-dimensional rotations. To learn more about quaternion, see <a href="https://en.wikipedia.org/wiki/Quaternion">https://en.wikipedia.org/wiki/Quaternion</a></p>
+<p >The variable "aruco_visible" tells whether or not that at least one marker is detected.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="ZedPosition_8msg.html">ZedPosition.msg</a></dd></dl>
+<p>Zed camera currently using WVGA mode which has a FOV of 56(V) and 87(H).</p>
+<p >Nodes that subscribe to the published Zed topics include the logic and autonomy node. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="logic__node_8cpp.html" title="Node handling logic for robot.">logic_node.cpp</a></dd>
 <dd>
-autonomy_node.cpp </dd></dl>
+<a class="el" href="autonomy__node_8cpp.html" title="Node handling Autonomy for robot.">autonomy_node.cpp</a> </dd></dl>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
