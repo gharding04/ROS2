@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['broadcastip_0',['broadcastIP',['../communication__node_8cpp.html#a7b8f256d906f6221368ac0894b5e34cc',1,'communication_node.cpp']]]
+  ['_5f_5finit_5f_5f_0',['__init__',['../classexcavation_1_1excavation__node_1_1ExcavationNode.html#a3a84ab1017be481a3d868eac9aa1d944',1,'excavation::excavation_node::ExcavationNode']]]
 ];

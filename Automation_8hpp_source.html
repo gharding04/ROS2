@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.4"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Razorbotz RMC 2021-2022 Documentation: skinny/src/logic/include/logic/Automation.hpp Source File</title>
+<title>Razorbotz RMC 2021-2022 Documentation: spinner/src/logic/include/logic/Automation.hpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -62,54 +62,65 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_8a969c40d4f2d53059dd45393ba76637.html">skinny</a></li><li class="navelem"><a class="el" href="dir_376664fb55a24650e8c79eb3ced74278.html">src</a></li><li class="navelem"><a class="el" href="dir_e907d50237a1616750593f5fbe3ce7d5.html">logic</a></li><li class="navelem"><a class="el" href="dir_41c0c811e87bb4ab6df69a44e8e5206e.html">include</a></li><li class="navelem"><a class="el" href="dir_c0ac67496562bce9471c349c6d09fc31.html">logic</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_e1e8e7a629f78848c229dd588f60f637.html">spinner</a></li><li class="navelem"><a class="el" href="dir_5b9fa479348470032ea538a53ac711fb.html">src</a></li><li class="navelem"><a class="el" href="dir_3e94934189597ca00cffab894948509f.html">logic</a></li><li class="navelem"><a class="el" href="dir_c9bbd53966f727e2642d97cb7b67d058.html">include</a></li><li class="navelem"><a class="el" href="dir_32892a5da3a8540303d4f5a5b66bca81.html">logic</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="headertitle"><div class="title">Automation.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="Automation_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
+<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;rclcpp/rclcpp.hpp&gt;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;std_msgs/msg/float32.hpp&gt;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="AutomationTypes_8hpp.html">AutomationTypes.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;AutomationTypes.hpp&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="classAutomation.html">   14</a></span><span class="keyword">class </span><a class="code hl_class" href="classAutomation.html">Automation</a>{</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    std::shared_ptr&lt;rclcpp::Publisher&lt;std_msgs::msg::Float32_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;void&gt; &gt; &gt; driveLeftSpeedPublisher;</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    std::shared_ptr&lt;rclcpp::Publisher&lt;std_msgs::msg::Float32_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;void&gt; &gt; &gt; driveRightSpeedPublisher;</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    rclcpp::Node::SharedPtr node;</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <a class="code hl_struct" href="structPosition.html">Position</a> position;</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <a class="code hl_struct" href="structQuaternion.html">Quaternion</a> orientationQuaternion;</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <a class="code hl_struct" href="structEulerAngles.html">EulerAngles</a> orientation;</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordtype">float</span> currentLeftSpeed=0;</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keywordtype">float</span> currentRightSpeed=0;</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno"><a class="line" href="classAutomation.html">    9</a></span><span class="keyword">class </span><a class="code hl_class" href="classAutomation.html">Automation</a>{</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    std::shared_ptr&lt;rclcpp::Publisher&lt;std_msgs::msg::Float32_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;void&gt; &gt; &gt; driveLeftSpeedPublisher;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    std::shared_ptr&lt;rclcpp::Publisher&lt;std_msgs::msg::Float32_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;void&gt; &gt; &gt; driveRightSpeedPublisher;</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    std::shared_ptr&lt;rclcpp::Publisher&lt;std_msgs::msg::Float32_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;void&gt; &gt; &gt; dumpBinSpeedPublisher;</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    std::shared_ptr&lt;rclcpp::Publisher&lt;std_msgs::msg::Float32_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;void&gt; &gt; &gt; shoulderSpeedPublisher;</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    std::shared_ptr&lt;rclcpp::Publisher&lt;std_msgs::msg::Float32_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;void&gt; &gt; &gt; excavationArmPublisher;</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    std::shared_ptr&lt;rclcpp::Publisher&lt;std_msgs::msg::Float32_&lt;std::allocator&lt;void&gt; &gt;, std::allocator&lt;void&gt; &gt; &gt; excavationDrumPublisher;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    rclcpp::Node::SharedPtr node;</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    <a class="code hl_struct" href="structPosition.html">Position</a> position;</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <a class="code hl_struct" href="structQuaternion.html">Quaternion</a> orientationQuaternion;</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <a class="code hl_struct" href="structEulerAngles.html">EulerAngles</a> orientation;</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keywordtype">float</span> currentLeftSpeed=0;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordtype">float</span> currentRightSpeed=0;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keyword">virtual</span> <span class="keywordtype">void</span> automate() = 0;</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classAutomation.html#a35d610ea56c94a7b96897a54144c0f1f">setNode</a>(rclcpp::Node::SharedPtr node);</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classAutomation.html#ad216c05e7a24f9a7dc9216f5ffee173f">setPosition</a>(<a class="code hl_struct" href="structPosition.html">Position</a> position);</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classAutomation.html#a9ee08cd555d8e86e37275ac28799b417">changeSpeed</a>(<span class="keywordtype">float</span> left, <span class="keywordtype">float</span> right);</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <a class="code hl_struct" href="structEulerAngles.html">EulerAngles</a> <a class="code hl_function" href="classAutomation.html#a5b45d73f58858dab802c413018f378c1">toEulerAngles</a>(<a class="code hl_struct" href="structQuaternion.html">Quaternion</a> q); </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>};</div>
-<div class="ttc" id="aAutomationTypes_8hpp_html"><div class="ttname"><a href="AutomationTypes_8hpp.html">AutomationTypes.hpp</a></div><div class="ttdoc">Header file for AutomationTypes.</div></div>
-<div class="ttc" id="aclassAutomation_html"><div class="ttname"><a href="classAutomation.html">Automation</a></div><div class="ttdef"><b>Definition:</b> Automation.hpp:14</div></div>
-<div class="ttc" id="aclassAutomation_html_a35d610ea56c94a7b96897a54144c0f1f"><div class="ttname"><a href="classAutomation.html#a35d610ea56c94a7b96897a54144c0f1f">Automation::setNode</a></div><div class="ttdeci">void setNode(rclcpp::Node::SharedPtr node)</div><div class="ttdoc">Sets publisher node for left and right wheel motor speed.</div><div class="ttdef"><b>Definition:</b> Automation.cpp:20</div></div>
-<div class="ttc" id="aclassAutomation_html_a5b45d73f58858dab802c413018f378c1"><div class="ttname"><a href="classAutomation.html#a5b45d73f58858dab802c413018f378c1">Automation::toEulerAngles</a></div><div class="ttdeci">EulerAngles toEulerAngles(Quaternion q)</div><div class="ttdoc">Converts raw x,y,z-axis data to Euler angles to orient the bot in 3d space.</div><div class="ttdef"><b>Definition:</b> Automation.cpp:71</div></div>
-<div class="ttc" id="aclassAutomation_html_a9ee08cd555d8e86e37275ac28799b417"><div class="ttname"><a href="classAutomation.html#a9ee08cd555d8e86e37275ac28799b417">Automation::changeSpeed</a></div><div class="ttdeci">void changeSpeed(float left, float right)</div><div class="ttdoc">Assigns/publishes left/right motorspeeds.</div><div class="ttdef"><b>Definition:</b> Automation.cpp:49</div></div>
-<div class="ttc" id="aclassAutomation_html_ad216c05e7a24f9a7dc9216f5ffee173f"><div class="ttname"><a href="classAutomation.html#ad216c05e7a24f9a7dc9216f5ffee173f">Automation::setPosition</a></div><div class="ttdeci">void setPosition(Position position)</div><div class="ttdoc">Sets axis orientations and calls EulerAngles.</div><div class="ttdef"><b>Definition:</b> Automation.cpp:34</div></div>
-<div class="ttc" id="astructEulerAngles_html"><div class="ttname"><a href="structEulerAngles.html">EulerAngles</a></div><div class="ttdef"><b>Definition:</b> AutomationTypes.hpp:21</div></div>
-<div class="ttc" id="astructPosition_html"><div class="ttname"><a href="structPosition.html">Position</a></div><div class="ttdef"><b>Definition:</b> AutomationTypes.hpp:9</div></div>
-<div class="ttc" id="astructQuaternion_html"><div class="ttname"><a href="structQuaternion.html">Quaternion</a></div><div class="ttdef"><b>Definition:</b> AutomationTypes.hpp:17</div></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keyword">virtual</span> <span class="keywordtype">void</span> automate() = 0;</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keywordtype">void</span> setNode(rclcpp::Node::SharedPtr node);</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordtype">void</span> setPosition(<a class="code hl_struct" href="structPosition.html">Position</a> position);</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keywordtype">void</span> changeSpeed(<span class="keywordtype">float</span> left, <span class="keywordtype">float</span> right);</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <a class="code hl_struct" href="structEulerAngles.html">EulerAngles</a> toEulerAngles(<a class="code hl_struct" href="structQuaternion.html">Quaternion</a> q); </div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keywordtype">void</span> changeDumpBinSpeed(<span class="keywordtype">float</span> speed);</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordtype">void</span> changeShoulderSpeed(<span class="keywordtype">float</span> speed);</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keywordtype">void</span> changeArmSpeed(<span class="keywordtype">float</span> speed);</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keywordtype">void</span> changeDrumSpeed(<span class="keywordtype">float</span> speed);</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordtype">void</span> changeLockServoSpeed(<span class="keywordtype">float</span> speed);</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordtype">void</span> changeArmServoSpeed(<span class="keywordtype">float</span> speed);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>};</div>
+<div class="ttc" id="aclassAutomation_html"><div class="ttname"><a href="classAutomation.html">Automation</a></div><div class="ttdef"><b>Definition:</b> Automation.hpp:9</div></div>
+<div class="ttc" id="astructEulerAngles_html"><div class="ttname"><a href="structEulerAngles.html">EulerAngles</a></div><div class="ttdef"><b>Definition:</b> AutomationTypes.hpp:15</div></div>
+<div class="ttc" id="astructPosition_html"><div class="ttname"><a href="structPosition.html">Position</a></div><div class="ttdef"><b>Definition:</b> AutomationTypes.hpp:3</div></div>
+<div class="ttc" id="astructQuaternion_html"><div class="ttname"><a href="structQuaternion.html">Quaternion</a></div><div class="ttdef"><b>Definition:</b> AutomationTypes.hpp:11</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

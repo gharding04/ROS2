@@ -1,7 +1,4 @@
 var searchData=
 [
-  ['camera_2emsg_0',['Camera.msg',['../Camera_8msg.html',1,'']]],
-  ['changespeed_1',['changeSpeed',['../classAutomation.html#a9ee08cd555d8e86e37275ac28799b417',1,'Automation']]],
-  ['charucosubpixelparallel_2',['CharucoSubpixelParallel',['../classcv_1_1aruco_1_1CharucoSubpixelParallel.html',1,'cv::aruco']]],
-  ['communication_5fnode_2ecpp_3',['communication_node.cpp',['../communication__node_8cpp.html',1,'']]]
+  ['calibrate_0',['calibrate',['../classexcavation_1_1excavation__node_1_1ExcavationNode.html#ae2dfa58f71ba52137530b5213d0526c3',1,'excavation.excavation_node.ExcavationNode.calibrate(self, odrv, num)'],['../classexcavation_1_1excavation__node_1_1ExcavationNode.html#a8b95f1d775fbf0e0ddbe12bcdf7df104',1,'excavation.excavation_node.ExcavationNode.calibrate(self)']]]
 ];

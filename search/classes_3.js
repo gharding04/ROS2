@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['eulerangles_0',['EulerAngles',['../structEulerAngles.html',1,'']]]
+  ['position_0',['Position',['../structPosition.html',1,'']]],
+  ['powerdistributionpanel_1',['PowerDistributionPanel',['../classPowerDistributionPanel.html',1,'']]]
 ];

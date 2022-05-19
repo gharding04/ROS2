@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['charucosubpixelparallel_0',['CharucoSubpixelParallel',['../classcv_1_1aruco_1_1CharucoSubpixelParallel.html',1,'cv::aruco']]]
+  ['eulerangles_0',['EulerAngles',['../structEulerAngles.html',1,'']]],
+  ['excavationnode_1',['ExcavationNode',['../classexcavation_1_1excavation__node_1_1ExcavationNode.html',1,'excavation::excavation_node']]]
 ];

@@ -1,8 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" title=" " alt="" coords="5,143,128,170"/>
-<area shape="rect" id="node2" href="$classcv_1_1aruco_1_1CharucoSubpixelParallel.html" title=" " alt="" coords="191,5,368,47"/>
-<area shape="rect" id="node3" href="$classcv_1_1aruco_1_1DetectInitialCandidatesParallel.html" title=" " alt="" coords="205,71,354,112"/>
-<area shape="rect" id="node4" href="$classcv_1_1aruco_1_1IdentifyCandidatesParallel.html" title=" " alt="" coords="186,136,373,177"/>
-<area shape="rect" id="node5" href="$classcv_1_1aruco_1_1MarkerSubpixelParallel.html" title=" " alt="" coords="195,201,364,243"/>
-<area shape="rect" id="node6" href="$classcv_1_1aruco_1_1SinglePoseEstimationParallel.html" title=" " alt="" coords="176,267,383,308"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,13,59,39"/>
+<area shape="rect" id="node2" href="$classexcavation_1_1excavation__node_1_1ExcavationNode.html" title=" " alt="" coords="107,5,261,47"/>
 </map>
