@@ -1,10 +1,10 @@
 <map id="spinner/src" name="spinner/src">
-<area shape="rect" id="node2" href="dir_4da3757df68f03f9d8102108ed59e0d5.html" title="autonomy" alt="" coords="634,63,713,111"/>
-<area shape="rect" id="node3" href="dir_dea0aee04d974487b9d43b9c71ec4237.html" title="excavation" alt="" coords="526,63,610,111"/>
-<area shape="rect" id="node4" href="dir_3e94934189597ca00cffab894948509f.html" title="logic" alt="" coords="429,63,501,111"/>
-<area shape="rect" id="node5" href="dir_1488ba7d6a49094a0af8fcfcd0819fde.html" title="messages" alt="" coords="323,63,405,111"/>
-<area shape="rect" id="node6" href="dir_43e6b6d3e5920e8551675b30fe2b73ec.html" title="power_distribution_panel" alt="" coords="133,63,299,111"/>
-<area shape="rect" id="node7" href="dir_2dc7e0e6639d059725cae74a7cd2fdf1.html" title="talon" alt="" coords="37,63,109,111"/>
-<area shape="rect" id="clust2" href="dir_5b9fa479348470032ea538a53ac711fb.html" alt="" coords="27,52,820,121"/>
-<area shape="rect" id="clust1" href="dir_e1e8e7a629f78848c229dd588f60f637.html" title="spinner" alt="" coords="16,16,831,132"/>
+<area shape="rect" id="node2" href="dir_4da3757df68f03f9d8102108ed59e0d5.html" title="autonomy" alt="" coords="553,70,631,95"/>
+<area shape="rect" id="node3" href="dir_dea0aee04d974487b9d43b9c71ec4237.html" title="excavation" alt="" coords="445,70,529,95"/>
+<area shape="rect" id="node4" href="dir_3e94934189597ca00cffab894948509f.html" title="logic" alt="" coords="371,70,421,95"/>
+<area shape="rect" id="node5" href="dir_1488ba7d6a49094a0af8fcfcd0819fde.html" title="messages" alt="" coords="264,70,347,95"/>
+<area shape="rect" id="node6" href="dir_43e6b6d3e5920e8551675b30fe2b73ec.html" title="power_distribution\l_panel" alt="" coords="113,63,239,103"/>
+<area shape="rect" id="node7" href="dir_2dc7e0e6639d059725cae74a7cd2fdf1.html" title="talon" alt="" coords="37,70,88,95"/>
+<area shape="rect" id="clust2" href="dir_5b9fa479348470032ea538a53ac711fb.html" alt="" coords="27,52,707,113"/>
+<area shape="rect" id="clust1" href="dir_e1e8e7a629f78848c229dd588f60f637.html" title="spinner" alt="" coords="16,16,717,124"/>
 </map>
