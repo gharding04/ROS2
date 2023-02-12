@@ -116,6 +116,9 @@ Structure of the packages</h2>
 <li><a href="https://github.com/Razorbotz/ROS2/tree/master/spinner/src/talon">Talon</a></li>
 <li><a href="https://github.com/Razorbotz/ROS2/tree/master/spinner/src/zed">Zed Tracking</a></li>
 </ul>
+<p>The Autonomy node is no longer used or under active development. The functionality of the Autonomy node has been moved to the Logic node. The 2021-2022 node relationships are shown in the image below.</p>
+<p><img src="docs/images/Nodes.svg" alt="Node Relationship Visual" style="pointer-events: none;" class="inline"/></p>
+<p>The Talon and Falcon nodes have been combined into a single instance on the image to reduce the complexity and make it easier to understand. The message names that are passed from each node are shown. All motor controller nodes, ie Talon, Falcon, and Exavation nodes, also subscribe to two publishers from the communication node that are called the GO and STOP publishers. These subscriptions were omitted from the diagram for the sake of clarity.</p>
 <h1><a class="anchor" id="autotoc_md6"></a>
 Documentation</h1>
 <p>This project uses <a href="https://www.doxygen.nl/index.html">Doxygen</a> to generate documentation for the files automatically. <b>To make documentation easier for all users, Doxygen is hosted on the Github and does not need to be downloaded by contributers.</b> To learn more about the Doxygen formatting, please refer to the <a href="https://www.doxygen.nl/manual/docblocks.html">Documenting the code</a> section of the Doxygen docs. The documentation for this project can be found at the project website that is found <a href="https://razorbotz.github.io/ROS2/">here</a>.</p>
