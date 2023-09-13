@@ -2,11 +2,15 @@
 This page intends to provide a starting point and overview of the project, as well as a roadmap for how to get involved with the project even if you aren't familiar with the code or technology stack. Please note that these links may not be up to date and any links should be followed at your own risk.  If you find any links that no longer work or changes that need to be made, please contact me at andrewburroughs17@gmail.com.  Click [here](https://razorbotz.github.io/ROS2/) to view the documentation for the project.  If you are not familiar with Github and the git cli, please refer to the [Razorbotz Github Intro page](https://github.com/Razorbotz/Test).
 
 ## Overview
+* [Getting Started](https://github.com/Razorbotz/ROS2/tree/master#getting-started)
 * [Installing ROS2](https://github.com/Razorbotz/ROS2/tree/master#installing-ros2)
 * [Understanding the Codebase](https://github.com/Razorbotz/ROS2/tree/master#understanding-the-codebase)
 * [Documentation](https://github.com/Razorbotz/ROS2/tree/master#documentation)
 * [Tutorials](https://github.com/Razorbotz/ROS2/tree/master#tutorials)
 * [Resources](https://github.com/Razorbotz/ROS2/tree/master#resources)
+
+## Getting Started
+To get started with the project, install the [virtual machine](https://github.com/Razorbotz/ROS2/tree/master#installing-ros2). The after installing the virtual machine, go through these [Linux tutorials](https://www.hostinger.com/tutorials/linux-commands). The key objective of these tutorials is to teach how to navigate through the file structure via the terminal, as well manipulating files using commands. Because the robot is designed to be operated remotely on the lunar surface, understanding these commands is an essential skill for this project. 
 
 ## Installing ROS2
 To install ROS2 and begin the project, please refer to the [Razorbotz Installation Page](https://github.com/Razorbotz/ROS2-Installation).  After installing ROS2, please use the following commands to run some examples and ensure ROS2 is installed correctly.
