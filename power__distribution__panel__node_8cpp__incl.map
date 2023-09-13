@@ -1,35 +1,35 @@
 <map id="spinner/src/power_distribution_panel/src/power_distribution_panel_node.cpp" name="spinner/src/power_distribution_panel/src/power_distribution_panel_node.cpp">
 <area shape="rect" id="Node000001" title="Node publishing Power Distribution Panel info." alt="" coords="724,5,918,61"/>
 <area shape="rect" id="Node000002" title=" " alt="" coords="5,117,125,142"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="724,43,458,66,298,86,137,112,121,115,120,110,137,106,297,81,458,61,723,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="724,43,458,66,298,86,137,112,122,115,121,110,137,106,297,81,458,61,723,38"/>
 <area shape="rect" id="Node000003" title=" " alt="" coords="149,117,322,142"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="724,51,335,112,311,116,310,111,334,106,723,46"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="724,51,335,112,312,116,311,110,334,106,723,46"/>
 <area shape="rect" id="Node000004" title=" " alt="" coords="346,117,405,142"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="724,49,579,72,498,90,419,112,414,113,412,108,418,106,497,85,578,67,723,43"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="724,49,579,72,498,90,419,112,415,113,414,108,418,106,497,85,578,67,723,43"/>
 <area shape="rect" id="Node000005" title=" " alt="" coords="430,117,492,142"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="724,55,618,79,504,112,500,113,498,108,503,106,616,74,723,50"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="724,55,618,79,504,112,501,113,499,108,503,106,616,74,723,50"/>
 <area shape="rect" id="Node000006" title=" " alt="" coords="516,117,582,142"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="734,64,595,112,591,113,589,108,593,106,732,59"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="734,64,595,112,591,113,590,108,593,106,732,59"/>
 <area shape="rect" id="Node000007" title=" " alt="" coords="607,117,670,142"/>
 <area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="769,64,676,112,674,107,767,59"/>
 <area shape="rect" id="Node000008" title=" " alt="" coords="694,117,754,142"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="795,63,748,108,745,104,791,60"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="795,63,749,108,745,104,791,60"/>
 <area shape="rect" id="Node000009" title=" " alt="" coords="778,117,864,142"/>
-<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="824,62,824,102,818,102,818,62"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="824,62,824,101,818,101,818,62"/>
 <area shape="rect" id="Node000010" title=" " alt="" coords="889,117,983,142"/>
-<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="856,59,912,105,909,109,852,64"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="856,59,911,105,908,109,852,64"/>
 <area shape="rect" id="Node000011" title=" " alt="" coords="1007,117,1086,142"/>
 <area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="887,59,1005,108,1003,113,885,64"/>
 <area shape="rect" id="Node000012" title=" " alt="" coords="1164,198,1246,223"/>
-<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="919,46,1009,69,1056,86,1100,107,1140,140,1186,185,1182,189,1137,144,1097,111,1054,91,1008,74,918,51"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="919,46,1009,69,1056,86,1100,107,1140,140,1185,184,1181,188,1137,144,1097,111,1054,91,1008,74,918,51"/>
 <area shape="rect" id="Node000013" title=" " alt="" coords="1285,198,1392,223"/>
-<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="919,36,1075,45,1251,59,1402,79,1453,92,1481,107,1489,118,1491,129,1482,151,1467,168,1448,182,1407,200,1405,195,1446,177,1463,165,1477,148,1485,128,1484,120,1478,111,1451,97,1401,84,1251,64,1075,50,919,41"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="919,36,1075,45,1251,59,1402,79,1453,92,1481,107,1489,118,1491,129,1482,151,1467,168,1449,182,1408,200,1406,195,1446,177,1463,164,1477,148,1485,128,1484,120,1478,111,1451,97,1401,84,1251,64,1075,50,919,41"/>
 <area shape="rect" id="Node000014" title=" " alt="" coords="1407,117,1467,142"/>
-<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="919,36,1019,43,1139,57,1268,77,1395,106,1400,108,1399,113,1394,112,1267,82,1138,62,1018,49,918,41"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="919,36,1019,43,1139,57,1268,77,1395,106,1400,108,1398,113,1394,112,1267,82,1138,62,1018,49,918,41"/>
 <area shape="rect" id="Node000015" href="$PowerDistributionPanel_8hpp_source.html" title=" " alt="" coords="1161,109,1383,150"/>
-<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="919,52,1164,103,1163,108,918,57"/>
+<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="919,52,1163,103,1162,108,918,57"/>
 <area shape="rect" id="Node000016" title=" " alt="" coords="1542,117,1716,142"/>
 <area shape="poly" id="edge17_Node000001_Node000016" title=" " alt="" coords="919,40,1192,66,1524,106,1552,111,1551,116,1523,112,1191,71,918,45"/>
-<area shape="poly" id="edge15_Node000015_Node000012" title=" " alt="" coords="1257,152,1227,188,1223,184,1253,148"/>
-<area shape="poly" id="edge16_Node000015_Node000013" title=" " alt="" coords="1290,148,1321,184,1317,188,1286,152"/>
+<area shape="poly" id="edge15_Node000015_Node000012" title=" " alt="" coords="1257,152,1227,187,1223,184,1253,148"/>
+<area shape="poly" id="edge16_Node000015_Node000013" title=" " alt="" coords="1290,148,1320,184,1316,187,1286,152"/>
 </map>

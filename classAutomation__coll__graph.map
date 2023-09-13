@@ -1,9 +1,9 @@
 <map id="Automation" name="Automation">
 <area shape="rect" id="Node000001" title=" " alt="" coords="96,94,183,120"/>
 <area shape="rect" id="Node000002" href="$structPosition.html" title=" " alt="" coords="5,5,74,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="60,40,88,68,120,91,117,96,84,72,56,44"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="61,41,88,68,120,91,117,96,84,72,57,45"/>
 <area shape="rect" id="Node000003" href="$structQuaternion.html" title=" " alt="" coords="97,5,182,31"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="142,46,142,94,137,94,137,46"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="142,47,142,94,137,94,137,47"/>
 <area shape="rect" id="Node000004" href="$structEulerAngles.html" title=" " alt="" coords="252,5,342,31"/>
 <area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="289,46,281,60,269,72,249,85,227,94,184,104,183,99,226,89,247,80,266,68,277,57,285,43"/>
 </map>

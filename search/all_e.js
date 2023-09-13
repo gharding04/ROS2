@@ -1,8 +1,12 @@
 var searchData=
 [
-  ['setrequestedstate_0',['setRequestedState',['../classexcavation_1_1excavation__node_1_1ExcavationNode.html#ab5693efcaf67aca94f5b9b6d4a03c6b5',1,'excavation::excavation_node::ExcavationNode']]],
-  ['speedcallback_1',['speedCallback',['../talon__node_8cpp.html#a92f034499be43dd813c91feaf4d23d9d',1,'talon_node.cpp']]],
-  ['stopcallback_2',['stopCallback',['../classexcavation_1_1excavation__node_1_1ExcavationNode.html#ac48b8f095926753e365fe82d2b7c0e79',1,'excavation.excavation_node.ExcavationNode.stopCallback()'],['../talon__node_8cpp.html#ab1e864b4db2bf6ec016a2d770fa3d1a0',1,'stopCallback(std_msgs::msg::Empty::SharedPtr empty):&#160;talon_node.cpp']]],
-  ['stopexcavation_3',['stopExcavation',['../logic__node_8cpp.html#abaa2c975bcf2f82121196930dc026e2c',1,'logic_node.cpp']]],
-  ['stopspeed_4',['stopSpeed',['../logic__node_8cpp.html#a291d4c0addc833b2f937352267bca31f',1,'logic_node.cpp']]]
+  ['packages_0',['Structure of the packages',['../index.html#autotoc_md6',1,'']]],
+  ['parsecurrent_1',['parseCurrent',['../classPowerDistributionPanel.html#a4b8db8aeb85b455da984cde08e98da9b',1,'PowerDistributionPanel']]],
+  ['parseframe_2',['parseFrame',['../classPowerDistributionPanel.html#a1f377d1df81b350a14aae8c6a7b891c9',1,'PowerDistributionPanel']]],
+  ['parsevoltage_3',['parseVoltage',['../classPowerDistributionPanel.html#ac999e3d51768d689e0f1e7f168fddeee',1,'PowerDistributionPanel']]],
+  ['position_4',['Position',['../structPosition.html',1,'']]],
+  ['power_5fdistribution_5fpanel_5fnode_2ecpp_5',['power_distribution_panel_node.cpp',['../power__distribution__panel__node_8cpp.html',1,'']]],
+  ['powerdistributionpanel_6',['powerdistributionpanel',['../classPowerDistributionPanel.html',1,'PowerDistributionPanel'],['../classPowerDistributionPanel.html#a82c7b8a8b1cf63f5490cb33ebe7e8ded',1,'PowerDistributionPanel::PowerDistributionPanel()']]],
+  ['powerdistributionpanel_2ecpp_7',['PowerDistributionPanel.cpp',['../PowerDistributionPanel_8cpp.html',1,'']]],
+  ['project_8',['Welcome to the Razorbotz NASA Robotic Mining Competition Project!',['../index.html',1,'']]]
 ];

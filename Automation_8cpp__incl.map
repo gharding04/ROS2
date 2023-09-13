@@ -1,22 +1,22 @@
 <map id="spinner/src/logic/src/Automation.cpp" name="spinner/src/logic/src/Automation.cpp">
 <area shape="rect" id="Node000001" title=" " alt="" coords="269,5,408,46"/>
 <area shape="rect" id="Node000002" title=" " alt="" coords="142,94,199,120"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="298,49,210,90,208,85,295,44"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="298,49,211,89,209,85,295,44"/>
 <area shape="rect" id="Node000003" title=" " alt="" coords="5,168,125,193"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="317,49,269,85,212,122,163,146,116,165,114,160,161,141,209,117,266,80,313,44"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="317,49,269,85,212,122,163,146,117,164,115,159,161,141,209,117,266,80,313,44"/>
 <area shape="rect" id="Node000004" title=" " alt="" coords="149,168,322,193"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="328,48,254,157,250,154,323,45"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="328,48,255,156,250,153,323,45"/>
 <area shape="rect" id="Node000005" title=" " alt="" coords="347,168,506,193"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="343,46,351,81,366,118,382,139,400,156,397,160,378,142,361,121,346,83,338,47"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="343,46,351,81,366,118,381,139,399,156,396,160,377,142,361,121,346,83,338,47"/>
 <area shape="rect" id="Node000006" title=" " alt="" coords="531,168,701,193"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="409,41,470,62,530,92,569,122,599,154,595,158,565,126,528,96,468,67,407,46"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="409,41,470,62,530,92,568,122,598,153,595,157,565,126,528,96,468,67,407,46"/>
 <area shape="rect" id="Node000007" href="$Automation_8hpp_source.html" title=" " alt="" coords="375,94,518,120"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="367,44,420,83,417,87,363,49"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="367,44,419,82,416,87,363,49"/>
 <area shape="rect" id="Node000008" href="$AutomationTypes_8hpp_source.html" title=" " alt="" coords="725,168,872,193"/>
-<area shape="poly" id="edge12_Node000001_Node000008" title=" " alt="" coords="408,44,565,91,754,159,753,164,563,97,407,49"/>
-<area shape="poly" id="edge7_Node000007_Node000003" title=" " alt="" coords="382,123,139,168,138,163,381,118"/>
-<area shape="poly" id="edge8_Node000007_Node000004" title=" " alt="" coords="411,123,286,165,284,160,410,118"/>
-<area shape="poly" id="edge9_Node000007_Node000005" title=" " alt="" coords="446,121,436,154,431,153,440,119"/>
-<area shape="poly" id="edge10_Node000007_Node000006" title=" " alt="" coords="476,118,575,159,572,164,474,123"/>
-<area shape="poly" id="edge11_Node000007_Node000008" title=" " alt="" coords="507,118,725,162,724,167,506,123"/>
+<area shape="poly" id="edge12_Node000001_Node000008" title=" " alt="" coords="408,44,565,91,754,159,752,164,563,97,407,49"/>
+<area shape="poly" id="edge7_Node000007_Node000003" title=" " alt="" coords="382,123,140,168,139,163,381,118"/>
+<area shape="poly" id="edge8_Node000007_Node000004" title=" " alt="" coords="411,123,287,165,285,160,410,118"/>
+<area shape="poly" id="edge9_Node000007_Node000005" title=" " alt="" coords="446,121,436,153,431,152,440,119"/>
+<area shape="poly" id="edge10_Node000007_Node000006" title=" " alt="" coords="476,118,574,159,572,164,474,123"/>
+<area shape="poly" id="edge11_Node000007_Node000008" title=" " alt="" coords="507,118,724,161,723,167,506,123"/>
 </map>
