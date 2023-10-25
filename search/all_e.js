@@ -8,5 +8,5 @@ var searchData=
   ['power_5fdistribution_5fpanel_5fnode_2ecpp_5',['power_distribution_panel_node.cpp',['../power__distribution__panel__node_8cpp.html',1,'']]],
   ['powerdistributionpanel_6',['powerdistributionpanel',['../classPowerDistributionPanel.html',1,'PowerDistributionPanel'],['../classPowerDistributionPanel.html#a82c7b8a8b1cf63f5490cb33ebe7e8ded',1,'PowerDistributionPanel::PowerDistributionPanel()']]],
   ['powerdistributionpanel_2ecpp_7',['PowerDistributionPanel.cpp',['../PowerDistributionPanel_8cpp.html',1,'']]],
-  ['project_8',['Welcome to the Razorbotz NASA Robotic Mining Competition Project!',['../index.html',1,'']]]
+  ['project_8',['Welcome to the Razorbotz NASA Lunabotics Project!',['../index.html',1,'']]]
 ];
