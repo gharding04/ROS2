@@ -8,12 +8,6 @@ from launch_ros.actions import Node
 def generate_launch_description():
     return LaunchDescription([
         Node(
-            package='arduino',
-            name='arduino',
-            executable='arduino_node'
-        )
-        ,
-        Node(
             package='logic',
             name='logic',
             executable='logic_node',
@@ -46,6 +40,7 @@ def generate_launch_description():
                 {"diagnostics_port": 56715},
                 {"invert_motor": True},
                 {"speed_topic": "talon_14_speed"},
+                {"potentiometer_topic": "potentiometer_1_data"},
                 {"info_topic": "talon_14_info"},
                 {"use_velocity": False},
                 {"velocity_multiplier": 3000},
@@ -67,6 +62,7 @@ def generate_launch_description():
                 {"diagnostics_port": 56714},
                 {"invert_motor": True},
                 {"speed_topic": "talon_15_speed"},
+                {"potentiometer_topic": "potentiometer_2_data"},
                 {"info_topic": "talon_15_info"},
                 {"use_velocity": False},
                 {"velocity_multiplier": 3000},
@@ -88,7 +84,30 @@ def generate_launch_description():
                 {"diagnostics_port": 56713},
                 {"invert_motor": True},
                 {"speed_topic": "talon_16_speed"},
+                {"potentiometer_topic": "potentiometer_3_data"},
                 {"info_topic": "talon_16_info"},
+                {"use_velocity": False},
+                {"velocity_multiplier": 3000},
+                {"test_speed": 100},
+                {"kP": 0.20},
+                {"kI": 0.000001},
+                {"kD": 0.000001},
+                {"kF": 0.0}
+            ],
+            output={'stderr': 'screen', 'stdout': 'screen'}
+        )
+        ,
+        Node(
+            package='talon',
+            name='dump_2',
+            executable='talon_node',
+            parameters=[
+                {"motor_number": 17},
+                {"diagnostics_port": 56712},
+                {"invert_motor": True},
+                {"speed_topic": "talon_17_speed"},
+                {"potentiometer_topic": "potentiometer_4_data"},
+                {"info_topic": "talon_17_info"},
                 {"use_velocity": False},
                 {"velocity_multiplier": 3000},
                 {"test_speed": 100},

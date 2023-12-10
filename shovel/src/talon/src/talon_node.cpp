@@ -194,6 +194,7 @@ int main(int argc,char** argv){
 	c_Phoenix_Diagnostics_Create1(portNumber);  //Creates a Phoenix Diagnostics server with the port specified
 	
 	std::string infoTopic = getParameter<std::string>("info_topic", "unset");
+	std::string potentiometerTopic = getParameter<std::string>("potentiometer_topic", "unset");
 	std::string speedTopic = getParameter<std::string>("speed_topic", "unset");
 
 	bool invertMotor = getParameter<bool>("invert_motor", 0);
@@ -233,6 +234,7 @@ int main(int argc,char** argv){
 
 	talonSRX->Set(ControlMode::PercentOutput, 0);
 	talonSRX->Set(ControlMode::Velocity, 0);
+	//talonSRX->SetFeedbackDevice(FeedbackDevice.AnalogPotentiometer);
 
 	RCLCPP_INFO(nodeHandle->get_logger(),"configured talon");
 
@@ -240,6 +242,7 @@ int main(int argc,char** argv){
 
 	messages::msg::TalonOut talonOut;
 	auto talonOutPublisher=nodeHandle->create_publisher<messages::msg::TalonOut>(infoTopic.c_str(),1);
+	//auto potentiometerPublisher=nodeHandle->create_publisher<messages::msg::Int16>(potentiometerTopic.c_str(),1);
 	auto speedSubscriber=nodeHandle->create_subscription<std_msgs::msg::Float32>(speedTopic.c_str(),1,speedCallback);
 
 	auto stopSubscriber=nodeHandle->create_subscription<std_msgs::msg::Empty>("STOP",1,stopCallback);
@@ -280,8 +283,12 @@ int main(int argc,char** argv){
 			talonOut.error_derivative=errorDerivative0;
 
 			talonOutPublisher->publish(talonOut);
-        		start = std::chrono::high_resolution_clock::now();
+        	start = std::chrono::high_resolution_clock::now();
 		}
+		//int encoderPosition = talonSRX->GetEncoderPosition();
+		//messages::msg::Float32 potentiometerData;
+		//potentiometerData.data = encoderPosition();
+		//potentiometerPublisher->publish(potentiometerData);
 
 		if(count++>200 && GO){
 			std::cout <<"V=" << talonSRX->GetSelectedSensorVelocity(kPIDLoopIdx) <<"  "

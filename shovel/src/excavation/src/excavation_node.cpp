@@ -12,6 +12,7 @@ rclcpp::Node::SharedPtr nodeHandle;
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > talon14Publisher;
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > talon15Publisher;
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > talon16Publisher;
+std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > talon17Publisher;
 
 /** @file
  * @brief Node to control excavation motors
@@ -33,9 +34,11 @@ std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >
  * \li \b talon_14_speed
  * \li \b talon_15_speed
  * \li \b talon_16_speed
+ * \li \b talon_17_speed
  * \li \b linearOut1
  * \li \b linearOut2
  * \li \b linearOut3
+ * \li \b linearOut4
  * 
  */
 
@@ -75,6 +78,7 @@ struct LinearActuator{
 LinearActuator linear1;
 LinearActuator linear2;
 LinearActuator linear3;
+LinearActuator linear4;
 
 float currentSpeed = 0;
 int thresh1 = 60;
@@ -271,72 +275,6 @@ void processPotentiometerData(int potentData, LinearActuator *linear){
 }
 
 
-/** @brief Callback function for the potentiometer topic
- * 
- * This function receives the potentiometer topic and processes the
- * information. If any of the values are equal to -1, the Arduino
- * node isn't reading the data correctly and any data that is sent
- * should be ignored, which is denoted by raising the ConnectionError
- * error. If the values received are not equal to -1, the data is 
- * being read and there is no ConnectionError. Next, the values
- * are sent to the setPotentiometerError function to ensure that the
- * received values are valid. If there is no connection error and the
- * potentiometers are reading correctly, the first two linear actuators
- * are compared to check if there is a synchronization error and are
- * then synced. 
- * @param potent - Array of ints containing potentiometer information
- * @return void
- * */
-void potentiometerCallback(const std_msgs::msg::Int16MultiArray::SharedPtr potent){
-    RCLCPP_INFO(nodeHandle->get_logger(),"Potentiometer %d %d %d", potent->data[0], potent->data[1], potent->data[2]);
-    
-    if(potent->data[0] == -1 || potent->data[1] == -1){
-        linear1.error = ConnectionError;
-        linear2.error = ConnectionError;
-        linear3.error = ConnectionError;
-        RCLCPP_INFO(nodeHandle->get_logger(),"EXCAVATION ERROR: ConnectionError");
-    }
-    else{
-        if(linear1.error == ConnectionError){
-            linear1.error = None;
-            linear2.error = None;
-            linear3.error = None;
-        }
-    }
-
-    setPotentiometerError(potent->data[0], &linear1);
-    setPotentiometerError(potent->data[1], &linear2);
-    setPotentiometerError(potent->data[2], &linear3);
-
-    if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != PotentiometerError){
-        processPotentiometerData(potent->data[0], &linear1);
-        processPotentiometerData(potent->data[1], &linear2);
-
-        if(abs(potent->data[0] - potent->data[1]) > thresh1){
-            if(linear1.error == None){
-                linear1.error = ActuatorsSyncError;
-            }
-            if(linear2.error == None){
-                linear2.error = ActuatorsSyncError;
-            }
-        }
-        else{
-            if(linear1.error == ActuatorsSyncError){
-                linear1.error = None;
-            }
-            if(linear2.error == ActuatorsSyncError){
-                linear2.error = None;
-            }
-        }
-        sync();
-    }
-
-    if(linear3.error != ConnectionError && linear3.error != PotentiometerError){
-        processPotentiometerData(potent->data[2], &linear3);
-    }
-}
-
-
 /** @brief Callback function for the dump_speed topic
  * 
  * 
@@ -365,6 +303,108 @@ void automationGoCallback(const std_msgs::msg::Bool::SharedPtr msg){
 }
 
 
+
+void potentiometer1Callback(const std_msgs::msg::Int16::SharedPtr msg){
+    if(msg->data == -1){
+        linear1.error = ConnectionError;
+    }
+    else{
+        if(linear1.error == ConnectionError){
+            linear1.error = None;
+        }
+    }
+    setPotentiometerError(msg->data, &linear1);
+
+    if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != ConnectionError && linear2.error != PotentiometerError){
+        processPotentiometerData(msg->data, &linear1);
+
+        if(abs(linear1.potentiometer - linear2.potentiometer) > thresh1){
+            if(linear1.error == None){
+                linear1.error = ActuatorsSyncError;
+            }
+            if(linear2.error == None){
+                linear2.error = ActuatorsSyncError;
+            }
+        }
+        else{
+            if(linear1.error == ActuatorsSyncError){
+                linear1.error = None;
+            }
+            if(linear2.error == ActuatorsSyncError){
+                linear2.error = None;
+            }
+        }
+        sync();
+    }
+}
+
+void potentiometer2Callback(const std_msgs::msg::Int16::SharedPtr msg){
+    if(msg->data == -1){
+        linear2.error = ConnectionError;
+    }
+    else{
+        if(linear2.error == ConnectionError){
+            linear2.error = None;
+        }
+    }
+    setPotentiometerError(msg->data, &linear2);
+
+    if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != ConnectionError && linear2.error != PotentiometerError){
+        processPotentiometerData(msg->data, &linear2);
+
+        if(abs(linear1.potentiometer - linear2.potentiometer) > thresh1){
+            if(linear1.error == None){
+                linear1.error = ActuatorsSyncError;
+            }
+            if(linear2.error == None){
+                linear2.error = ActuatorsSyncError;
+            }
+        }
+        else{
+            if(linear1.error == ActuatorsSyncError){
+                linear1.error = None;
+            }
+            if(linear2.error == ActuatorsSyncError){
+                linear2.error = None;
+            }
+        }
+        sync();
+    }
+}
+
+void potentiometer3Callback(const std_msgs::msg::Int16::SharedPtr msg){
+    if(msg->data == -1){
+        linear3.error = ConnectionError;
+    }
+    else{
+        if(linear3.error == ConnectionError){
+            linear3.error = None;
+        }
+    }
+    setPotentiometerError(msg->data, &linear3);
+
+    if(linear3.error != ConnectionError && linear3.error != PotentiometerError){
+        processPotentiometerData(msg->data, &linear3);
+    }
+}
+
+void potentiometer4Callback(const std_msgs::msg::Int16::SharedPtr msg){
+    if(msg->data == -1){
+        linear4.error = ConnectionError;
+    }
+    else{
+        if(linear4.error == ConnectionError){
+            linear4.error = None;
+        }
+    }
+    setPotentiometerError(msg->data, &linear4);
+
+    if(linear4.error != ConnectionError && linear4.error != PotentiometerError){
+        processPotentiometerData(msg->data, &linear4);
+    }
+}
+
+
 /** @brief Function to get the LinearOut values
  * 
  * This function sets the values of the LinearOut message
@@ -390,23 +430,31 @@ int main(int argc, char **argv){
     rclcpp::init(argc,argv);
     nodeHandle = rclcpp::Node::make_shared("excavation");
 
-    auto potentiometerSubscriber = nodeHandle->create_subscription<std_msgs::msg::Int16MultiArray>("potentiometer_data",1, potentiometerCallback);
     auto shoulderSubscriber = nodeHandle->create_subscription<std_msgs::msg::Float32>("shoulder_speed",1,shoulderCallback);
     auto dumpSpeedSubscriber = nodeHandle->create_subscription<std_msgs::msg::Float32>("dump_speed",1,dumpSpeedCallback);
     auto automationGoSubscriber = nodeHandle->create_subscription<std_msgs::msg::Bool>("automationGo",1,automationGoCallback);
     auto dumpBinSubscriber = nodeHandle->create_subscription<std_msgs::msg::Float32>("dump_bin_speed",1,dumpBinSpeedCallback);
 
+    auto potentiometerDataSubscriber1 = nodeHandle->create_subscription<std_msgs::msg::Int16>("potentiometer_1_data",1,potentiometer1Callback);
+    auto potentiometerDataSubscriber2 = nodeHandle->create_subscription<std_msgs::msg::Int16>("potentiometer_2_data",1,potentiometer2Callback);
+    auto potentiometerDataSubscriber3 = nodeHandle->create_subscription<std_msgs::msg::Int16>("potentiometer_3_data",1,potentiometer3Callback);
+    auto potentiometerDataSubscriber4 = nodeHandle->create_subscription<std_msgs::msg::Int16>("potentiometer_4_data",1,potentiometer4Callback);
+
+
     talon14Publisher = nodeHandle->create_publisher<std_msgs::msg::Float32>("talon_14_speed",1);
     talon15Publisher = nodeHandle->create_publisher<std_msgs::msg::Float32>("talon_15_speed",1);
     talon16Publisher = nodeHandle->create_publisher<std_msgs::msg::Float32>("talon_16_speed",1);
+    talon17Publisher = nodeHandle->create_publisher<std_msgs::msg::Float32>("talon_17_speed",1);
     
     messages::msg::LinearOut linearOut1;
     messages::msg::LinearOut linearOut2;
     messages::msg::LinearOut linearOut3;
+    messages::msg::LinearOut linearOut4;
 
     auto linearOut1Publisher = nodeHandle->create_publisher<messages::msg::LinearOut>("linearOut1",1);
     auto linearOut2Publisher = nodeHandle->create_publisher<messages::msg::LinearOut>("linearOut2",1);
     auto linearOut3Publisher = nodeHandle->create_publisher<messages::msg::LinearOut>("linearOut3",1);
+    auto linearOut4Publisher = nodeHandle->create_publisher<messages::msg::LinearOut>("linearOut4",1);
 
     auto start = std::chrono::high_resolution_clock::now();
     while(rclcpp::ok()){
@@ -420,6 +468,9 @@ int main(int argc, char **argv){
 
             getLinearOut(&linearOut3, &linear3);
             linearOut3Publisher->publish(linearOut3);
+
+            getLinearOut(&linearOut4, &linear4);
+            linearOut4Publisher->publish(linearOut4);
         }
         rclcpp:spin_some(nodeHandle);
     }
