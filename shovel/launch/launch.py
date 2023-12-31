@@ -17,7 +17,7 @@ def generate_launch_description():
         Node(
             package='communication2',
             name='communication2',
-            executable='communication2_node',
+            executable='communication_node',
             parameters=[
                 {"robot_name": "Scoop"}
             ],
