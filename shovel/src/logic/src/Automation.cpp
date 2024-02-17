@@ -26,12 +26,11 @@ void Automation::setNode(rclcpp::Node::SharedPtr node){
     this->node=node;
     driveLeftSpeedPublisher= this->node->create_publisher<std_msgs::msg::Float32>("drive_left_speed",1);
     driveRightSpeedPublisher= this->node->create_publisher<std_msgs::msg::Float32>("drive_right_speed",1);
+    armSpeedPublisher= this->node->create_publisher<std_msgs::msg::Float32>("arm_speed",1);
+    bucketSpeedPublisher= this->node->create_publisher<std_msgs::msg::Float32>("bucket_speed",1);
+    cameraSpeedPublisher= this->node->create_publisher<std_msgs::msg::Float32>("camera_speed",1);
     goPublisher = this->node->create_publisher<std_msgs::msg::Empty>("GO", 1);
     stopPublisher = this->node->create_publisher<std_msgs::msg::Empty>("STOP",1);
-    shoulderPublisher = this->node->create_publisher<std_msgs::msg::Float32>("shoulder_speed",1);
-    dumpPublisher = this->node->create_publisher<std_msgs::msg::Float32>("dump_speed",1);
-    neoPublisher = this->node->create_publisher<std_msgs::msg::Float32>("neo_speed",1);
-    stepperPublisher = this->node->create_publisher<std_msgs::msg::Float32>("stepper_speed",1);
     autonomyOutPublisher = this->node->create_publisher<messages::msg::AutonomyOut>("autonomy_out",1);
 }
 
@@ -118,14 +117,6 @@ void Automation::setStop(){
     stopPublisher->publish(empty);
 }
 
-void Automation::stopActuators(){
-    std_msgs::msg::Float32 Speed;
-    Speed.data = 0.0;
-    shoulderPublisher->publish(Speed);
-    dumpPublisher->publish(Speed);
-    stepperPublisher->publish(Speed);
-}
-
 void Automation::setLinear1(const messages::msg::LinearOut::SharedPtr linearOut){
     this->linear1.speed = linearOut->speed;
     this->linear1.atMax = linearOut->at_max;
@@ -147,16 +138,18 @@ void Automation::setLinear3(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear3.error = linearOut->error;
 }
 
-void Automation::setShoulderSpeed(float speed){
-    std_msgs::msg::Float32 Speed;
-    Speed.data = speed;
-    shoulderPublisher->publish(Speed);
+void Automation::setLinear4(const messages::msg::LinearOut::SharedPtr linearOut){
+    this->linear4.speed = linearOut->speed;
+    this->linear4.atMax = linearOut->at_max;
+    this->linear4.atMin = linearOut->at_min;
+    this->linear4.error = linearOut->error;
 }
 
-void Automation::setDumpSpeed(float speed){
-    std_msgs::msg::Float32 Speed;
-    Speed.data = speed;
-    dumpPublisher->publish(Speed);
+void Automation::setLinear5(const messages::msg::LinearOut::SharedPtr linearOut){
+    this->linear5.speed = linearOut->speed;
+    this->linear5.atMax = linearOut->at_max;
+    this->linear5.atMin = linearOut->at_min;
+    this->linear5.error = linearOut->error;
 }
 
 bool Automation::checkErrors(Linear linear){
@@ -166,18 +159,6 @@ bool Automation::checkErrors(Linear linear){
     else{
         return false;
     }
-}
-
-void Automation::setNeoSpeed(float speed){
-    std_msgs::msg::Float32 Speed;
-    Speed.data = speed;
-    neoPublisher->publish(Speed);
-}
-
-void Automation::setStepperSpeed(float speed){
-    std_msgs::msg::Float32 Speed;
-    Speed.data = speed;
-    stepperPublisher->publish(Speed);
 }
 
 void Automation::setDestAngle(float degrees){

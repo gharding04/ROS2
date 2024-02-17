@@ -22,6 +22,7 @@ add_executable(${PROJECT_NAME}_node
 	src/logic_node.cpp
 	src/Automation.cpp
 	src/Automation1.cpp
+    src/search.cpp
 )
 
 install(TARGETS ${PROJECT_NAME}_node

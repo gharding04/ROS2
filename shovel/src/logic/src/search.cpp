@@ -1,0 +1,236 @@
+#include "logic/search.hpp"
+#include <cmath>
+#include <stdexcept>
+
+void Search::initializeMap(){
+	for(int i = 0; i < ROW; i++){
+		for(int j = 0; j < COL; j++){
+			this->map[i][j] = 1;
+		}
+	}
+}
+
+void Search::initializeMap(float width){
+	int buffer = std::ceil(width / 2);
+	for(int i = 0; i < ROW; i++){
+		for(int j = 0; j < COL; j++){
+			if(i >= buffer && i <= ROW - buffer && j >= buffer && j <= COL - buffer){
+				this->map[i][j] = 1;
+			}
+			else{
+				this->map[i][j] = 0;
+			}
+		}
+	}
+}
+
+void Search::setMap(int map[][COL]){
+	for(int i = 0; i < ROW; i++){
+		for(int j = 0; j < COL; j++){
+			this->map[i][j] = map[i][j];
+		}
+	}
+}
+
+void Search::setObstacle(int x, int y, int type){
+    this->map[x][y] = type;
+}
+
+void Search::setOpen(int x, int y){
+    this->map[x][y] = 0;
+}
+
+bool Search::isValid(int x, int y){
+    return (x >= 0) && (x < ROW) && (y >= 0) && (y < COL);
+}
+
+bool Search::isOpen(int x, int y){
+    return this->map[x][y] == 1;
+}
+
+bool Search::isDestination(int x, int y){
+    return x == this->destX && y == this->destY;
+}
+
+double Search::calculateHeuristic(int x, int y){
+    return pow(double(pow(int(x - this->destX), 2) + pow((y - this->destY), 2)), 0.5);
+}
+
+void Search::setStart(Point start){
+    this->startX = start.x;
+    this->startY = start.y;
+}
+
+void Search::setDest(Point dest){
+    this->destX = dest.x;
+    this->destY = dest.y;
+}
+
+void Search::printPath(std::stack<Coord> Path){
+	printf("\nThe Path is ");
+	while (!Path.empty()) {
+		std::pair<int, int> p = Path.top();
+		Path.pop();
+		printf("-> (%d,%d) ", p.first, p.second);
+	}
+}
+
+std::stack<Coord> Search::getPath(){
+	int row = this->destX;
+	int col = this->destY;
+
+	std::stack<Coord> Path;
+
+	while (!(this->cells[row][col].parent.x == row && this->cells[row][col].parent.y == col)) {
+		Path.push(std::make_pair(row, col));
+		int temp_row = this->cells[row][col].parent.x;
+		int temp_col = this->cells[row][col].parent.y;
+		row = temp_row;
+		col = temp_col;
+	}
+
+	Path.push(std::make_pair(row, col));
+	return Path;
+}
+
+void Search::initializeCells(){
+	for (int i = 0; i < ROW; i++) {
+		for (int j = 0; j < COL; j++) {
+			this->cells[i][j].totalCost = FLT_MAX;
+			this->cells[i][j].cost = FLT_MAX;
+			this->cells[i][j].heuristic = FLT_MAX;
+			this->cells[i][j].parent.x = -1;
+			this->cells[i][j].parent.y = -1;
+		}
+	}
+}
+
+bool Search::checkSuccessor(int i, int deltaX, int j, int deltaY){
+	if(isValid(i+deltaX, j+deltaY)){
+		if(isDestination(i+deltaX, j+deltaY)){
+			this->cells[i+deltaX][j+deltaY].parent.x = i;
+			this->cells[i+deltaX][j+deltaY].parent.y = j;
+			return true;
+		}
+		else if(!this->closedList[i+deltaX][j+deltaY] && isOpen(i+deltaX, j+deltaY)){
+			float cost = pow((pow(deltaX, 2) + pow(deltaY, 2)), 0.5);
+			Search::newCost = this->cells[i][j].cost + cost;
+			Search::newH = calculateHeuristic(i+deltaX, j+deltaY);
+			Search::newTotal = Search::newCost + Search::newH;
+
+			if (this->cells[i+deltaX][j+deltaY].totalCost == FLT_MAX || this->cells[i+deltaX][j+deltaY].totalCost > Search::newTotal) {
+				this->openList.insert(std::make_pair(Search::newTotal, std::make_pair(i+deltaX, j+deltaY)));
+
+				this->cells[i+deltaX][j+deltaY].totalCost = Search::newTotal;
+				this->cells[i+deltaX][j+deltaY].cost = Search::newCost;
+				this->cells[i+deltaX][j+deltaY].heuristic = Search::newH;
+				this->cells[i+deltaX][j+deltaY].parent.x = i;
+				this->cells[i+deltaX][j+deltaY].parent.y = j;
+			}
+		}
+	}
+	return false;
+}
+
+std::stack<Coord> Search::aStar(int grid[][COL], Point src, Point dest){
+	setMap(grid);
+	return aStar(src, dest);
+}
+
+std::stack<Coord> Search::aStar(Point src, Point dest){
+	setStart(src);
+	setDest(dest);
+	std::stack<Coord> Path;
+	if (!isValid(src.x, src.y) || (!isValid(dest.x, dest.y))) {
+		std::cout << "Invalid point." << std::endl;
+		Path.push(std::make_pair(-2, -2));
+		return Path;
+	}
+
+	if (!isOpen(src.x, src.y) || !isOpen(dest.x, dest.y)) {
+		std::cout << "Closed point." << std::endl;
+		Path.push(std::make_pair(-3, -3));
+		return Path;
+	}
+	if (isDestination(src.x, src.y)) {
+		Path.push(std::make_pair(src.x, src.y));
+		return Path;
+	}
+	memset(this->closedList, false, sizeof(this->closedList));
+
+	int i, j;
+
+	initializeCells();
+
+	i = src.x, j = src.y;
+	this->cells[i][j].totalCost = 0.0;
+	this->cells[i][j].cost = 0.0;
+	this->cells[i][j].heuristic = 0.0;
+	this->cells[i][j].parent.x = i;
+	this->cells[i][j].parent.y = j;
+
+	this->openList.insert(std::make_pair(0.0, std::make_pair(i, j)));
+
+	while (!this->openList.empty()) {
+		Node p = *this->openList.begin();
+
+		this->openList.erase(this->openList.begin());
+
+		i = p.second.first;
+		j = p.second.second;
+		this->closedList[i][j] = true;
+
+		if(checkSuccessor(i, -1, j, 0))return getPath();
+		if(checkSuccessor(i, 1, j, 0))return getPath();
+		if(checkSuccessor(i, 0, j, -1))return getPath();
+		if(checkSuccessor(i, 0, j, 1))return getPath();
+
+		if(checkSuccessor(i, -1, j, 1))return getPath();
+		if(checkSuccessor(i, -1, j, -1))return getPath();
+		if(checkSuccessor(i, 1, j, 1))return getPath();
+		if(checkSuccessor(i, 1, j, -1))return getPath();
+	}
+
+	Path.push(std::make_pair(-1, -1));
+	return Path;
+}
+
+std::stack<Coord> getSimplifiedPath(std::stack<Coord> rpath){
+	std::stack<Coord> path;
+	while (!rpath.empty()){
+		std::pair<int, int> value = rpath.top();
+		rpath.pop();
+		path.push(value);
+	}
+	std::stack<Coord> simplifiedPath;
+	std::pair<int, int> initial = path.top();
+	path.pop();
+	simplifiedPath.push(initial);
+	bool xSecond = false;
+	bool ySecond = false;
+	while (!path.empty()) {
+		std::pair<int, int> previous = simplifiedPath.top();
+		std::pair<int, int> p = path.top();
+		path.pop();
+		if(previous.first == p.first){
+			if(xSecond){
+				simplifiedPath.pop();
+			}
+			xSecond = true;
+			ySecond = false;
+		}
+		else if(previous.second == p.second){
+			if(ySecond){
+				simplifiedPath.pop();
+			}
+			xSecond = false;
+			ySecond = true;
+		}
+		else{
+			xSecond = false;
+			ySecond = false;
+		}
+		simplifiedPath.push(p);
+	}
+	return simplifiedPath;
+}

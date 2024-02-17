@@ -33,7 +33,7 @@ def generate_launch_description():
         ,
         Node(
             package='talon',
-            name='shoulder_1',
+            name='arm_1',
             executable='talon_node',
             parameters=[
                 {"motor_number": 14},
@@ -55,7 +55,7 @@ def generate_launch_description():
         ,
         Node(
             package='talon',
-            name='shoulder_2',
+            name='arm_2',
             executable='talon_node',
             parameters=[
                 {"motor_number": 15},
@@ -77,7 +77,7 @@ def generate_launch_description():
         ,
         Node(
             package='talon',
-            name='dump',
+            name='bucket_1',
             executable='talon_node',
             parameters=[
                 {"motor_number": 16},
@@ -99,7 +99,7 @@ def generate_launch_description():
         ,
         Node(
             package='talon',
-            name='dump_2',
+            name='bucket_2',
             executable='talon_node',
             parameters=[
                 {"motor_number": 17},
@@ -108,6 +108,28 @@ def generate_launch_description():
                 {"speed_topic": "talon_17_speed"},
                 {"potentiometer_topic": "potentiometer_4_data"},
                 {"info_topic": "talon_17_info"},
+                {"use_velocity": False},
+                {"velocity_multiplier": 3000},
+                {"test_speed": 100},
+                {"kP": 0.20},
+                {"kI": 0.000001},
+                {"kD": 0.000001},
+                {"kF": 0.0}
+            ],
+            output={'stderr': 'screen', 'stdout': 'screen'}
+        )
+        ,
+        Node(
+            package='talon',
+            name='camera',
+            executable='talon_node',
+            parameters=[
+                {"motor_number": 18},
+                {"diagnostics_port": 56711},
+                {"invert_motor": True},
+                {"speed_topic": "talon_18_speed"},
+                {"potentiometer_topic": "potentiometer_5_data"},
+                {"info_topic": "talon_18_info"},
                 {"use_velocity": False},
                 {"velocity_multiplier": 3000},
                 {"test_speed": 100},
@@ -155,6 +177,46 @@ def generate_launch_description():
                 {"invert_motor": False},
                 {"speed_topic": "drive_right_speed"},
                 {"info_topic": "talon_11_info"},
+                {"use_velocity": False},
+                {"velocity_multiplier": 3000},
+                {"test_speed": 100},
+                {"kP": 0.20},
+                {"kI": 0.000001},
+                {"kD": 0.000001},
+                {"kF": 0.0}
+            ]
+        )
+        ,
+        Node(
+            package='falcon',
+            name='Falcon12',
+            executable='falcon_node',
+            parameters=[
+                {"motor_number": 12},
+                {"diagnostics_port": 72342},
+                {"invert_motor": True},
+                {"speed_topic": "drive_left_speed"},
+                {"info_topic": "talon_12_info"},
+                {"use_velocity": False},
+                {"velocity_multiplier": 3000},
+                {"test_speed": 100},
+                {"kP": 0.20},
+                {"kI": 0.000001},
+                {"kD": 0.000001},
+                {"kF": 0.0}
+            ]
+        )
+	    ,
+        Node(
+            package='falcon',
+            name='Falcon13',
+            executable='falcon_node',
+            parameters=[
+                {"motor_number": 13},
+                {"diagnostics_port": 72343},
+                {"invert_motor": False},
+                {"speed_topic": "drive_right_speed"},
+                {"info_topic": "talon_13_info"},
                 {"use_velocity": False},
                 {"velocity_multiplier": 3000},
                 {"test_speed": 100},

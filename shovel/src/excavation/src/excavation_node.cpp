@@ -149,37 +149,6 @@ void setSpeeds(LinearActuator *linear1, LinearActuator *linear2){
 }
 
 
-/** @brief Shoulder Callback Function
- * 
- * Callback function triggered when the node receives
- * a topic with the topic name of shoulder_speed. This
- * function checks if the automationGo value is true; if
- * it is false, the linear actuators are set to the speed 
- * value, even if the linear actuators are in an error state.
- * It is assumed that the user is watching the motors and is
- * intending to override the error checking logic. If the 
- * automationGo value is true, the speeds are only set if the
- * actuators don't have a PotentiometerError, then syncs the
- * actuators. To better understand the logic, please take a
- * look at the Excavation Speed Flow Diagram.
- * @param speed
- * @return void
- * */
-void shoulderCallback(const std_msgs::msg::Float32::SharedPtr speed){
-    currentSpeed = speed->data;
-    RCLCPP_INFO(nodeHandle->get_logger(),"currentSpeed: %f", currentSpeed);
-    setSpeeds(&linear1, &linear2);
-
-    std_msgs::msg::Float32 speed1;
-    speed1.data = linear1.speed;    
-    talon14Publisher->publish(speed1);
-    std_msgs::msg::Float32 speed2;
-    speed2.data = linear2.speed;
-    talon15Publisher->publish(speed2);
-    RCLCPP_INFO(nodeHandle->get_logger(),"Shoulder speeds: %f, %f", linear1.speed, linear2.speed);
-}
-
-
 /** @brief Function to set potentiometer error
  * 
  * Thsi function is used to set the value of the error
@@ -289,26 +258,6 @@ void processPotentiometerData(int potentData, LinearActuator *linear){
 }
 
 
-/** @brief Callback function for the dump_speed topic
- * 
- * 
- * @param speed - ROS2 message containing the speed data
- * @return void
- * */
-void dumpSpeedCallback(const std_msgs::msg::Float32::SharedPtr speed){
-    currentSpeed = speed->data;
-    RCLCPP_INFO(nodeHandle->get_logger(),"currentSpeed: %f", currentSpeed);
-    setSpeeds(&linear3, &linear4);
-
-    std_msgs::msg::Float32 speed1;
-    speed1.data = linear3.speed;    
-    talon16Publisher->publish(speed1);
-    std_msgs::msg::Float32 speed2;
-    speed2.data = linear4.speed;
-    talon17Publisher->publish(speed2);
-}
-
-
 /** @brief Callback function for the automationGo topic
  * 
  * This function sets the automationGo value to the value
@@ -351,6 +300,7 @@ void potentiometer1Callback(const std_msgs::msg::Int16::SharedPtr msg){
     }
 }
 
+
 void potentiometer2Callback(const std_msgs::msg::Int16::SharedPtr msg){
     setPotentiometerError(msg->data, &linear2);
 
@@ -359,6 +309,7 @@ void potentiometer2Callback(const std_msgs::msg::Int16::SharedPtr msg){
         setSyncErrors(&linear1, &linear2);
     }
 }
+
 
 void potentiometer3Callback(const std_msgs::msg::Int16::SharedPtr msg){
     setPotentiometerError(msg->data, &linear3);
@@ -369,6 +320,7 @@ void potentiometer3Callback(const std_msgs::msg::Int16::SharedPtr msg){
     }
 }
 
+
 void potentiometer4Callback(const std_msgs::msg::Int16::SharedPtr msg){
     setPotentiometerError(msg->data, &linear4);
 
@@ -376,6 +328,16 @@ void potentiometer4Callback(const std_msgs::msg::Int16::SharedPtr msg){
         processPotentiometerData(msg->data, &linear4);
         setSyncErrors(&linear3, &linear4);
     }
+}
+
+
+void armSpeedCallback(const std_msgs::msg::Float32::SharedPtr msg){
+
+}
+
+
+void bucketSpeedCallback(const std_msgs::msg::Float32::SharedPtr msg){
+
 }
 
 
@@ -404,10 +366,10 @@ int main(int argc, char **argv){
     rclcpp::init(argc,argv);
     nodeHandle = rclcpp::Node::make_shared("excavation");
 
-    auto shoulderSubscriber = nodeHandle->create_subscription<std_msgs::msg::Float32>("shoulder_speed",1,shoulderCallback);
-    auto dumpSpeedSubscriber = nodeHandle->create_subscription<std_msgs::msg::Float32>("dump_speed",1,dumpSpeedCallback);
     auto automationGoSubscriber = nodeHandle->create_subscription<std_msgs::msg::Bool>("automationGo",1,automationGoCallback);
-    auto dumpBinSubscriber = nodeHandle->create_subscription<std_msgs::msg::Float32>("dump_bin_speed",1,dumpBinSpeedCallback);
+
+    auto armSpeedSubscriber = nodeHandle->create_subscription<std_msgs::msg::Float32>("arm_speed",1,armSpeedCallback);
+    auto bucketSpeedSubscriber = nodeHandle->create_subscription<std_msgs::msg::Float32>("bucket_speed",1,bucketSpeedCallback);
 
     auto potentiometerDataSubscriber1 = nodeHandle->create_subscription<std_msgs::msg::Int16>("potentiometer_1_data",1,potentiometer1Callback);
     auto potentiometerDataSubscriber2 = nodeHandle->create_subscription<std_msgs::msg::Int16>("potentiometer_2_data",1,potentiometer2Callback);

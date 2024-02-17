@@ -36,10 +36,9 @@
  * The topics that are being published are as follows:
  * \li \b drive_left_speed
  * \li \b drive_right_speed
- * \li \b dump_bin_speed
- * \li \b shoulder_speed
- * \li \b excavationArm
- * \li \b excavationDrum
+ * \li \b arm_speed
+ * \li \b bucket_speed
+ * \li \b camera_speed
  * 
  * To read more about the nodes that subscribe to this one
  * \see talon_node.cpp
@@ -56,23 +55,20 @@ float joystick1Yaw=0;
 float joystick1Throttle=0;
 
 float maxSpeed=0.4;
-float maxNeoSpeed = 0.1;
 
 bool automationGo=false;
 bool excavationGo = false;
-bool invertBucket = false;
 bool runSensorlessly = false;
 
 Automation* automation=new Automation1();
 
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > driveLeftSpeedPublisher;
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > driveRightSpeedPublisher;
-std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > shoulderPublisher;
-std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > dumpPublisher;
-std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > neoPublisher;
+std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > armSpeedPublisher;
+std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > bucketSpeedPublisher;
+std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > cameraSpeedPublisher;
+
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Bool_<std::allocator<void> >, std::allocator<void> > > automationGoPublisher;
-std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > dumpBinPublisher;
-std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > stepperPublisher;
 
 
 /** @brief Function to initialize the motors to zero
@@ -89,9 +85,6 @@ void initSetSpeed(){
     
     driveLeftSpeedPublisher->publish(speed);
     driveRightSpeedPublisher->publish(speed);
-    shoulderPublisher->publish(speed);
-    dumpPublisher->publish(speed);
-    neoPublisher->publish(speed);
     //RCLCPP_INFO(nodeHandle->get_logger(), "Set init motor speeds to 0.0");
 }
 
@@ -146,15 +139,6 @@ void stopSpeed(){
  * @return void
  * */
 void updateExcavation(){
-    std_msgs::msg::Float32 speed;
-    speed.data = joystick1Pitch;
-    shoulderPublisher->publish(speed);
-    std_msgs::msg::Float32 throttleSpeed;
-    throttleSpeed.data = joystick1Throttle * maxNeoSpeed;
-    neoPublisher->publish(throttleSpeed);
-    std_msgs::msg::Float32 dumpSpeed;
-    dumpSpeed.data = joystick1Yaw;
-    dumpPublisher->publish(dumpSpeed);
 }
 
 /** @brief Function to stop excavation motors
@@ -169,10 +153,6 @@ void updateExcavation(){
 void stopExcavation(){
     std_msgs::msg::Float32 speed;
     speed.data = 0.0;
-    shoulderPublisher->publish(speed);
-    dumpPublisher->publish(speed);
-    neoPublisher->publish(speed);
-    dumpBinPublisher->publish(speed);
 }
 
 /**
@@ -234,7 +214,7 @@ void joystickAxisCallback(const messages::msg::AxisState::SharedPtr axisState){
     }
     else if(axisState->axis==3){
         joystick1Throttle = axisState->state/2 + 0.5;
-        joystick1Throttle = transformJoystickInfo(joystick1Throttle, deadZone * maxNeoSpeed);
+        joystick1Throttle = transformJoystickInfo(joystick1Throttle, deadZone);
         if(excavationGo){
             updateExcavation();
         }
@@ -261,54 +241,14 @@ void joystickButtonCallback(const messages::msg::ButtonState::SharedPtr buttonSt
         case 0:
             break;
         case 1: //toggles driving and digging
-            if(buttonState->state){
-                excavationGo = !excavationGo;
-                if(!excavationGo)
-                    stopExcavation();
-                else
-                    stopSpeed();
-            }
-            RCLCPP_INFO(nodeHandle->get_logger(), "Button 2");
             break;
         case 2:
-            if(buttonState->state){
-                speed.data = 1.0;
-            }
-            else{
-                speed.data = 0.0;
-            }
-            stepperPublisher->publish(speed);
-            RCLCPP_INFO(nodeHandle->get_logger(), "Button 3");
             break;
         case 3:
-            if(buttonState->state){
-                speed.data = -0.25;
-            }
-            else{
-                speed.data = 0.0;
-            }
-            dumpBinPublisher->publish(speed);
-            RCLCPP_INFO(nodeHandle->get_logger(), "Button 4");
             break;
         case 4:
-            if(buttonState->state){
-                speed.data = -1.0;
-            }
-            else{
-                speed.data = 0.0;
-            }
-            stepperPublisher->publish(speed);
-            RCLCPP_INFO(nodeHandle->get_logger(), "Button 5");
             break;
         case 5:
-            if(buttonState->state){
-                speed.data = 0.25;
-            }
-            else{
-                speed.data = 0.0;
-            }
-            dumpBinPublisher->publish(speed);
-            RCLCPP_INFO(nodeHandle->get_logger(), "Button 6");
             break;
         case 6:
             break;
@@ -335,13 +275,20 @@ void joystickButtonCallback(const messages::msg::ButtonState::SharedPtr buttonSt
  * */
 void joystickHatCallback(const messages::msg::HatState::SharedPtr hatState){
     std::cout << "Hat " << (int)hatState->joystick << " " << (int)hatState->hat << " " << (int)hatState->state << std::endl;
-
+    std_msgs::msg::Float32 speed;
     if((int)hatState->state == 1 ){
+        speed.data = 1.0;
+        cameraSpeedPublisher->publish(speed);
     }
     if((int)hatState->state == 4 ){
+        speed.data = -1.0;
+        cameraSpeedPublisher->publish(speed);
     }
     if((int)hatState->state == 0 ){
+        speed.data = 0.0;
+        cameraSpeedPublisher->publish(speed);
     }
+
 }
 
 /** @brief Function to update max speed multiplier
@@ -366,17 +313,6 @@ void updateMaxSpeed(float deltaSpeed){
     RCLCPP_INFO(nodeHandle->get_logger(), "maxSpeed: %f", maxSpeed);
 }
 
-
-void updateMaxNeoSpeed(float deltaSpeed){
-    maxNeoSpeed += deltaSpeed;
-    if(maxNeoSpeed <= 0){
-        maxNeoSpeed = 0.1;
-    }
-    if(maxNeoSpeed > 1){
-        maxNeoSpeed = 1;
-    }
-    RCLCPP_INFO(nodeHandle->get_logger(), "maxNeoSpeed: %f", maxNeoSpeed);
-}
 
 /** @brief Callback function for the keys
  * 
@@ -403,7 +339,6 @@ void keyCallback(const messages::msg::KeyState::SharedPtr keyState){
         }
         else{
             automation->setStop();
-            automation->stopActuators();
         }
         RCLCPP_INFO(nodeHandle->get_logger(), "Automation invert.  Current state: %d", automationGo);
     }
@@ -416,12 +351,6 @@ void keyCallback(const messages::msg::KeyState::SharedPtr keyState){
     }
     if(keyState->key==45 && keyState->state==1){
         updateMaxSpeed(-0.1);
-    }
-    if(keyState->key==104 && keyState->state==1){
-        updateMaxNeoSpeed(0.1);
-    }
-    if(keyState->key==108 && keyState->state==1){
-        updateMaxNeoSpeed(-0.1);
     }
 }
 
@@ -499,6 +428,24 @@ void linearOut3Callback(const messages::msg::LinearOut::SharedPtr linearOut){
 }
 
 
+/** @brief Callback function for the LinearOut topic
+ * 
+ * @param linearOut 
+ */
+void linearOut4Callback(const messages::msg::LinearOut::SharedPtr linearOut){
+    automation->setLinear4(linearOut);
+}
+
+
+/** @brief Callback function for the LinearOut topic
+ * 
+ * @param linearOut 
+ */
+void linearOut5Callback(const messages::msg::LinearOut::SharedPtr linearOut){
+    automation->setLinear5(linearOut);
+}
+
+
 int main(int argc, char **argv){
     rclcpp::init(argc,argv);
     nodeHandle = rclcpp::Node::make_shared("logic");
@@ -512,15 +459,12 @@ int main(int argc, char **argv){
     auto linearOut1Subscriber = nodeHandle->create_subscription<messages::msg::LinearOut>("linearOut1",1,linearOut1Callback);
     auto linearOut2Subscriber = nodeHandle->create_subscription<messages::msg::LinearOut>("linearOut2",1,linearOut2Callback);
     auto linearOut3Subscriber = nodeHandle->create_subscription<messages::msg::LinearOut>("linearOut3",1,linearOut3Callback);
+    auto linearOut4Subscriber = nodeHandle->create_subscription<messages::msg::LinearOut>("linearOut4",1,linearOut4Callback);
+    auto linearOut5Subscriber = nodeHandle->create_subscription<messages::msg::LinearOut>("linearOut5",1,linearOut5Callback);
 
     driveLeftSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("drive_left_speed",1);
     driveRightSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("drive_right_speed",1);
-    shoulderPublisher = nodeHandle->create_publisher<std_msgs::msg::Float32>("shoulder_speed",1);
-    dumpPublisher = nodeHandle->create_publisher<std_msgs::msg::Float32>("dump_speed",1);
-    neoPublisher = nodeHandle->create_publisher<std_msgs::msg::Float32>("neo_speed",1);
     automationGoPublisher = nodeHandle->create_publisher<std_msgs::msg::Bool>("automationGo",1);
-    dumpBinPublisher = nodeHandle->create_publisher<std_msgs::msg::Float32>("dump_bin_speed",1);
-    stepperPublisher = nodeHandle->create_publisher<std_msgs::msg::Float32>("stepper_speed",1);
 
     initSetSpeed();
 
