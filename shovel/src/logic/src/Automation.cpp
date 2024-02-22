@@ -162,7 +162,10 @@ bool Automation::checkErrors(Linear linear){
 }
 
 void Automation::setDestAngle(float degrees){
-    if(degrees > 180){
+    if(degrees < 0){
+        this->destAngle = degrees + 360;
+    }
+    else if (degrees > 360){
         this->destAngle = degrees - 360;
     }
     else{
@@ -170,8 +173,23 @@ void Automation::setDestAngle(float degrees){
     }
 }
 
-void Automation::setDestDistance(float meters){
-    this->destDistance = meters;
+float Automation::getAngle(){
+    float x = this->search.destX - this->search.startX;
+    float y = this->search.destY - this->search.startY;
+    float angle = std::atan2(y, x) * 180 / M_PI;
+    angle += 90;
+    if(angle < 0){
+		angle += 360;
+	}
+    return angle;
+}
+
+void Automation::setDestX(float meters){
+    this->destX = meters;
+}
+
+void Automation::setDestZ(float meters){
+    this->destZ = meters;
 }
 
 void Automation::publishAutonomyOut(std::string robotStateString, std::string excavationStateString, std::string errorStateString, std::string dumpStateString){
@@ -201,4 +219,24 @@ std::chrono::time_point<std::chrono::high_resolution_clock> Automation::getBacku
 
 void Automation::setRunSensorlessly(bool value){
     this->runSensorlessly = value;
+}
+
+void Automation::setCameraSpeed(float speed){
+    std_msgs::msg::Float32 cameraSpeed;
+    cameraSpeed.data = speed;
+    cameraSpeedPublisher->publish(cameraSpeed);
+}
+
+void Automation::setStartPosition(int x, int y){
+    this->search.startX = x;
+    this->search.startY = y;
+}
+
+void Automation::setDestPosition(int x, int y){
+    this->search.destX = x;
+    this->search.destY = y;
+}
+
+void Automation::aStar(bool includeHoles){
+    this->currentPath = this->search.aStar(includeHoles);
 }

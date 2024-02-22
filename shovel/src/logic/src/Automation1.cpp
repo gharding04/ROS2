@@ -3,9 +3,9 @@
 
 #include "logic/Automation.hpp"
 #include "logic/Automation1.hpp"
-#include "logic/search.hpp"
 
 int left = 0;
+int destX = 10, destY = 10;
 
 /** @file
  *
@@ -19,6 +19,14 @@ int left = 0;
 void Automation1::automate(){
     // Initially start with locating the Aruco marker
     // Turn slowly until it's seen
+
+    if(robotState==ROBOT_IDLE){
+        //setCameraSpeed(1.0);
+        setDestPosition(destX, destY);
+        robotState = LOCATE;
+    }
+
+    // TODO: Change this to align
     if(robotState==LOCATE){
         changeSpeed(0.15,-0.15);
         if(position.arucoVisible==true){
@@ -29,41 +37,10 @@ void Automation1::automate(){
             }
             RCLCPP_INFO(this->node->get_logger(), "Left: %d", left);
             setDestAngle(position.yaw + 90.0);
-            destination.x=-2;
-            destination.z=1;
             changeSpeed(0,0);
             robotState=ALIGN;
         }
     }
-/*  
-    if(robotState==GO_TO_DIG_SITE){
-        double yawRadians=this->orientation.roll;
-
-        double facingUnitX=-sin(yawRadians);
-        double facingUnitZ=cos(yawRadians);
-        double directionX=destination.x-position.x;
-        double directionZ=destination.z-position.z;
-
-        double theta = acos((facingUnitX*directionX + facingUnitZ*directionZ)/(sqrt(directionX*directionX + directionZ*directionZ)))*180/M_PI;
-        double yaw = yawRadians * 180/M_PI;
-        double deltaYaw = theta-yaw;
-        double yawTolerance=5;
-        if(deltaYaw > yawTolerance){
-            changeSpeed(-0.15,0.15);
-        }
-        else if (deltaYaw < yawTolerance){
-            changeSpeed(0.15,-0.15);
-        }
-        else{
-            changeSpeed(0.15 - 0.1*deltaYaw/yawTolerance,0.15 + 0.1*deltaYaw/yawTolerance);
-        }
-        std::cout << orientation.roll*180/M_PI << ", " << orientation.pitch*180/M_PI << ", " << orientation.yaw*180/ M_PI << "   "
-                << "   \t" << position.x << "  " << position.y << "  " << position.z
-                << "   \t" << position.ox << "  " << position.oy << "  " << position.oz << "  " << position.ow
-                << "   \t" << facingUnitX << " " << facingUnitZ << "   " << yaw << " " << deltaYaw << " " << theta
-              << "   \t" << position.arucoVisible << std::endl;
-    }
-*/    
 
     // After finding the Aruco marker, turn the bot to 
     // align with the arena
@@ -71,11 +48,18 @@ void Automation1::automate(){
         RCLCPP_INFO(this->node->get_logger(), "Left: %d", left);
         if (!(position.yaw < this->destAngle+5 && position.yaw > this->destAngle-5)) {
             changeSpeed(0.15*left, -0.15*left);
-        } else {
+        } 
+        else {
             changeSpeed(0, 0);
-            setDestDistance(position.x - 1.0);
+            setStartPosition(this->search.row - std::ceil(position.z * 10), std::ceil(position.x * 10));
+            aStar();
+            RCLCPP_INFO(this->node->get_logger(), "Current Position: %d, %d", this->search.startX, this->search.startY);
             setGo();
-            changeSpeed(0.25, 0.25);
+            std::pair<int, int> initial = this->currentPath.top();
+            this->currentPath.pop();
+            setDestZ(initial.first);
+            setDestX(initial.second);
+            setDestAngle(getAngle());
             robotState = GO_TO_DIG_SITE;
         }
     }
@@ -86,18 +70,37 @@ void Automation1::automate(){
         RCLCPP_INFO(this->node->get_logger(), "GO_TO_DIG_SITE");
         RCLCPP_INFO(this->node->get_logger(), "ZedPosition.z: %f", this->position.z);
         RCLCPP_INFO(this->node->get_logger(), "Left: %d", left);
-        if(abs(this->position.x) > abs(this->destDistance)){
-            changeSpeed(0.0, 0.0);
-            robotState = EXCAVATE;
-        }
-        else if(abs(this->position.x) > abs(this->destDistance) - 0.1){
-            changeSpeed(0.1, 0.1);
-        }
-        else if(abs(this->position.x) > abs(this->destDistance) - 0.25){
-            changeSpeed(0.15, 0.15);
-        }
-        else{
-            changeSpeed(0.25, 0.25);
+        if (!(position.yaw < this->destAngle+5 && position.yaw > this->destAngle-5)) {
+            if(position.yaw - this->destAngle > 180 || position.yaw - this->destAngle < 0){
+                changeSpeed(0.15, -0.15);
+            }
+            else{
+                changeSpeed(-0.15, 0.15);
+            }
+        } 
+        else{ 
+            if(abs(this->position.x) > abs(this->destX)){
+                changeSpeed(0.0, 0.0);
+                if(this->currentPath.empty()){
+                    robotState = EXCAVATE;
+                }
+                else{
+                    std::pair<int, int> current = this->currentPath.top();
+                    this->currentPath.pop();
+                    setDestZ(current.first);
+                    setDestX(current.second);
+                    setDestAngle(getAngle());
+                }
+            }
+            else if(abs(this->position.x) > abs(this->destX) - 0.1){
+                changeSpeed(0.1, 0.1);
+            }
+            else if(abs(this->position.x) > abs(this->destX) - 0.25){
+                changeSpeed(0.15, 0.15);
+            }
+            else{
+                changeSpeed(0.25, 0.25);
+            }
         }
     }
 
@@ -109,20 +112,36 @@ void Automation1::automate(){
     // After mining, return to start position
     if(robotState==GO_TO_HOME){
         if (!(position.yaw < this->destAngle+5 && position.yaw > this->destAngle-5)) {
-            changeSpeed(0.15, -0.15);
-        }
-        else if(abs(this->position.x) > abs(this->destDistance)){
-            changeSpeed(0.0, 0.0);
-            robotState = DOCK;
-        }
-        else if(abs(this->position.x) > abs(this->destDistance) - 0.1){
-            changeSpeed(0.1, 0.1);
-        }
-        else if(abs(this->position.x) > abs(this->destDistance) - 0.25){
-            changeSpeed(0.15, 0.15);
-        }
-        else{
-            changeSpeed(0.25, 0.25);
+            if(position.yaw - this->destAngle > 180 || position.yaw - this->destAngle < 0){
+                changeSpeed(0.15, -0.15);
+            }
+            else{
+                changeSpeed(-0.15, 0.15);
+            }
+        } 
+        else{ 
+            if(abs(this->position.x) > abs(this->destX)){
+                changeSpeed(0.0, 0.0);
+                if(this->currentPath.empty()){
+                    robotState = DOCK;
+                }
+                else{
+                    std::pair<int, int> current = this->currentPath.top();
+                    this->currentPath.pop();
+                    setDestZ(current.first);
+                    setDestX(current.second);
+                    setDestAngle(getAngle());
+                }
+            }
+            else if(abs(this->position.x) > abs(this->destX) - 0.1){
+                changeSpeed(0.1, 0.1);
+            }
+            else if(abs(this->position.x) > abs(this->destX) - 0.25){
+                changeSpeed(0.15, 0.15);
+            }
+            else{
+                changeSpeed(0.25, 0.25);
+            }
         }
     }
 

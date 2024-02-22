@@ -5,7 +5,7 @@
 void Search::initializeMap(){
 	for(int i = 0; i < ROW; i++){
 		for(int j = 0; j < COL; j++){
-			this->map[i][j] = 1;
+			this->map[i][j] = 0;
 		}
 	}
 }
@@ -15,10 +15,10 @@ void Search::initializeMap(float width){
 	for(int i = 0; i < ROW; i++){
 		for(int j = 0; j < COL; j++){
 			if(i >= buffer && i <= ROW - buffer && j >= buffer && j <= COL - buffer){
-				this->map[i][j] = 1;
+				this->map[i][j] = 0;
 			}
 			else{
-				this->map[i][j] = 0;
+				this->map[i][j] = 3;
 			}
 		}
 	}
@@ -44,8 +44,13 @@ bool Search::isValid(int x, int y){
     return (x >= 0) && (x < ROW) && (y >= 0) && (y < COL);
 }
 
-bool Search::isOpen(int x, int y){
-    return this->map[x][y] == 1;
+bool Search::isOpen(int x, int y, bool includeHoles){
+	if(includeHoles){
+		return (this->map[x][y] == 0 || this->map[x][y] == 1);
+	}
+	else{
+	    return this->map[x][y] == 0;
+	}
 }
 
 bool Search::isDestination(int x, int y){
@@ -105,14 +110,14 @@ void Search::initializeCells(){
 	}
 }
 
-bool Search::checkSuccessor(int i, int deltaX, int j, int deltaY){
+bool Search::checkSuccessor(int i, int deltaX, int j, int deltaY, bool includeHoles){
 	if(isValid(i+deltaX, j+deltaY)){
 		if(isDestination(i+deltaX, j+deltaY)){
 			this->cells[i+deltaX][j+deltaY].parent.x = i;
 			this->cells[i+deltaX][j+deltaY].parent.y = j;
 			return true;
 		}
-		else if(!this->closedList[i+deltaX][j+deltaY] && isOpen(i+deltaX, j+deltaY)){
+		else if(!this->closedList[i+deltaX][j+deltaY] && isOpen(i+deltaX, j+deltaY, includeHoles)){
 			float cost = pow((pow(deltaX, 2) + pow(deltaY, 2)), 0.5);
 			Search::newCost = this->cells[i][j].cost + cost;
 			Search::newH = calculateHeuristic(i+deltaX, j+deltaY);
@@ -132,28 +137,21 @@ bool Search::checkSuccessor(int i, int deltaX, int j, int deltaY){
 	return false;
 }
 
-std::stack<Coord> Search::aStar(int grid[][COL], Point src, Point dest){
-	setMap(grid);
-	return aStar(src, dest);
-}
-
-std::stack<Coord> Search::aStar(Point src, Point dest){
-	setStart(src);
-	setDest(dest);
+std::stack<Coord> Search::aStar(bool includeHoles){
 	std::stack<Coord> Path;
-	if (!isValid(src.x, src.y) || (!isValid(dest.x, dest.y))) {
+	if (!isValid(this->startX, this->startY) || (!isValid(this->destX, this->destY))) {
 		std::cout << "Invalid point." << std::endl;
 		Path.push(std::make_pair(-2, -2));
 		return Path;
 	}
 
-	if (!isOpen(src.x, src.y) || !isOpen(dest.x, dest.y)) {
+	if (!isOpen(this->startX, this->startY) || !isOpen(this->destX, this->destY)) {
 		std::cout << "Closed point." << std::endl;
 		Path.push(std::make_pair(-3, -3));
 		return Path;
 	}
-	if (isDestination(src.x, src.y)) {
-		Path.push(std::make_pair(src.x, src.y));
+	if (isDestination(this->startX, this->startY)) {
+		Path.push(std::make_pair(this->startX, this->startY));
 		return Path;
 	}
 	memset(this->closedList, false, sizeof(this->closedList));
@@ -162,7 +160,7 @@ std::stack<Coord> Search::aStar(Point src, Point dest){
 
 	initializeCells();
 
-	i = src.x, j = src.y;
+	i = this->startX, j = this->startY;
 	this->cells[i][j].totalCost = 0.0;
 	this->cells[i][j].cost = 0.0;
 	this->cells[i][j].heuristic = 0.0;
@@ -180,19 +178,30 @@ std::stack<Coord> Search::aStar(Point src, Point dest){
 		j = p.second.second;
 		this->closedList[i][j] = true;
 
-		if(checkSuccessor(i, -1, j, 0))return getPath();
-		if(checkSuccessor(i, 1, j, 0))return getPath();
-		if(checkSuccessor(i, 0, j, -1))return getPath();
-		if(checkSuccessor(i, 0, j, 1))return getPath();
+		if(checkSuccessor(i, -1, j, 0, includeHoles))return getPath();
+		if(checkSuccessor(i, 1, j, 0, includeHoles))return getPath();
+		if(checkSuccessor(i, 0, j, -1, includeHoles))return getPath();
+		if(checkSuccessor(i, 0, j, 1, includeHoles))return getPath();
 
-		if(checkSuccessor(i, -1, j, 1))return getPath();
-		if(checkSuccessor(i, -1, j, -1))return getPath();
-		if(checkSuccessor(i, 1, j, 1))return getPath();
-		if(checkSuccessor(i, 1, j, -1))return getPath();
+		if(checkSuccessor(i, -1, j, 1, includeHoles))return getPath();
+		if(checkSuccessor(i, -1, j, -1, includeHoles))return getPath();
+		if(checkSuccessor(i, 1, j, 1, includeHoles))return getPath();
+		if(checkSuccessor(i, 1, j, -1, includeHoles))return getPath();
 	}
 
 	Path.push(std::make_pair(-1, -1));
 	return Path;
+}
+
+std::stack<Coord> Search::aStar(int grid[][COL], Point src, Point dest, bool includeHoles){
+	setMap(grid);
+	return aStar(src, dest);
+}
+
+std::stack<Coord> Search::aStar(Point src, Point dest, bool includeHoles){
+	setStart(src);
+	setDest(dest);
+	return aStar(includeHoles);
 }
 
 std::stack<Coord> getSimplifiedPath(std::stack<Coord> rpath){

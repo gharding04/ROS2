@@ -1,5 +1,5 @@
-#define ROW 50
-#define COL 68
+#define ROW 9
+#define COL 10
 
 #include <bits/stdc++.h>
 
@@ -19,6 +19,8 @@ typedef std::pair<double, std::pair<int, int> > Node;
  
 class Search{
     public:
+
+    int row = ROW, col = COL;
 
     cell cells[ROW][COL];
 
@@ -42,7 +44,7 @@ class Search{
 
     bool isValid(int x, int y);
 
-    bool isOpen(int x, int y);
+    bool isOpen(int x, int y, bool includeHoles = false);
 
     bool isDestination(int x, int y);
 
@@ -54,15 +56,17 @@ class Search{
 
     void initializeCells();
 
-    bool checkSuccessor(int i, int deltaX, int j, int deltaY);
+    bool checkSuccessor(int i, int deltaX, int j, int deltaY, bool includeHoles = false);
 
     void printPath(std::stack<Coord> Path);
 
     std::stack<Coord> getPath();
 
-    std::stack<Coord> aStar(Point src, Point dest);
+    std::stack<Coord> aStar(bool includeHoles = false);
+
+    std::stack<Coord> aStar(Point src, Point dest, bool includeHoles = false);
     
-    std::stack<Coord> aStar(int grid[][COL], Point src, Point dest);
+    std::stack<Coord> aStar(int grid[][COL], Point src, Point dest, bool includeHoles = false);
 
     std::stack<Coord> getSimplifiedPath(std::stack<Coord> rpath);
 };

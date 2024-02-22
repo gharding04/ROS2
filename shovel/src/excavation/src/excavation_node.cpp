@@ -3,7 +3,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/float32.hpp>
-#include <std_msgs/msg/int16_multi_array.hpp>
+#include <std_msgs/msg/int16.hpp>
 
 #include "messages/msg/linear_out.hpp"
 
@@ -161,7 +161,7 @@ void setSpeeds(LinearActuator *linear1, LinearActuator *linear2){
  * @return void
  * */
 void setPotentiometerError(int potentData, LinearActuator *linear){
-    if(msg->data == -1){
+    if(potentData == -1){
         linear->error = ConnectionError;
     }
     else{

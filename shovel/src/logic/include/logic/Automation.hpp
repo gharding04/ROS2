@@ -8,6 +8,7 @@
 #include <messages/msg/autonomy_out.hpp>
 
 #include "AutomationTypes.hpp"
+#include "search.hpp"
 
 
 class Automation{
@@ -28,10 +29,13 @@ class Automation{
     EulerAngles orientation;
     float currentLeftSpeed=0;
     float currentRightSpeed=0;
-    Linear linear1, linear2, linear3;
-    float destDistance=0, destAngle=0;
+    Linear linear1, linear2, linear3, linear4, linear5;
+    float destX = 0, destZ = 0, destAngle=0;
+    std::stack<Coord> currentPath;
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
     std::chrono::time_point<std::chrono::high_resolution_clock> startBackupTime;
+    Search search = Search();
+    bool holes = false;
 
     bool runSensorlessly = false;
 
@@ -67,7 +71,11 @@ class Automation{
 
     void setDestAngle(float degrees);
 
-    void setDestDistance(float meters);
+    float getAngle();
+
+    void setDestX(float meters);
+
+    void setDestZ(float meters);
 
     void publishAutonomyOut(std::string robotStateString, std::string excavationStateString, std::string errorStateString, std::string dumpStateString);
 
@@ -80,4 +88,12 @@ class Automation{
     std::chrono::time_point<std::chrono::high_resolution_clock> getBackupStartTime();
 
     void setRunSensorlessly(bool value);
+
+    void setCameraSpeed(float speed);
+
+    void setStartPosition(int x, int y);
+
+    void setDestPosition(int x, int y);
+
+    void aStar(bool includeHoles = false);
 };
