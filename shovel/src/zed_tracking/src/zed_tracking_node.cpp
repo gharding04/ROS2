@@ -101,6 +101,7 @@ int main(int argc, char **argv) {
     sl::Mat image_zed(image_size, sl::MAT_TYPE::U8_C4);
     cv::Mat image_ocv = cv::Mat(image_zed.getHeight(), image_zed.getWidth(), CV_8UC4, image_zed.getPtr<sl::uchar1>(sl::MEM::CPU));
     cv::Mat image_ocv_rgb;
+    sl::Mat depth, point_cloud;
 
     auto calibInfo = cameraInfo.calibration_parameters.left_cam;
     cv::Matx33d camera_matrix = cv::Matx33d::eye();
@@ -126,6 +127,7 @@ int main(int argc, char **argv) {
     std::string zed_rotation_txt;
     std::string aruco_position_txt;
     sl::float3 angles;
+    float distance;
 
     int currentRow=0;
     float pastValues[ROW_COUNT][7];
@@ -173,6 +175,24 @@ int main(int argc, char **argv) {
 	            zedPosition.aruco_visible=false;
 	        }
 
+            zed.retrieveImage(image_zed, sl::VIEW::LEFT);
+            zed.retrieveMeasure(depth, sl::MEASURE::DEPTH);
+            zed.retrieveMeasure(point_cloud, sl::MEASURE::XYZRGBA);
+
+            int x = image_zed.getWidth() / 2;
+            int y = image_zed.getHeight() / 2;
+            sl::float4 point_cloud_value;
+            point_cloud.getValue(x, y, &point_cloud_value);
+
+            if(std::isfinite(point_cloud_value.z)){
+                distance = sqrt(point_cloud_value.x * point_cloud_value.x + point_cloud_value.y * point_cloud_value.y + point_cloud_value.z * point_cloud_value.z);
+                distance *= 10;
+                RCLCPP_INFO(nodeHandle->get_logger(), "Distance: %f", distance);
+            }
+            else{
+                distance = -1;
+            }
+            
             sl::POSITIONAL_TRACKING_STATE tracking_state = zed.getPosition(zedPose, sl::REFERENCE_FRAME::WORLD);
 
             if (tracking_state == sl::POSITIONAL_TRACKING_STATE::OK) {
@@ -215,6 +235,7 @@ int main(int argc, char **argv) {
                 zedPosition.pitch = angles[0];
                 zedPosition.yaw = angles[1];
                 zedPosition.roll = angles[2];
+                zedPosition.distance = distance;
                 zedPositionPublisher->publish(zedPosition);
             }
 

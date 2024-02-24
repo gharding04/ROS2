@@ -5,21 +5,24 @@
 
 class Automation1 : public Automation{
 
-    enum RobotState{LOCATE,ALIGN,GO_TO_DIG_SITE,EXCAVATE,GO_TO_HOME,DOCK,DUMP,RETURN_TO_START,ROBOT_IDLE};
+    enum RobotState{LOCATE,ALIGN,GO_TO_DIG_SITE,EXCAVATE,OBSTACLE,GO_TO_HOME,DOCK,DUMP,RETURN_TO_START,ROBOT_IDLE};
     enum ExcavationState{EXCAVATION_IDLE,LOWER_ASSEMBLY,LOWER_LADDER,DIG,RAISE_LADDER,RAISE_ASSEMBLY,ERROR_RECOVERY};
     enum ErrorState {LOWER_ASSEMBLY_ERROR,LOWER_LADDER_ERROR,DIG_ERROR,RAISE_LADDER_ERROR,RAISE_ASSEMBLY_ERROR,RAISE_BIN_ERROR,LOWER_BIN_ERROR,NONE};
     enum DumpState{DUMP_IDLE,DUMP_LOWER_ASSEMBLY,RAISE_BIN,SERVO,LOWER_BIN,DUMP_RAISE_ASSEMBLY,DUMP_ERROR_RECOVERY};
     RobotState robotState=EXCAVATE;
+    RobotState previousState = ROBOT_IDLE;
     ExcavationState excavationState = EXCAVATION_IDLE;
     ErrorState errorState = NONE;
     DumpState dumpState = DUMP_IDLE;
     Location destination;
+    float normalDistance = 1.2;
 
     std::map<RobotState, const char*> robotStateMap = {
         {LOCATE, "Locate"},
         {ALIGN, "Align"},
         {GO_TO_DIG_SITE, "Go To Dig Site"},
         {EXCAVATE, "Excavate"},
+        {OBSTACLE, "Obstacle"},
         {GO_TO_HOME, "Go To Home"},
         {DOCK, "Dock"},
         {DUMP, "Dump"},

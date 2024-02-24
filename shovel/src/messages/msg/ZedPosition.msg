@@ -12,3 +12,4 @@ float32 roll
 float32 aruco_pitch
 float32 aruco_yaw
 float32 aruco_roll
+float32 distance
