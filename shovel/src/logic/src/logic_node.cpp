@@ -85,6 +85,9 @@ void initSetSpeed(){
     
     driveLeftSpeedPublisher->publish(speed);
     driveRightSpeedPublisher->publish(speed);
+    armSpeedPublisher->publish(speed);
+    bucketSpeedPublisher->publish(speed);
+    cameraSpeedPublisher->publish(speed);
     //RCLCPP_INFO(nodeHandle->get_logger(), "Set init motor speeds to 0.0");
 }
 
@@ -233,22 +236,63 @@ void joystickAxisCallback(const messages::msg::AxisState::SharedPtr axisState){
  * */
 void joystickButtonCallback(const messages::msg::ButtonState::SharedPtr buttonState){
     std::cout << "Button " << buttonState->joystick << " " << buttonState->button << " " << buttonState->state << std::endl;
-    std_msgs::msg::Float32 speed;
-    std_msgs::msg::Bool state;
+    std_msgs::msg::Float32 armSpeed;
+    std_msgs::msg::Float32 bucketSpeed;
+    std_msgs::msg::Bool state; 
 
-    switch (buttonState->button) {
+    switch (buttonState->button) { 
 
         case 0:
             break;
         case 1: //toggles driving and digging
+            if(buttonState->state){
+                excavationGo = !excavationGo;
+                if(!excavationGo)
+                    stopExcavation();
+                else
+                    stopSpeed();
+            }
+            RCLCPP_INFO(nodeHandle->get_logger(), "Button 2");
             break;
-        case 2:
+        case 2: //catch to prevent from going to far?
+            if(buttonState->state){ 
+                armSpeed.data = -1.0; 
+            }
+            else{
+                armSpeed.data = 0.0;
+            }
+            armSpeedPublisher->publish(speed);
+            RCLCPP_INFO(nodeHandle->get_logger(), "Button 3");
             break;
         case 3:
+            if(buttonState->state){
+                bucketSpeed.data = -0.25;
+            }
+            else{
+                bucketSpeed.data = 0.0;
+            }
+            bucketSpeedPublisher->publish(speed);
+            RCLCPP_INFO(nodeHandle->get_logger(), "Button 4");
             break;
         case 4:
+            if(buttonState->state){
+                armSpeed.data = 1.0;
+            }
+            else{
+                armSpeed.data = 0.0;
+            }
+            armSpeedPublisher->publish(speed);
+            RCLCPP_INFO(nodeHandle->get_logger(), "Button 5");
             break;
         case 5:
+            if(buttonState->state){
+                bucketSpeed.data = 0.25;
+            }
+            else{
+                bucketSpeed.data = 0.0;
+            }
+            bucketSpeedPublisher->publish(speed);
+            RCLCPP_INFO(nodeHandle->get_logger(), "Button 6");
             break;
         case 6:
             break;
@@ -264,6 +308,7 @@ void joystickButtonCallback(const messages::msg::ButtonState::SharedPtr buttonSt
             break;
     }
 }
+
 
 /** @brief Callback function for joystick hat
  * 
