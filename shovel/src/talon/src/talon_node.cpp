@@ -24,6 +24,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 //#include <rclcpp/console.h>
+#include <std_msgs/msg/int32.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <std_msgs/msg/float32_multi_array.hpp>
 #include <std_msgs/msg/empty.hpp>
@@ -219,8 +220,8 @@ int main(int argc,char** argv){
 	RCLCPP_INFO(nodeHandle->get_logger(),"here 1");
 
 	talonSRX->SelectProfileSlot(0,0);
-	talonSRX->ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, kTimeoutMs);
-	//talonSRX->SetSensorPhase(false);
+	talonSRX->ConfigSelectedFeedbackSensor(FeedbackDevice::Analog, 0, kTimeoutMs);
+	talonSRX->SetSensorPhase(false);
 	talonSRX->ConfigClosedloopRamp(2);
 	talonSRX->ConfigNominalOutputForward(0, kTimeoutMs);
 	talonSRX->ConfigNominalOutputReverse(0, kTimeoutMs);
@@ -242,7 +243,7 @@ int main(int argc,char** argv){
 
 	messages::msg::TalonOut talonOut;
 	auto talonOutPublisher=nodeHandle->create_publisher<messages::msg::TalonOut>(infoTopic.c_str(),1);
-	//auto potentiometerPublisher=nodeHandle->create_publisher<messages::msg::Int16>(potentiometerTopic.c_str(),1);
+	auto potentiometerPublisher=nodeHandle->create_publisher<std_msgs::msg::Int32>(potentiometerTopic.c_str(),1);
 	auto speedSubscriber=nodeHandle->create_subscription<std_msgs::msg::Float32>(speedTopic.c_str(),1,speedCallback);
 
 	auto stopSubscriber=nodeHandle->create_subscription<std_msgs::msg::Empty>("STOP",1,stopCallback);
@@ -250,11 +251,13 @@ int main(int argc,char** argv){
 	RCLCPP_INFO(nodeHandle->get_logger(),"set subscribers");
 
 	rclcpp::Rate rate(20);
-	int count=0;
+	auto start2 = std::chrono::high_resolution_clock::now();
 	auto start = std::chrono::high_resolution_clock::now();
 	while(rclcpp::ok()){
 		if(GO)ctre::phoenix::unmanaged::FeedEnable(100);
 		auto finish = std::chrono::high_resolution_clock::now();
+		int encoderPosition = talonSRX->GetSelectedSensorPosition();
+		std_msgs::msg::Int32 potentiometerData;
 
 		if(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count() > 250000000){
 			int deviceID=talonSRX->GetDeviceID();
@@ -281,23 +284,17 @@ int main(int argc,char** argv){
 			talonOut.closed_loop_error=closedLoopError0;
 			talonOut.integral_accumulator=integralAccumulator0;
 			talonOut.error_derivative=errorDerivative0;
+			talonOut.potentiometer=encoderPosition;
 
 			talonOutPublisher->publish(talonOut);
         	start = std::chrono::high_resolution_clock::now();
 		}
-		//int encoderPosition = talonSRX->GetEncoderPosition();
-		//messages::msg::Float32 potentiometerData;
-		//potentiometerData.data = encoderPosition();
-		//potentiometerPublisher->publish(potentiometerData);
-
-		if(count++>200 && GO){
-			std::cout <<"V=" << talonSRX->GetSelectedSensorVelocity(kPIDLoopIdx) <<"  "
-				<< "  E=" << talonSRX->GetClosedLoopError(kPIDLoopIdx) 
-				<< "  IA=" << talonSRX->GetIntegralAccumulator(kPIDLoopIdx)
-				<< "  ED=" << talonSRX->GetErrorDerivative(kPIDLoopIdx) 
-				<< std::endl;
-			count=0;
+		
+		if(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start2).count() > 100000000){
+			potentiometerPublisher->publish(potentiometerData);
+        	start2 = std::chrono::high_resolution_clock::now();
 		}
+
 		rate.sleep();
 		rclcpp::spin_some(nodeHandle);
         }

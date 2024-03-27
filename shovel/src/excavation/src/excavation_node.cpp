@@ -3,7 +3,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/float32.hpp>
-#include <std_msgs/msg/int16.hpp>
+#include <std_msgs/msg/int32.hpp>
 
 #include "messages/msg/linear_out.hpp"
 
@@ -71,7 +71,8 @@ struct LinearActuator{
     bool atMin = false;
     bool atMax = false;
     float stroke = 11.8;
-    float extended = 0.0;
+    float minExtended = 11.8;
+    float maxExtension = 0.0;
 };
 
 
@@ -291,7 +292,7 @@ void setSyncErrors(LinearActuator *linear1, LinearActuator *linear2){
 }
 
 
-void potentiometer1Callback(const std_msgs::msg::Int16::SharedPtr msg){
+void potentiometer1Callback(const std_msgs::msg::Int32::SharedPtr msg){
     setPotentiometerError(msg->data, &linear1);
 
     if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != ConnectionError && linear2.error != PotentiometerError){
@@ -301,7 +302,7 @@ void potentiometer1Callback(const std_msgs::msg::Int16::SharedPtr msg){
 }
 
 
-void potentiometer2Callback(const std_msgs::msg::Int16::SharedPtr msg){
+void potentiometer2Callback(const std_msgs::msg::Int32::SharedPtr msg){
     setPotentiometerError(msg->data, &linear2);
 
     if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != ConnectionError && linear2.error != PotentiometerError){
@@ -311,7 +312,7 @@ void potentiometer2Callback(const std_msgs::msg::Int16::SharedPtr msg){
 }
 
 
-void potentiometer3Callback(const std_msgs::msg::Int16::SharedPtr msg){
+void potentiometer3Callback(const std_msgs::msg::Int32::SharedPtr msg){
     setPotentiometerError(msg->data, &linear3);
 
     if(linear3.error != ConnectionError && linear3.error != PotentiometerError){
@@ -321,7 +322,7 @@ void potentiometer3Callback(const std_msgs::msg::Int16::SharedPtr msg){
 }
 
 
-void potentiometer4Callback(const std_msgs::msg::Int16::SharedPtr msg){
+void potentiometer4Callback(const std_msgs::msg::Int32::SharedPtr msg){
     setPotentiometerError(msg->data, &linear4);
 
     if(linear4.error != ConnectionError && linear4.error != PotentiometerError){
@@ -331,12 +332,79 @@ void potentiometer4Callback(const std_msgs::msg::Int16::SharedPtr msg){
 }
 
 
-void armSpeedCallback(const std_msgs::msg::Float32::SharedPtr msg){
-
+void armSpeedCallback(const std_msgs::msg::Float32::SharedPtr speed){
+    currentSpeed = speed->data;
+    RCLCPP_INFO(nodeHandle->get_logger(),"currentSpeed: %f", currentSpeed);
+    if(!automationGo){
+        linear1.speed = currentSpeed;
+        linear2.speed = currentSpeed;
+    }
+    else{
+        if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != PotentiometerError){
+            linear1.speed = currentSpeed;
+            linear2.speed = currentSpeed;
+        }
+    }
+    if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != PotentiometerError){
+        sync(&linear1, &linear2);
+        if(linear1.atMax && currentSpeed > 0){
+            linear1.speed = 0.0;
+        }
+        if(linear2.atMax && currentSpeed > 0){
+            linear2.speed = 0.0;
+        }
+        if(linear1.atMin && currentSpeed < 0){
+            linear1.speed = 0.0;
+        }
+        if(linear2.atMin && currentSpeed < 0){
+            linear2.speed = 0.0;
+        }
+    }
+    std_msgs::msg::Float32 speed1;
+    speed1.data = linear1.speed;    
+    talon14Publisher->publish(speed1);
+    std_msgs::msg::Float32 speed2;
+    speed2.data = linear2.speed;
+    talon15Publisher->publish(speed2);
+    RCLCPP_INFO(nodeHandle->get_logger(),"Shoulder speeds: %f, %f", linear1.speed, linear2.speed);
 }
 
 
-void bucketSpeedCallback(const std_msgs::msg::Float32::SharedPtr msg){
+void bucketSpeedCallback(const std_msgs::msg::Float32::SharedPtr speed){
+    currentSpeed = speed->data;
+    RCLCPP_INFO(nodeHandle->get_logger(),"currentSpeed: %f", currentSpeed);
+    if(!automationGo){
+        linear3.speed = currentSpeed;
+        linear4.speed = currentSpeed;
+    }
+    else{
+        if(linear3.error != ConnectionError && linear3.error != PotentiometerError && linear4.error != PotentiometerError){
+            linear3.speed = currentSpeed;
+            linear4.speed = currentSpeed;
+        }
+    }
+    if(linear3.error != ConnectionError && linear3.error != PotentiometerError && linear4.error != PotentiometerError){
+        sync(&linear3, &linear4);
+        if(linear3.atMax && currentSpeed > 0){
+            linear3.speed = 0.0;
+        }
+        if(linear4.atMax && currentSpeed > 0){
+            linear4.speed = 0.0;
+        }
+        if(linear3.atMin && currentSpeed < 0){
+            linear3.speed = 0.0;
+        }
+        if(linear4.atMin && currentSpeed < 0){
+            linear4.speed = 0.0;
+        }
+    }
+    std_msgs::msg::Float32 speed1;
+    speed1.data = linear3.speed;    
+    talon16Publisher->publish(speed1);
+    std_msgs::msg::Float32 speed2;
+    speed2.data = linear4.speed;
+    talon17Publisher->publish(speed2);
+    RCLCPP_INFO(nodeHandle->get_logger(),"Shoulder speeds: %f, %f", linear3.speed, linear2.speed);
 
 }
 
@@ -371,10 +439,10 @@ int main(int argc, char **argv){
     auto armSpeedSubscriber = nodeHandle->create_subscription<std_msgs::msg::Float32>("arm_speed",1,armSpeedCallback);
     auto bucketSpeedSubscriber = nodeHandle->create_subscription<std_msgs::msg::Float32>("bucket_speed",1,bucketSpeedCallback);
 
-    auto potentiometerDataSubscriber1 = nodeHandle->create_subscription<std_msgs::msg::Int16>("potentiometer_1_data",1,potentiometer1Callback);
-    auto potentiometerDataSubscriber2 = nodeHandle->create_subscription<std_msgs::msg::Int16>("potentiometer_2_data",1,potentiometer2Callback);
-    auto potentiometerDataSubscriber3 = nodeHandle->create_subscription<std_msgs::msg::Int16>("potentiometer_3_data",1,potentiometer3Callback);
-    auto potentiometerDataSubscriber4 = nodeHandle->create_subscription<std_msgs::msg::Int16>("potentiometer_4_data",1,potentiometer4Callback);
+    auto potentiometerDataSubscriber1 = nodeHandle->create_subscription<std_msgs::msg::Int32>("potentiometer_1_data",1,potentiometer1Callback);
+    auto potentiometerDataSubscriber2 = nodeHandle->create_subscription<std_msgs::msg::Int32>("potentiometer_2_data",1,potentiometer2Callback);
+    auto potentiometerDataSubscriber3 = nodeHandle->create_subscription<std_msgs::msg::Int32>("potentiometer_3_data",1,potentiometer3Callback);
+    auto potentiometerDataSubscriber4 = nodeHandle->create_subscription<std_msgs::msg::Int32>("potentiometer_4_data",1,potentiometer4Callback);
 
 
     talon14Publisher = nodeHandle->create_publisher<std_msgs::msg::Float32>("talon_14_speed",1);

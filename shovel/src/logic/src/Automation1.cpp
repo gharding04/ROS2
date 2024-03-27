@@ -4,7 +4,6 @@
 #include "logic/Automation.hpp"
 #include "logic/Automation1.hpp"
 
-int left = 0;
 int destX = 10, destY = 10;
 
 /** @file
@@ -30,12 +29,6 @@ void Automation1::automate(){
     if(robotState==LOCATE){
         changeSpeed(0.15,-0.15);
         if(position.arucoVisible==true){
-            if (abs(position.aruco_roll) < 90.0) {
-                left = 1;
-            } else { // dot on top
-                left = -1;
-            }
-            RCLCPP_INFO(this->node->get_logger(), "Left: %d", left);
             setDestAngle(position.yaw + 90.0);
             changeSpeed(0,0);
             robotState=ALIGN;
@@ -45,9 +38,8 @@ void Automation1::automate(){
     // After finding the Aruco marker, turn the bot to 
     // align with the arena
     if(robotState==ALIGN){
-        RCLCPP_INFO(this->node->get_logger(), "Left: %d", left);
         if (!(position.yaw < this->destAngle+2 && position.yaw > this->destAngle-2)) {
-            changeSpeed(0.15*left, -0.15*left);
+            changeSpeed(0.15, -0.15);
         } 
         else {
             changeSpeed(0, 0);
@@ -69,7 +61,6 @@ void Automation1::automate(){
     if(robotState==GO_TO_DIG_SITE){
         RCLCPP_INFO(this->node->get_logger(), "GO_TO_DIG_SITE");
         RCLCPP_INFO(this->node->get_logger(), "ZedPosition.z: %f", this->position.z);
-        RCLCPP_INFO(this->node->get_logger(), "Left: %d", left);
         //TODO: Take rotation of robot into account
         if(position.distance < normalDistance - 0.5 || position.distance > normalDistance + 0.5){
             changeSpeed(0, 0);
