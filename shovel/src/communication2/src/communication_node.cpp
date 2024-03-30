@@ -29,10 +29,8 @@
 #include <messages/msg/button_state.hpp>
 #include <messages/msg/axis_state.hpp>
 #include <messages/msg/talon_out.hpp>
-#include <messages/msg/victor_out.hpp>
 #include <messages/msg/zed_position.hpp>
 #include <messages/msg/linear_out.hpp>
-#include <messages/msg/neo_out.hpp>
 #include <messages/msg/autonomy_out.hpp>
 
 #include <BinaryMessage.hpp>

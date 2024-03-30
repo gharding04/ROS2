@@ -38,7 +38,6 @@
  * \li \b drive_right_speed
  * \li \b arm_speed
  * \li \b bucket_speed
- * \li \b camera_speed
  * 
  * To read more about the nodes that subscribe to this one
  * \see talon_node.cpp
@@ -66,7 +65,6 @@ std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > driveRightSpeedPublisher;
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > armSpeedPublisher;
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > bucketSpeedPublisher;
-std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > cameraSpeedPublisher;
 
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Bool_<std::allocator<void> >, std::allocator<void> > > automationGoPublisher;
 
@@ -87,7 +85,6 @@ void initSetSpeed(){
     driveRightSpeedPublisher->publish(speed);
     armSpeedPublisher->publish(speed);
     bucketSpeedPublisher->publish(speed);
-    cameraSpeedPublisher->publish(speed);
     //RCLCPP_INFO(nodeHandle->get_logger(), "Set init motor speeds to 0.0");
 }
 
@@ -323,15 +320,12 @@ void joystickHatCallback(const messages::msg::HatState::SharedPtr hatState){
     std_msgs::msg::Float32 speed;
     if((int)hatState->state == 1 ){
         speed.data = 1.0;
-        cameraSpeedPublisher->publish(speed);
     }
     if((int)hatState->state == 4 ){
         speed.data = -1.0;
-        cameraSpeedPublisher->publish(speed);
     }
     if((int)hatState->state == 0 ){
         speed.data = 0.0;
-        cameraSpeedPublisher->publish(speed);
     }
 
 }
@@ -483,15 +477,6 @@ void linearOut4Callback(const messages::msg::LinearOut::SharedPtr linearOut){
 }
 
 
-/** @brief Callback function for the LinearOut topic
- * 
- * @param linearOut 
- */
-void linearOut5Callback(const messages::msg::LinearOut::SharedPtr linearOut){
-    automation->setLinear5(linearOut);
-}
-
-
 int main(int argc, char **argv){
     rclcpp::init(argc,argv);
     nodeHandle = rclcpp::Node::make_shared("logic");
@@ -506,13 +491,11 @@ int main(int argc, char **argv){
     auto linearOut2Subscriber = nodeHandle->create_subscription<messages::msg::LinearOut>("linearOut2",1,linearOut2Callback);
     auto linearOut3Subscriber = nodeHandle->create_subscription<messages::msg::LinearOut>("linearOut3",1,linearOut3Callback);
     auto linearOut4Subscriber = nodeHandle->create_subscription<messages::msg::LinearOut>("linearOut4",1,linearOut4Callback);
-    auto linearOut5Subscriber = nodeHandle->create_subscription<messages::msg::LinearOut>("linearOut5",1,linearOut5Callback);
 
     driveLeftSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("drive_left_speed",1);
     driveRightSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("drive_right_speed",1);
     armSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("arm_speed",1);
     bucketSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("bucket_speed",1);
-    cameraSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("camera_speed",1);
     automationGoPublisher = nodeHandle->create_publisher<std_msgs::msg::Bool>("automationGo",1);
 
     initSetSpeed();
