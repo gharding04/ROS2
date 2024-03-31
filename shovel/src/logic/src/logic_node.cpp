@@ -67,7 +67,7 @@ std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > bucketSpeedPublisher;
 
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Bool_<std::allocator<void> >, std::allocator<void> > > automationGoPublisher;
-
+std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Empty_<std::allocator<void> > , std::allocator<void> > > sensorlessPublisher;
 
 /** @brief Function to initialize the motors to zero
  * 
@@ -130,31 +130,6 @@ void stopSpeed(){
     driveRightSpeedPublisher->publish(speed);
 }
 
-/** @brief Function to update excavation motor speeds
- * 
- * This function is called when the node receives 
- * joystick information and is in the excavation 
- * state.  The function publishes the shoulder speed,
- * the arm speed, and the drum speeed.
- * @return void
- * */
-void updateExcavation(){
-}
-
-/** @brief Function to stop excavation motors
- * 
- * This function is called when the thumb
- * button is pressed and switches to the drive
- * state.  It publishes a speed of 0.0 for
- * the shoulder, excavation arm, drum, and
- * dump bin.
- * @return void
- * */
-void stopExcavation(){
-    std_msgs::msg::Float32 speed;
-    speed.data = 0.0;
-}
-
 /**
  * @brief  Function to transform the joystick input
  * 
@@ -196,28 +171,18 @@ void joystickAxisCallback(const messages::msg::AxisState::SharedPtr axisState){
     float deadZone = 0.1;
     if(axisState->axis==0){
         joystick1Roll = transformJoystickInfo(-axisState->state, deadZone);
-        if(!excavationGo)
-            updateSpeed();
+        updateSpeed();
     }
     else if(axisState->axis==1){
         joystick1Pitch = transformJoystickInfo(axisState->state, deadZone);
-        if(excavationGo)
-            updateExcavation();
-        else
-            updateSpeed();
+        updateSpeed();
     }
     else if(axisState->axis==2){
         joystick1Yaw = transformJoystickInfo(axisState->state, deadZone);
-        if(excavationGo){
-            updateExcavation();
-        }
     }
     else if(axisState->axis==3){
         joystick1Throttle = axisState->state/2 + 0.5;
         joystick1Throttle = transformJoystickInfo(joystick1Throttle, deadZone);
-        if(excavationGo){
-            updateExcavation();
-        }
     }
 }
 
@@ -243,15 +208,11 @@ void joystickButtonCallback(const messages::msg::ButtonState::SharedPtr buttonSt
             break;
         case 1: //toggles driving and digging
             if(buttonState->state){
-                excavationGo = !excavationGo;
-                if(!excavationGo)
-                    stopExcavation();
-                else
-                    stopSpeed();
+                stopSpeed();
             }
             RCLCPP_INFO(nodeHandle->get_logger(), "Button 2");
             break;
-        case 2: //catch to prevent from going to far?
+        case 2:
             if(buttonState->state){ 
                 armSpeed.data = -1.0; 
             }
@@ -384,6 +345,8 @@ void keyCallback(const messages::msg::KeyState::SharedPtr keyState){
     if(keyState->key==120 && keyState->state==1){
         runSensorlessly = !runSensorlessly;
         automation->setRunSensorlessly(runSensorlessly);
+        std_msgs::msg::Empty empty;
+        sensorlessPublisher->publish(empty);
     }
     if(keyState->key==43 && keyState->state==1){
         updateMaxSpeed(0.1);
@@ -497,6 +460,7 @@ int main(int argc, char **argv){
     armSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("arm_speed",1);
     bucketSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("bucket_speed",1);
     automationGoPublisher = nodeHandle->create_publisher<std_msgs::msg::Bool>("automationGo",1);
+    sensorlessPublisher = nodeHandle->create_publisher<std_msgs::msg::Empty>("sensorless",1);
 
     initSetSpeed();
 

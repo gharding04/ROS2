@@ -4,6 +4,7 @@
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <std_msgs/msg/int32.hpp>
+#include <std_msgs/msg/empty.hpp>
 
 #include "messages/msg/linear_out.hpp"
 
@@ -28,10 +29,12 @@ messages::msg::LinearOut linearOut4;
  * back to the client-side GUI to integrate information about the
  * position data and error state. This node subscribes to the 
  * following topics:
- * \li \b potentiometer_data
- * \li \b shoulder_speed
- * \li \b dump_speed
+ * \li \b potentiometer_data_1
+ * \li \b potentiometer_data_2
+ * \li \b potentiometer_data_3
+ * \li \b potentiometer_data_4
  * \li \b automationGo
+ * \li \b sensorless
  * 
  * 
  * This node publishes the following topics:
@@ -75,15 +78,16 @@ struct LinearActuator{
     bool atMin = false;
     bool atMax = false;
     float stroke = 11.8;
-    float minExtended = 11.8;
-    float maxExtension = 0.0;
+    float distance = 0.0;
+    float extensionSpeed = 0.0;
+    float timeToExtend = 0.0;
 };
 
 
-LinearActuator linear1{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 5.9, 5.9, 0.0};
-LinearActuator linear2{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 5.9, 5.9, 0.0};
-LinearActuator linear3{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 11.8, 11.8, 0.0};;
-LinearActuator linear4{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 11.8, 11.8, 0.0};;
+LinearActuator linear1{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 5.9, 5.9, 0.0, 0.0};
+LinearActuator linear2{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 5.9, 5.9, 0.0, 0.0};
+LinearActuator linear3{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 11.8, 11.8, 0.0, 0.0};;
+LinearActuator linear4{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 11.8, 11.8, 0.0, 0.0};;
 
 float currentSpeed = 0.0;
 float currentSpeed2 = 0.0;
@@ -92,6 +96,7 @@ int thresh2 = 30;
 int thresh3 = 45;
 
 bool automationGo = false;
+bool sensorless = false;
 
 
 /** @brief Function to sync the linear actuators
@@ -124,6 +129,7 @@ void sync(){
         linear2.speed = currentSpeed;
     }
 }
+
 
 void sync2(){
     float diff = abs(linear3.potentiometer - linear4.potentiometer);
@@ -190,13 +196,13 @@ void setSpeeds2(){
         if(linear3.atMax && currentSpeed2 > 0){
             linear3.speed = 0.0;
         }
-        if(linear4.atMax && currentSpeed2 > 0){
+        if(linear2.atMax && currentSpeed2 > 0){
             linear4.speed = 0.0;
         }
         if(linear3.atMin && currentSpeed2 < 0){
             linear3.speed = 0.0;
         }
-        if(linear4.atMin && currentSpeed2 < 0){
+        if(linear2.atMin && currentSpeed2 < 0){
             linear4.speed = 0.0;
         }
     }
@@ -352,6 +358,7 @@ void setSyncErrors(){
     }
 }
 
+
 void setSyncErrors2(){
     if(abs(linear3.potentiometer - linear4.potentiometer) > thresh1){
         if(linear3.error == None){
@@ -382,41 +389,49 @@ void setSyncErrors2(){
 
 
 void potentiometer1Callback(const std_msgs::msg::Int32::SharedPtr msg){
-    setPotentiometerError(msg->data, &linear1);
+    if(!sensorless){
+        setPotentiometerError(msg->data, &linear1);
 
-    if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != ConnectionError && linear2.error != PotentiometerError){
-        processPotentiometerData(msg->data, &linear1);
-        setSyncErrors();
+        if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != ConnectionError && linear2.error != PotentiometerError){
+            processPotentiometerData(msg->data, &linear1);
+            setSyncErrors();
+        }
     }
 }
 
 
 void potentiometer2Callback(const std_msgs::msg::Int32::SharedPtr msg){
-    setPotentiometerError(msg->data, &linear2);
+    if(!sensorless){
+        setPotentiometerError(msg->data, &linear2);
 
-    if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != ConnectionError && linear2.error != PotentiometerError){
-        processPotentiometerData(msg->data, &linear2);
-        setSyncErrors();
+        if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != ConnectionError && linear2.error != PotentiometerError){
+            processPotentiometerData(msg->data, &linear2);
+            setSyncErrors();
+        }
     }
 }
 
 
 void potentiometer3Callback(const std_msgs::msg::Int32::SharedPtr msg){
-    setPotentiometerError(msg->data, &linear3);
+    if(!sensorless){
+        setPotentiometerError(msg->data, &linear3);
 
-    if(linear3.error != ConnectionError && linear3.error != PotentiometerError){
-        processPotentiometerData(msg->data, &linear3);
-        setSyncErrors2();
+        if(linear3.error != ConnectionError && linear3.error != PotentiometerError){
+            processPotentiometerData(msg->data, &linear3);
+            setSyncErrors2();
+        }
     }
 }
 
 
 void potentiometer4Callback(const std_msgs::msg::Int32::SharedPtr msg){
-    setPotentiometerError(msg->data, &linear4);
+    if(!sensorless){
+        setPotentiometerError(msg->data, &linear4);
 
-    if(linear4.error != ConnectionError && linear4.error != PotentiometerError){
-        processPotentiometerData(msg->data, &linear4);
-        setSyncErrors2();
+        if(linear4.error != ConnectionError && linear4.error != PotentiometerError){
+            processPotentiometerData(msg->data, &linear4);
+            setSyncErrors2();
+        }
     }
 }
 
@@ -460,30 +475,30 @@ void armSpeedCallback(const std_msgs::msg::Float32::SharedPtr speed){
 
 
 void bucketSpeedCallback(const std_msgs::msg::Float32::SharedPtr speed){
-    currentSpeed2 = speed->data;
-    RCLCPP_INFO(nodeHandle->get_logger(),"currentSpeed: %f", currentSpeed2);
+    currentSpeed = speed->data;
+    RCLCPP_INFO(nodeHandle->get_logger(),"currentSpeed: %f", currentSpeed);
     if(!automationGo){
-        linear3.speed = currentSpeed2;
-        linear4.speed = currentSpeed2;
+        linear3.speed = currentSpeed;
+        linear4.speed = currentSpeed;
     }
     else{
         if(linear3.error != ConnectionError && linear3.error != PotentiometerError && linear4.error != PotentiometerError){
-            linear3.speed = currentSpeed2;
-            linear4.speed = currentSpeed2;
+            linear3.speed = currentSpeed;
+            linear4.speed = currentSpeed;
         }
     }
     if(linear3.error != ConnectionError && linear3.error != PotentiometerError && linear4.error != PotentiometerError){
         sync2();
-        if(linear3.atMax && currentSpeed2 > 0){
+        if(linear3.atMax && currentSpeed > 0){
             linear3.speed = 0.0;
         }
-        if(linear4.atMax && currentSpeed2 > 0){
+        if(linear4.atMax && currentSpeed > 0){
             linear4.speed = 0.0;
         }
-        if(linear3.atMin && currentSpeed2 < 0){
+        if(linear3.atMin && currentSpeed < 0){
             linear3.speed = 0.0;
         }
-        if(linear4.atMin && currentSpeed2 < 0){
+        if(linear4.atMin && currentSpeed < 0){
             linear4.speed = 0.0;
         }
     }
@@ -493,7 +508,7 @@ void bucketSpeedCallback(const std_msgs::msg::Float32::SharedPtr speed){
     std_msgs::msg::Float32 speed2;
     speed2.data = linear4.speed;
     talon17Publisher->publish(speed2);
-    RCLCPP_INFO(nodeHandle->get_logger(),"Bucket speeds: %f, %f", linear3.speed, linear4.speed);
+    RCLCPP_INFO(nodeHandle->get_logger(),"Bucket speeds: %f, %f", linear3.speed, linear2.speed);
 
 }
 
@@ -506,52 +521,80 @@ void bucketSpeedCallback(const std_msgs::msg::Float32::SharedPtr speed){
  * @param *linear - Pointer for the linear actuator
  * @return void
  * */
-void getLinearOut1(){
-    linearOut1.speed = linear1.speed;
-    linearOut1.potentiometer = linear1.potentiometer;
-    linearOut1.time_without_change = linear1.timeWithoutChange;
-    linearOut1.max = linear1.max;
-    linearOut1.min = linear1.min;
-    linearOut1.error = errorMap.at(linear1.error);
-    linearOut1.run = linear1.run;
-    linearOut1.at_min = linear1.atMin;
-    linearOut1.at_max = linear1.atMax;
+void getLinearOut(messages::msg::LinearOut *linearOut, LinearActuator *linear){
+    linearOut->speed = linear->speed;
+    linearOut->potentiometer = linear->potentiometer;
+    linearOut->time_without_change = linear->timeWithoutChange;
+    linearOut->max = linear->max;
+    linearOut->min = linear->min;
+    linearOut->error = errorMap.at(linear->error);
+    linearOut->run = linear->run;
+    linearOut->at_min = linear->atMin;
+    linearOut->at_max = linear->atMax;
 }
 
-void getLinearOut2(){
-    linearOut2.speed = linear2.speed;
-    linearOut2.potentiometer = linear2.potentiometer;
-    linearOut2.time_without_change = linear2.timeWithoutChange;
-    linearOut2.max = linear2.max;
-    linearOut2.min = linear2.min;
-    linearOut2.error = errorMap.at(linear2.error);
-    linearOut2.run = linear2.run;
-    linearOut2.at_min = linear2.atMin;
-    linearOut2.at_max = linear2.atMax;
+
+void updateMotorPositions(int millis){
+    linear1.distance = linear1.speed * linear1.extensionSpeed * (millis / 1000.0) + linear1.distance;
+    if(linear1.distance > linear1.stroke){
+        linear1.distance = linear1.stroke;
+        linear1.atMax = true;
+    }
+    else if(linear1.distance < 0.0){
+        linear1.distance = 0.0;
+        linear1.atMin = true;
+    }
+    else{
+        linear1.atMin = false;
+        linear1.atMax = false;
+    }
+
+    linear2.distance = linear2.speed * linear2.extensionSpeed * (millis / 1000.0) + linear2.distance;
+    if(linear2.distance > linear2.stroke){
+        linear2.distance = linear2.stroke;
+        linear2.atMax = true;
+    }
+    else if(linear2.distance < 0.0){
+        linear2.distance = 0.0;
+        linear2.atMin = true;
+    }
+    else{
+        linear2.atMin = false;
+        linear2.atMax = false;
+    }
+    
+    linear3.distance = linear3.speed * linear3.extensionSpeed * (millis / 1000.0) + linear3.distance;
+    if(linear3.distance > linear3.stroke){
+        linear3.distance = linear3.stroke;
+        linear3.atMax = true;
+    }
+    else if(linear3.distance < 0.0){
+        linear3.distance = 0.0;
+        linear3.atMin = true;
+    }
+    else{
+        linear3.atMin = false;
+        linear3.atMax = false;
+    }
+    
+    linear4.distance = linear4.speed * linear4.extensionSpeed * (millis / 1000.0) + linear4.distance;
+    if(linear4.distance > linear4.stroke){
+        linear4.distance = linear4.stroke;
+        linear4.atMax = true;
+    }
+    else if(linear4.distance < 0.0){
+        linear4.distance = 0.0;
+        linear4.atMin = true;
+    }
+    else{
+        linear4.atMin = false;
+        linear4.atMax = false;
+    }
 }
 
-void getLinearOut3(){
-    linearOut3.speed = linear3.speed;
-    linearOut3.potentiometer = linear3.potentiometer;
-    linearOut3.time_without_change = linear3.timeWithoutChange;
-    linearOut3.max = linear3.max;
-    linearOut3.min = linear3.min;
-    linearOut3.error = errorMap.at(linear3.error);
-    linearOut3.run = linear3.run;
-    linearOut3.at_min = linear3.atMin;
-    linearOut3.at_max = linear3.atMax;
-}
 
-void getLinearOut4(){
-    linearOut4.speed = linear4.speed;
-    linearOut4.potentiometer = linear4.potentiometer;
-    linearOut4.time_without_change = linear4.timeWithoutChange;
-    linearOut4.max = linear4.max;
-    linearOut4.min = linear4.min;
-    linearOut4.error = errorMap.at(linear4.error);
-    linearOut4.run = linear4.run;
-    linearOut4.at_min = linear4.atMin;
-    linearOut4.at_max = linear4.atMax;
+void sensorlessCallback(const std_msgs::msg::Empty::SharedPtr empty){
+    sensorless = !sensorless;
 }
 
 
@@ -560,6 +603,7 @@ int main(int argc, char **argv){
     nodeHandle = rclcpp::Node::make_shared("excavation");
 
     auto automationGoSubscriber = nodeHandle->create_subscription<std_msgs::msg::Bool>("automationGo",1,automationGoCallback);
+    auto sensorlessSubscriber = nodeHandle->create_subscription<std_msgs::msg::Empty>("sensorless",1,sensorlessCallback);
 
     auto armSpeedSubscriber = nodeHandle->create_subscription<std_msgs::msg::Float32>("arm_speed",1,armSpeedCallback);
     auto bucketSpeedSubscriber = nodeHandle->create_subscription<std_msgs::msg::Float32>("bucket_speed",1,bucketSpeedCallback);
@@ -575,27 +619,40 @@ int main(int argc, char **argv){
     talon16Publisher = nodeHandle->create_publisher<std_msgs::msg::Float32>("talon_16_speed",1);
     talon17Publisher = nodeHandle->create_publisher<std_msgs::msg::Float32>("talon_17_speed",1);
     
+    messages::msg::LinearOut linearOut1;
+    messages::msg::LinearOut linearOut2;
+    messages::msg::LinearOut linearOut3;
+    messages::msg::LinearOut linearOut4;
+
     auto linearOut1Publisher = nodeHandle->create_publisher<messages::msg::LinearOut>("linearOut1",1);
     auto linearOut2Publisher = nodeHandle->create_publisher<messages::msg::LinearOut>("linearOut2",1);
     auto linearOut3Publisher = nodeHandle->create_publisher<messages::msg::LinearOut>("linearOut3",1);
     auto linearOut4Publisher = nodeHandle->create_publisher<messages::msg::LinearOut>("linearOut4",1);
 
     auto start = std::chrono::high_resolution_clock::now();
+    auto finish = std::chrono::high_resolution_clock::now();
+    int count = 0;
     while(rclcpp::ok()){
-        auto finish = std::chrono::high_resolution_clock::now();
-        if(std::chrono::duration_cast<std::chrono::seconds>(finish-start).count() > 2){
-            getLinearOut1();
+        finish = std::chrono::high_resolution_clock::now();
+        if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() > 100){
+            if(!sensorless)
+                updateMotorPositions(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() );
+            count += 1;
+            start = std::chrono::high_resolution_clock::now();
+        }
+        if(count > 10){
+            getLinearOut(&linearOut1, &linear1);
             linearOut1Publisher->publish(linearOut1);
 
-            getLinearOut2();
+            getLinearOut(&linearOut2, &linear2);
             linearOut2Publisher->publish(linearOut2);
 
-
-            getLinearOut3();
+            getLinearOut(&linearOut3, &linear3);
             linearOut3Publisher->publish(linearOut3);
 
-            getLinearOut4();
+            getLinearOut(&linearOut4, &linear4);
             linearOut4Publisher->publish(linearOut4);
+            count = 0;
         }
         rclcpp:spin_some(nodeHandle);
     }
