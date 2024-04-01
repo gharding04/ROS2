@@ -221,7 +221,7 @@ int main(int argc,char** argv){
 
 	talonSRX->SelectProfileSlot(0,0);
 	talonSRX->ConfigSelectedFeedbackSensor(FeedbackDevice::Analog, 0, kTimeoutMs);
-	talonSRX->SetSensorPhase(false);
+	talonSRX->SetSensorPhase(true);
 	talonSRX->ConfigClosedloopRamp(2);
 	talonSRX->ConfigNominalOutputForward(0, kTimeoutMs);
 	talonSRX->ConfigNominalOutputReverse(0, kTimeoutMs);
@@ -258,6 +258,7 @@ int main(int argc,char** argv){
 		auto finish = std::chrono::high_resolution_clock::now();
 		int encoderPosition = talonSRX->GetSelectedSensorPosition();
 		std_msgs::msg::Int32 potentiometerData;
+		potentiometerData.data = encoderPosition;
 
 		if(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count() > 250000000){
 			int deviceID=talonSRX->GetDeviceID();

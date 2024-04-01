@@ -84,22 +84,25 @@ struct LinearActuator{
 };
 
 
-LinearActuator linear1{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 5.9, 5.9, 0.0, 0.0};
-LinearActuator linear2{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 5.9, 5.9, 0.0, 0.0};
-LinearActuator linear3{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 11.8, 11.8, 0.0, 0.0};;
-LinearActuator linear4{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 11.8, 11.8, 0.0, 0.0};;
+LinearActuator linear1{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 5.9, 0.0, 0.69, 8.5};
+LinearActuator linear2{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 5.9, 0.0, 0.69, 8.5};
+LinearActuator linear3{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 9.8, 0.0, 0.85, 11.5};
+LinearActuator linear4{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 9.8, 0.0, 0.89, 11.0};
 
 float currentSpeed = 0.0;
 float currentSpeed2 = 0.0;
 int thresh1 = 15;
 int thresh2 = 30;
 int thresh3 = 45;
+float distThresh1 = 0.1;
+float distThresh2 = 0.2;
+float distThresh3 = 0.3;
 
 bool automationGo = false;
 bool sensorless = false;
 
 
-/** @brief Function to sync the linear actuators
+/** @brief Function to sync the linear actuators. 
  * 
  * The sync function works by checking if the currentSpeed is
  * greater than zero. If the speed is greater than zero, the val
@@ -107,8 +110,7 @@ bool sensorless = false;
  * the actuator to a lower value if the diff is greater than the 
  * thresh values.  If the value is less than zero, the val checks 
  * which actuator is less extended and sets the speed of the 
- * actuator to a lower value. The function then publishes the 
- * updated speed.
+ * actuator to a lower value.
  * @return void
  * */
 void sync(){
@@ -131,6 +133,19 @@ void sync(){
 }
 
 
+/** @brief Function to sync the second pair of linear actuators. 
+ * 
+ * The sync function works by checking if the currentSpeed2 is
+ * greater than zero. If the speed is greater than zero, the val
+ * checks which actuator is more extended and sets the speed of
+ * the actuator to a lower value if the diff is greater than the 
+ * thresh values.  If the value is less than zero, the val checks 
+ * which actuator is less extended and sets the speed of the 
+ * actuator to a lower value. This was added to eliminate memory
+ * issues arising from earlier functions that used pointers and 
+ * had unexpected behavior. Future updates may remove this.
+ * @return void
+ * */
 void sync2(){
     float diff = abs(linear3.potentiometer - linear4.potentiometer);
     // Might change this from ternary to if statements to improve readability
@@ -151,6 +166,75 @@ void sync2(){
 }
 
 
+/** @brief Function to sync the linear actuators when using the distance 
+ * calculated from the time running. 
+ * 
+ * The sync function works by checking if the currentSpeed is
+ * greater than zero. If the speed is greater than zero, the val
+ * checks which actuator is more extended and sets the speed of
+ * the actuator to a lower value if the diff is greater than the 
+ * thresh values.  If the value is less than zero, the val checks 
+ * which actuator is less extended and sets the speed of the 
+ * actuator to a lower value. 
+ * @return void
+ * */
+void syncDistance(){
+    float diff = abs(linear1.distance - linear2.distance);
+    bool val = (currentSpeed > 0) ? (linear1.distance > linear2.distance) : (linear1.distance < linear2.distance);
+    if (diff > distThresh3) {
+        (val) ? linear1.speed = 0 : linear2.speed = 0;
+    }
+    else if (diff > distThresh2){
+        (val) ? linear1.speed *= 0.5 : linear2.speed *= 0.5;
+    }
+    else if (diff > distThresh1) {
+        (val) ? linear1.speed *= 0.9 : linear2.speed *= 0.9;
+    }
+    else{
+        linear1.speed = currentSpeed;
+	    linear2.speed = currentSpeed;
+    }
+}
+
+
+/** @brief Function to sync the linear actuators when using the distance 
+ * calculated from the time running. 
+ * 
+ * The sync function works by checking if the currentSpeed is
+ * greater than zero. If the speed is greater than zero, the val
+ * checks which actuator is more extended and sets the speed of
+ * the actuator to a lower value if the diff is greater than the 
+ * thresh values.  If the value is less than zero, the val checks 
+ * which actuator is less extended and sets the speed of the 
+ * actuator to a lower value. 
+ * @return void
+ * */
+void syncDistance2(){
+    float diff = abs(linear3.distance - linear4.distance);
+    bool val = (currentSpeed > 0) ? (linear3.distance > linear4.distance) : (linear3.distance < linear4.distance);
+    if (diff > distThresh3) {
+        (val) ? linear3.speed = 0 : linear4.speed = 0;
+    }
+    else if (diff > distThresh2){
+        (val) ? linear3.speed *= 0.5 : linear4.speed *= 0.5;
+    }
+    else if (diff > distThresh1){
+        (val) ? linear3.speed *= 0.9 : linear4.speed *= 0.9;
+    }
+    else{
+        linear3.speed = currentSpeed2;
+	    linear4.speed = currentSpeed2;
+    }
+}
+
+
+/** @brief Function that sets the speeds of the first pair of linear
+ * actuators, then syncs the motors. 
+ * 
+ * The setSpeed function checks if the linear actuators are at the min
+ * or max, then sets the speed to 0.0 if either are true.
+ * @return void
+ * */
 void setSpeeds(){
     if(!automationGo){
         linear1.speed = currentSpeed;
@@ -180,6 +264,13 @@ void setSpeeds(){
 }
 
 
+/** @brief Function that sets the speeds of the second pair of linear
+ * actuators, then syncs the motors. 
+ * 
+ * The setSpeed function checks if the linear actuators are at the min
+ * or max, then sets the speed to 0.0 if either are true.
+ * @return void
+ * */
 void setSpeeds2(){
     if(!automationGo){
         linear3.speed = currentSpeed2;
@@ -196,22 +287,112 @@ void setSpeeds2(){
         if(linear3.atMax && currentSpeed2 > 0){
             linear3.speed = 0.0;
         }
-        if(linear2.atMax && currentSpeed2 > 0){
+        if(linear4.atMax && currentSpeed2 > 0){
             linear4.speed = 0.0;
         }
         if(linear3.atMin && currentSpeed2 < 0){
             linear3.speed = 0.0;
         }
-        if(linear2.atMin && currentSpeed2 < 0){
+        if(linear4.atMin && currentSpeed2 < 0){
             linear4.speed = 0.0;
         }
     }
 }
 
 
-/** @brief Function to set potentiometer error
+/** @brief Function to publish the speeds of the first pair of 
+ * actuators to Talons 14 and 15. 
  * 
- * Thsi function is used to set the value of the error
+ * The function creates two new Float32 messages, sets the data to
+ * the value of the linear object speed, then publishes the data.
+ * @return void
+ * */
+void publishSpeeds(){
+    std_msgs::msg::Float32 speed1;
+    speed1.data = linear1.speed;
+    talon14Publisher->publish(speed1);
+    std_msgs::msg::Float32 speed2;
+    speed2.data = linear2.speed;
+    talon15Publisher->publish(speed2);
+}
+
+
+/** @brief Function to publish the speeds of the second pair of 
+ * actuators to Talons 16 and 17. 
+ * 
+ * The function creates two new Float32 messages, sets the data to
+ * the value of the linear object speed, then publishes the data.
+ * @return void
+ * */
+void publishSpeeds2(){
+    std_msgs::msg::Float32 speed1;
+    speed1.data = linear3.speed;
+    talon16Publisher->publish(speed1);
+    std_msgs::msg::Float32 speed2;
+    speed2.data = linear4.speed;
+    talon17Publisher->publish(speed2);
+}
+
+
+/** @brief Function that sets the speeds of the first pair of linear
+ * actuators, then syncs the motors.
+ * 
+ * The setSpeed function checks if the linear actuators are at the min
+ * or max, then sets the speed to 0.0 if either are true. The values are
+ * published if either is not zero or the currentSpeed is not zero.
+ * @return void
+ * */
+void setSpeedsDistance(){
+    syncDistance();
+    if(linear1.atMax && currentSpeed > 0){
+        linear1.speed = 0.0;
+    }
+    if(linear2.atMax && currentSpeed > 0){
+        linear2.speed = 0.0;
+    }
+    if(linear1.atMin && currentSpeed < 0){
+        linear1.speed = 0.0;
+    }
+    if(linear2.atMin && currentSpeed < 0){
+        linear2.speed = 0.0;
+    }
+    if(linear1.speed != 0.0 || linear2.speed != 0.0 || currentSpeed != 0.0){
+        publishSpeeds();
+    }
+}
+
+
+/** @brief Function that sets the speeds of the second pair of linear
+ * actuators, then syncs the motors.
+ * 
+ * The setSpeed function checks if the linear actuators are at the min
+ * or max, then sets the speed to 0.0 if either are true. The values are
+ * published if either is not zero or the currentSpeed2 is not zero.
+ * @return void
+ * */
+void setSpeedsDistance2(){
+    syncDistance2();
+    if(linear3.atMax && currentSpeed2 > 0){
+        linear3.speed = 0.0;
+    }
+    if(linear4.atMax && currentSpeed2 > 0){
+        linear4.speed = 0.0;
+    }
+    if(linear3.atMin && currentSpeed2 < 0){
+        linear3.speed = 0.0;
+    }
+    if(linear4.atMin && currentSpeed2 < 0){
+        linear4.speed = 0.0;
+    }
+    if(linear3.speed != 0 || linear4.speed != 0 || currentSpeed2 != 0.0){
+        publishSpeeds2();
+    }
+}
+
+
+/** @brief Function to set potentiometer error.
+ * 
+ * This function is used to set the value of the error
  * of the linear object.  If the potentiometer is equal
  * to 1024, which is the value that occurs when the
  * potentiometer is disconnected from the Arduino. Refer
@@ -241,7 +422,7 @@ void setPotentiometerError(int potentData, LinearActuator *linear){
 }
 
 
-/** @brief Function to process potentiometer data
+/** @brief Function to process potentiometer data. 
  * 
  * This function processes the passed potentiometer data
  * and adjusts the passed linear values accordingly. First
@@ -318,7 +499,7 @@ void processPotentiometerData(int potentData, LinearActuator *linear){
 }
 
 
-/** @brief Callback function for the automationGo topic
+/** @brief Callback function for the automationGo topic. 
  * 
  * This function sets the automationGo value to the value
  * in the message.
@@ -330,6 +511,15 @@ void automationGoCallback(const std_msgs::msg::Bool::SharedPtr msg){
 }
 
 
+/** @brief Function that checks if the linear actuators are out of sync
+ * then sets the error state to the correct one
+ * 
+ * The function checks if the difference between the potentiometers is 
+ * greater than the thresh1 value, then checks if the error state is 
+ * None. If the error is None, the error is set to ActuatorsSyncError, 
+ * which indicates that the actuators are out of sync.
+ * @return void
+ * */
 void setSyncErrors(){
     if(abs(linear1.potentiometer - linear2.potentiometer) > thresh1){
         if(linear1.error == None){
@@ -349,16 +539,20 @@ void setSyncErrors(){
     }
     sync();
     if(linear1.speed != 0 || linear2.speed != 0){
-        std_msgs::msg::Float32 speed1;
-        speed1.data = linear1.speed;
-        talon14Publisher->publish(speed1);
-        std_msgs::msg::Float32 speed2;
-        speed2.data = linear2.speed;
-        talon15Publisher->publish(speed2);
+        publishSpeeds();
     }
 }
 
 
+/** @brief Function that checks if the linear actuators are out of sync
+ * then sets the error state to the correct one
+ * 
+ * The function checks if the difference between the potentiometers is 
+ * greater than the thresh1 value, then checks if the error state is 
+ * None. If the error is None, the error is set to ActuatorsSyncError, 
+ * which indicates that the actuators are out of sync.
+ * @return void
+ * */
 void setSyncErrors2(){
     if(abs(linear3.potentiometer - linear4.potentiometer) > thresh1){
         if(linear3.error == None){
@@ -378,16 +572,21 @@ void setSyncErrors2(){
     }
     sync2();
     if(linear3.speed != 0 || linear4.speed != 0){
-        std_msgs::msg::Float32 speed1;
-        speed1.data = linear3.speed;
-        talon16Publisher->publish(speed1);
-        std_msgs::msg::Float32 speed2;
-        speed2.data = linear4.speed;
-        talon17Publisher->publish(speed2);
+        publishSpeeds2();
     }
 }
 
 
+/** @brief Callback function for potentiometer 1
+ * 
+ * The function sets the error state of linear actuator 1, then
+ * processes the potentiometer data and sets the sync errors if the 
+ * node is not running in sensorless mode. If the node is in sensorless
+ * mode, the potentiometer data is ignored and nothing happens when the 
+ * data is received.
+ * @param msg - ROS2 message containing the value of the potentiomter
+ * @return void
+ * */
 void potentiometer1Callback(const std_msgs::msg::Int32::SharedPtr msg){
     if(!sensorless){
         setPotentiometerError(msg->data, &linear1);
@@ -400,6 +599,16 @@ void potentiometer1Callback(const std_msgs::msg::Int32::SharedPtr msg){
 }
 
 
+/** @brief Callback function for potentiometer 2.
+ * 
+ * The function sets the error state of linear actuator 2, then
+ * processes the potentiometer data and sets the sync errors if the 
+ * node is not running in sensorless mode. If the node is in sensorless
+ * mode, the potentiometer data is ignored and nothing happens when the 
+ * data is received.
+ * @param msg - ROS2 message containing the value of the potentiomter
+ * @return void
+ * */
 void potentiometer2Callback(const std_msgs::msg::Int32::SharedPtr msg){
     if(!sensorless){
         setPotentiometerError(msg->data, &linear2);
@@ -412,6 +621,16 @@ void potentiometer2Callback(const std_msgs::msg::Int32::SharedPtr msg){
 }
 
 
+/** @brief Callback function for potentiometer 3.
+ * 
+ * The function sets the error state of linear actuator 3, then
+ * processes the potentiometer data and sets the sync errors if the 
+ * node is not running in sensorless mode. If the node is in sensorless
+ * mode, the potentiometer data is ignored and nothing happens when the 
+ * data is received.
+ * @param msg - ROS2 message containing the value of the potentiomter
+ * @return void
+ * */
 void potentiometer3Callback(const std_msgs::msg::Int32::SharedPtr msg){
     if(!sensorless){
         setPotentiometerError(msg->data, &linear3);
@@ -424,6 +643,16 @@ void potentiometer3Callback(const std_msgs::msg::Int32::SharedPtr msg){
 }
 
 
+/** @brief Callback function for potentiometer 4.
+ * 
+ * The function sets the error state of linear actuator 4, then
+ * processes the potentiometer data and sets the sync errors if the 
+ * node is not running in sensorless mode. If the node is in sensorless
+ * mode, the potentiometer data is ignored and nothing happens when the 
+ * data is received.
+ * @param msg - ROS2 message containing the value of the potentiomter
+ * @return void
+ * */
 void potentiometer4Callback(const std_msgs::msg::Int32::SharedPtr msg){
     if(!sensorless){
         setPotentiometerError(msg->data, &linear4);
@@ -436,79 +665,37 @@ void potentiometer4Callback(const std_msgs::msg::Int32::SharedPtr msg){
 }
 
 
+/** @brief Callback function for the armSpeed topic. 
+ * 
+ * This function sets the currentSpeed variable to the value contained in the 
+ * speed->data. The speeds are set using the setSpeeds function and published
+ * using the publishSpeeds function.
+ * @param speed - ROS2 message containing speed value for the arm linear actuators
+ * @return void
+ * */
 void armSpeedCallback(const std_msgs::msg::Float32::SharedPtr speed){
     currentSpeed = speed->data;
     RCLCPP_INFO(nodeHandle->get_logger(),"currentSpeed: %f", currentSpeed);
-    if(!automationGo){
-        linear1.speed = currentSpeed;
-        linear2.speed = currentSpeed;
-    }
-    else{
-        if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != PotentiometerError){
-            linear1.speed = currentSpeed;
-            linear2.speed = currentSpeed;
-        }
-    }
-    if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != PotentiometerError){
-        sync();
-        if(linear1.atMax && currentSpeed > 0){
-            linear1.speed = 0.0;
-        }
-        if(linear2.atMax && currentSpeed > 0){
-            linear2.speed = 0.0;
-        }
-        if(linear1.atMin && currentSpeed < 0){
-            linear1.speed = 0.0;
-        }
-        if(linear2.atMin && currentSpeed < 0){
-            linear2.speed = 0.0;
-        }
-    }
-    std_msgs::msg::Float32 speed1;
-    speed1.data = linear1.speed;    
-    talon14Publisher->publish(speed1);
-    std_msgs::msg::Float32 speed2;
-    speed2.data = linear2.speed;
-    talon15Publisher->publish(speed2);
+    setSpeeds();
+    publishSpeeds();
     RCLCPP_INFO(nodeHandle->get_logger(),"Arm speeds: %f, %f", linear1.speed, linear2.speed);
 }
 
 
+/** @brief Callback function for the bucketSpeed topic. 
+ * 
+ * This function sets the currentSpeed2 variable to the value contained in the 
+ * speed->data. The speeds are set using the setSpeeds2 function and published
+ * using the publishSpeeds2 function.
+ * @param speed - ROS2 message containing speed value for the arm linear actuators
+ * @return void
+ * */
 void bucketSpeedCallback(const std_msgs::msg::Float32::SharedPtr speed){
-    currentSpeed = speed->data;
-    RCLCPP_INFO(nodeHandle->get_logger(),"currentSpeed: %f", currentSpeed);
-    if(!automationGo){
-        linear3.speed = currentSpeed;
-        linear4.speed = currentSpeed;
-    }
-    else{
-        if(linear3.error != ConnectionError && linear3.error != PotentiometerError && linear4.error != PotentiometerError){
-            linear3.speed = currentSpeed;
-            linear4.speed = currentSpeed;
-        }
-    }
-    if(linear3.error != ConnectionError && linear3.error != PotentiometerError && linear4.error != PotentiometerError){
-        sync2();
-        if(linear3.atMax && currentSpeed > 0){
-            linear3.speed = 0.0;
-        }
-        if(linear4.atMax && currentSpeed > 0){
-            linear4.speed = 0.0;
-        }
-        if(linear3.atMin && currentSpeed < 0){
-            linear3.speed = 0.0;
-        }
-        if(linear4.atMin && currentSpeed < 0){
-            linear4.speed = 0.0;
-        }
-    }
-    std_msgs::msg::Float32 speed1;
-    speed1.data = linear3.speed;    
-    talon16Publisher->publish(speed1);
-    std_msgs::msg::Float32 speed2;
-    speed2.data = linear4.speed;
-    talon17Publisher->publish(speed2);
-    RCLCPP_INFO(nodeHandle->get_logger(),"Bucket speeds: %f, %f", linear3.speed, linear2.speed);
+    currentSpeed2 = speed->data;
+    RCLCPP_INFO(nodeHandle->get_logger(),"currentSpeed: %f", currentSpeed2);
+    setSpeeds2();
+    publishSpeeds2();
+    RCLCPP_INFO(nodeHandle->get_logger(),"Bucket speeds: %f, %f", linear3.speed, linear4.speed);
 
 }
 
@@ -534,6 +721,18 @@ void getLinearOut(messages::msg::LinearOut *linearOut, LinearActuator *linear){
 }
 
 
+/** @brief Function to update the estimated position of the motors when sensorless
+ * mode is enabled.  
+ * 
+ * This function estimates the position of the motors by using the current speed, 
+ * the extension speed of each motor, and the time elapsed in milliseconds. The delta
+ * position is calculated by multiplying the speed by the extension speed in inches / sec
+ * and number of seconds, then adds this value to the previous value. The positions of
+ * all four linear actuators are calculated and the motor speeds are adjusted using the
+ * setSpeedDistance and setSpeedDistance2 functions. 
+ * @param speed - ROS2 message containing speed value for the arm linear actuators
+ * @return void
+ * */
 void updateMotorPositions(int millis){
     linear1.distance = linear1.speed * linear1.extensionSpeed * (millis / 1000.0) + linear1.distance;
     if(linear1.distance > linear1.stroke){
@@ -548,6 +747,7 @@ void updateMotorPositions(int millis){
         linear1.atMin = false;
         linear1.atMax = false;
     }
+    RCLCPP_INFO(nodeHandle->get_logger(), "Linear 1 Distance: %f", linear1.distance);
 
     linear2.distance = linear2.speed * linear2.extensionSpeed * (millis / 1000.0) + linear2.distance;
     if(linear2.distance > linear2.stroke){
@@ -562,7 +762,9 @@ void updateMotorPositions(int millis){
         linear2.atMin = false;
         linear2.atMax = false;
     }
-    
+    RCLCPP_INFO(nodeHandle->get_logger(), "Linear 1 Distance: %f", linear1.distance);
+    setSpeedsDistance();
+
     linear3.distance = linear3.speed * linear3.extensionSpeed * (millis / 1000.0) + linear3.distance;
     if(linear3.distance > linear3.stroke){
         linear3.distance = linear3.stroke;
@@ -576,7 +778,8 @@ void updateMotorPositions(int millis){
         linear3.atMin = false;
         linear3.atMax = false;
     }
-    
+    RCLCPP_INFO(nodeHandle->get_logger(), "Linear 1 Distance: %f", linear1.distance);
+
     linear4.distance = linear4.speed * linear4.extensionSpeed * (millis / 1000.0) + linear4.distance;
     if(linear4.distance > linear4.stroke){
         linear4.distance = linear4.stroke;
@@ -590,11 +793,21 @@ void updateMotorPositions(int millis){
         linear4.atMin = false;
         linear4.atMax = false;
     }
+    RCLCPP_INFO(nodeHandle->get_logger(), "Linear 1 Distance: %f", linear1.distance);
+    setSpeedsDistance2();
 }
 
 
+/** @brief Callback function for the sensorless topic. 
+ * 
+ * This function sets the sensorless value to the opposite value when
+ * this message is received by the node.
+ * @param msg - ROS2 message containing sensorless value
+ * @return void
+ * */
 void sensorlessCallback(const std_msgs::msg::Empty::SharedPtr empty){
     sensorless = !sensorless;
+    RCLCPP_INFO(nodeHandle->get_logger(), "Excavation sensorless mode: %d", sensorless);
 }
 
 
@@ -635,7 +848,7 @@ int main(int argc, char **argv){
     while(rclcpp::ok()){
         finish = std::chrono::high_resolution_clock::now();
         if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() > 100){
-            if(!sensorless)
+            if(sensorless)
                 updateMotorPositions(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() );
             count += 1;
             start = std::chrono::high_resolution_clock::now();
