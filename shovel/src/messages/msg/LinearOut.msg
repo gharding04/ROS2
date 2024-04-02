@@ -1,3 +1,4 @@
+int32 motor_number
 float32 speed
 int32 potentiometer
 int32 time_without_change
@@ -7,3 +8,4 @@ string error
 bool run
 bool at_min
 bool at_max
+float32 distance

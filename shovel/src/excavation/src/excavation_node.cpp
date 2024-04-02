@@ -67,27 +67,27 @@ std::map<Error, const char*> errorMap = {{ActuatorsSyncError, "ActuatorsSyncErro
 
 
 struct LinearActuator{
-    float speed = 0.0;
-    int potentiometer = 0;
-    int timeWithoutChange = 0;
-    int max = 0;
-    int min = 1024;
-    int count = 0;
-    Error error = ConnectionError;
-    bool run = true;
-    bool atMin = false;
-    bool atMax = false;
-    float stroke = 11.8;
-    float distance = 0.0;
-    float extensionSpeed = 0.0;
-    float timeToExtend = 0.0;
+    int motorNumber = 0;
+    float speed = 0.0;              // Speed variable of linear actuator
+    int potentiometer = 0;          // Potentiometer reading
+    int timeWithoutChange = 0;      // Number of potentiometer values received without change when speed > 0
+    int max = 0;                    // Max potentiometer value
+    int min = 1024;                 // Min potentiometer value
+    Error error = ConnectionError;  // Error state of the actuator
+    bool run = true;                 
+    bool atMin = false;             // Bool value of if actuator is at min extension
+    bool atMax = false;             // Bool value of if actuator is at max extension
+    float stroke = 11.8;            // Length of stroke of the actuator
+    float distance = 0.0;           // Distance extended
+    float extensionSpeed = 0.0;     // Speed of extension in in/sec
+    float timeToExtend = 0.0;       // Time to fully extend actuator
 };
 
 
-LinearActuator linear1{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 5.9, 0.0, 0.69, 8.5};
-LinearActuator linear2{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 5.9, 0.0, 0.69, 8.5};
-LinearActuator linear3{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 9.8, 0.0, 0.85, 11.5};
-LinearActuator linear4{0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 9.8, 0.0, 0.89, 11.0};
+LinearActuator linear1{14, 0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 5.9, 0.0, 0.69, 8.5};
+LinearActuator linear2{15, 0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 5.9, 0.0, 0.69, 8.5};
+LinearActuator linear3{16, 0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 9.8, 0.0, 0.85, 11.5};
+LinearActuator linear4{17, 0.0, 0, 0, 0, 1024, 0, ConnectionError, true, false, false, 9.8, 0.0, 0.89, 11.0};
 
 float currentSpeed = 0.0;
 float currentSpeed2 = 0.0;
@@ -228,6 +228,26 @@ void syncDistance2(){
 }
 
 
+void setSpeedAtEnd(){
+    if((linear1.atMax && currentSpeed > 0) || (linear1.atMin && currentSpeed < 0)){
+        linear1.speed = 0.0;
+    }
+    if((linear2.atMax && currentSpeed > 0) || (linear2.atMin && currentSpeed < 0)){
+        linear2.speed = 0.0;
+    }
+}
+
+
+void setSpeedAtEnd2(){
+    if((linear3.atMax && currentSpeed2 > 0) || (linear3.atMin && currentSpeed2 < 0)){
+        linear3.speed = 0.0;
+    }
+    if((linear4.atMax && currentSpeed2 > 0) || (linear4.atMin && currentSpeed2 < 0)){
+        linear4.speed = 0.0;
+    }
+}
+
+
 /** @brief Function that sets the speeds of the first pair of linear
  * actuators, then syncs the motors. 
  * 
@@ -248,18 +268,7 @@ void setSpeeds(){
     }
     if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != ConnectionError && linear2.error != PotentiometerError){
         sync();
-        if(linear1.atMax && currentSpeed > 0){
-            linear1.speed = 0.0;
-        }
-        if(linear2.atMax && currentSpeed > 0){
-            linear2.speed = 0.0;
-        }
-        if(linear1.atMin && currentSpeed < 0){
-            linear1.speed = 0.0;
-        }
-        if(linear2.atMin && currentSpeed < 0){
-            linear2.speed = 0.0;
-        }
+        setSpeedAtEnd();
     }
 }
 
@@ -284,18 +293,7 @@ void setSpeeds2(){
     }
     if(linear3.error != ConnectionError && linear3.error != PotentiometerError && linear4.error != ConnectionError && linear4.error != PotentiometerError){
         sync2();
-        if(linear3.atMax && currentSpeed2 > 0){
-            linear3.speed = 0.0;
-        }
-        if(linear4.atMax && currentSpeed2 > 0){
-            linear4.speed = 0.0;
-        }
-        if(linear3.atMin && currentSpeed2 < 0){
-            linear3.speed = 0.0;
-        }
-        if(linear4.atMin && currentSpeed2 < 0){
-            linear4.speed = 0.0;
-        }
+        setSpeedAtEnd2();
     }
 }
 
@@ -344,18 +342,7 @@ void publishSpeeds2(){
  * */
 void setSpeedsDistance(){
     syncDistance();
-    if(linear1.atMax && currentSpeed > 0){
-        linear1.speed = 0.0;
-    }
-    if(linear2.atMax && currentSpeed > 0){
-        linear2.speed = 0.0;
-    }
-    if(linear1.atMin && currentSpeed < 0){
-        linear1.speed = 0.0;
-    }
-    if(linear2.atMin && currentSpeed < 0){
-        linear2.speed = 0.0;
-    }
+    setSpeedAtEnd();
     if(linear1.speed != 0.0 || linear2.speed != 0.0 || currentSpeed != 0.0){
         publishSpeeds();
     }
@@ -372,18 +359,7 @@ void setSpeedsDistance(){
  * */
 void setSpeedsDistance2(){
     syncDistance2();
-    if(linear3.atMax && currentSpeed2 > 0){
-        linear3.speed = 0.0;
-    }
-    if(linear4.atMax && currentSpeed2 > 0){
-        linear4.speed = 0.0;
-    }
-    if(linear3.atMin && currentSpeed2 < 0){
-        linear3.speed = 0.0;
-    }
-    if(linear4.atMin && currentSpeed2 < 0){
-        linear4.speed = 0.0;
-    }
+    setSpeedAtEnd2();
     if(linear3.speed != 0 || linear4.speed != 0 || currentSpeed2 != 0.0){
         publishSpeeds2();
     }
@@ -432,8 +408,8 @@ void setPotentiometerError(int potentData, LinearActuator *linear){
  * that is stored in the linear->potentiometer variable. If
  * the value is within this threshold, it's assumed that 
  * the actuator isn't moving. If the speed isn't equal to
- * zero, ie the actuator should be moving, the count
- * variable gets increased. If the count is greater than 5,
+ * zero, ie the actuator should be moving, the timeWithoutChange
+ * variable gets increased. If the timeWithoutChange is greater than 5,
  * the function checks if the actuator is at the min or max
  * positions and sets the corresponding values to true if
  * it is.  If the data is outside of the threshold, the 
@@ -454,15 +430,15 @@ void processPotentiometerData(int potentData, LinearActuator *linear){
 
     if(linear->potentiometer >= potentData - 10 && linear->potentiometer <= potentData + 10){
         if(linear->speed != 0.0){
-            linear->count += 1;
-            if(linear->count >= 5){
+            linear->timeWithoutChange += 1;
+            if(linear->timeWithoutChange >= 5){
                 if(linear->max > 800 && linear->speed > 0.0 && potentData >= linear->max - 20){
                     linear->atMax = true;
-                    linear->count = 0;
+                    linear->timeWithoutChange = 0;
                 }
                 else if(linear->min < 200 && linear->speed < 0.0 && potentData <= linear->min + 20){
                     linear->atMin = true;
-                    linear->count = 0;
+                    linear->timeWithoutChange = 0;
                 }
                 else{
                     if(linear->error == None || linear->error == ActuatorsSyncError){
@@ -474,7 +450,7 @@ void processPotentiometerData(int potentData, LinearActuator *linear){
         }
     }
     else{
-        linear->count = 0;
+        linear->timeWithoutChange = 0;
         if(linear->error == ActuatorNotMovingError){
             linear->error = None;
         }
@@ -709,6 +685,7 @@ void bucketSpeedCallback(const std_msgs::msg::Float32::SharedPtr speed){
  * @return void
  * */
 void getLinearOut(messages::msg::LinearOut *linearOut, LinearActuator *linear){
+    linearOut->motor_number = linear->motorNumber;
     linearOut->speed = linear->speed;
     linearOut->potentiometer = linear->potentiometer;
     linearOut->time_without_change = linear->timeWithoutChange;
@@ -718,6 +695,7 @@ void getLinearOut(messages::msg::LinearOut *linearOut, LinearActuator *linear){
     linearOut->run = linear->run;
     linearOut->at_min = linear->atMin;
     linearOut->at_max = linear->atMax;
+    linearOut->distance = linear->distance;
 }
 
 
