@@ -9,7 +9,7 @@ def generate_launch_description():
             name='communication',
             executable='communication_node',
             parameters=[
-                {"robot_name": "Skinny"}
+                {"robot_name": "Shovel"}
             ]
         )
     ]

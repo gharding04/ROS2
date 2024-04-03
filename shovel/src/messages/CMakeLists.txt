@@ -42,7 +42,6 @@ rosidl_generate_interfaces(messages
   "msg/Camera.msg"
   "msg/JoystickCommand.msg"
   "msg/Power.msg"
-  "msg/VictorOut.msg"
   "msg/ButtonState.msg"
   "msg/HatState.msg"
   "msg/KeyState.msg"
@@ -50,6 +49,7 @@ rosidl_generate_interfaces(messages
   "msg/ZedPosition.msg"
   "msg/LinearOut.msg"
   "msg/AutonomyOut.msg"
+  "msg/FalconOut.msg"
 
   DEPENDENCIES builtin_interfaces
 )

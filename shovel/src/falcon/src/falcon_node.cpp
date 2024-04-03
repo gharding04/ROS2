@@ -35,7 +35,7 @@
 #include <ctre/phoenix/cci/Unmanaged_CCI.h>
 #include <ctre/phoenix/cci/Diagnostics_CCI.h>
 
-#include "messages/msg/talon_out.hpp"
+#include "messages/msg/falcon_out.hpp"
 
 using namespace ctre::phoenix;
 using namespace ctre::phoenix::platform;
@@ -244,8 +244,8 @@ int main(int argc,char** argv){
 
 	TalonFXConfiguration allConfigs;
 
-	messages::msg::TalonOut talonOut;
-	auto talonOutPublisher=nodeHandle->create_publisher<messages::msg::TalonOut>(infoTopic.c_str(),1);
+	messages::msg::FalconOut falconOut;
+	auto falconOutPublisher=nodeHandle->create_publisher<messages::msg::FalconOut>(infoTopic.c_str(),1);
 	auto speedSubscriber=nodeHandle->create_subscription<std_msgs::msg::Float32>(speedTopic.c_str(),1,speedCallback);
 
 	auto stopSubscriber=nodeHandle->create_subscription<std_msgs::msg::Empty>("STOP",1,stopCallback);
@@ -253,55 +253,45 @@ int main(int argc,char** argv){
 	RCLCPP_INFO(nodeHandle->get_logger(),"set subscribers");
 
 	rclcpp::Rate rate(20);
-	int count=0;
-        auto start = std::chrono::high_resolution_clock::now();
-        while(rclcpp::ok()){
-		if(GO)ctre::phoenix::unmanaged::FeedEnable(100);
-		auto finish = std::chrono::high_resolution_clock::now();
+	auto start = std::chrono::high_resolution_clock::now();
+	while(rclcpp::ok()){
+	if(GO)ctre::phoenix::unmanaged::FeedEnable(100);
+	auto finish = std::chrono::high_resolution_clock::now();
 
-		if(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count() > 250000000){
-			int deviceID=talonFX->GetDeviceID();
-			double busVoltage=talonFX->GetBusVoltage();
-			double outputCurrent=talonFX->GetOutputCurrent();
-			bool isInverted=talonFX->GetInverted();
-			double motorOutputVoltage=talonFX->GetMotorOutputVoltage();
-			double motorOutputPercent=talonFX->GetMotorOutputPercent();
-			double temperature=talonFX->GetTemperature();
-			int sensorPosition0=talonFX->GetSelectedSensorPosition(0);
-			int sensorVelocity0=talonFX->GetSelectedSensorVelocity(0);
-			int closedLoopError0=talonFX->GetClosedLoopError(0);
-			double integralAccumulator0=talonFX->GetIntegralAccumulator(0);
-			double errorDerivative0=talonFX->GetErrorDerivative(0);
-		
-			talonOut.device_id=deviceID;	
-			talonOut.bus_voltage=busVoltage;
-			talonOut.output_current=outputCurrent;
-			talonOut.output_voltage=motorOutputVoltage;
-			talonOut.output_percent=motorOutputPercent;
-			talonOut.temperature=temperature;
-			talonOut.sensor_position=sensorPosition0;
-			talonOut.sensor_velocity=sensorVelocity0;
-			talonOut.closed_loop_error=closedLoopError0;
-			talonOut.integral_accumulator=integralAccumulator0;
-			talonOut.error_derivative=errorDerivative0;
+	if(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count() > 250000000){
+		int deviceID=talonFX->GetDeviceID();
+		double busVoltage=talonFX->GetBusVoltage();
+		double outputCurrent=talonFX->GetOutputCurrent();
+		bool isInverted=talonFX->GetInverted();
+		double motorOutputVoltage=talonFX->GetMotorOutputVoltage();
+		double motorOutputPercent=talonFX->GetMotorOutputPercent();
+		double temperature=talonFX->GetTemperature();
+		int sensorPosition0=talonFX->GetSelectedSensorPosition(0);
+		int sensorVelocity0=talonFX->GetSelectedSensorVelocity(0);
+		int closedLoopError0=talonFX->GetClosedLoopError(0);
+		double integralAccumulator0=talonFX->GetIntegralAccumulator(0);
+		double errorDerivative0=talonFX->GetErrorDerivative(0);
+	
+		falconOut.device_id=deviceID;	
+		falconOut.bus_voltage=busVoltage;
+		falconOut.output_current=outputCurrent;
+		falconOut.output_voltage=motorOutputVoltage;
+		falconOut.output_percent=motorOutputPercent;
+		falconOut.temperature=temperature;
+		falconOut.sensor_position=sensorPosition0;
+		falconOut.sensor_velocity=sensorVelocity0;
+		falconOut.closed_loop_error=closedLoopError0;
+		falconOut.integral_accumulator=integralAccumulator0;
+		falconOut.error_derivative=errorDerivative0;
 
-			talonOutPublisher->publish(talonOut);
-			start = std::chrono::high_resolution_clock::now();
+		falconOutPublisher->publish(falconOut);
+		start = std::chrono::high_resolution_clock::now();
 
-		}
+	}
 
-		if(count++>200 && GO){
-			std::cout <<"V=" << talonFX->GetSelectedSensorVelocity(kPIDLoopIdx) <<"  "
-				<< "  E=" << talonFX->GetClosedLoopError(kPIDLoopIdx) 
-				<< "  IA=" << talonFX->GetIntegralAccumulator(kPIDLoopIdx)
-				<< "  ED=" << talonFX->GetErrorDerivative(kPIDLoopIdx) 
-				<< std::endl;
-			count=0;
-		}
-
-		rate.sleep();
-		rclcpp::spin_some(nodeHandle);
-        }
+	rate.sleep();
+	rclcpp::spin_some(nodeHandle);
+	}
 }
 
 
