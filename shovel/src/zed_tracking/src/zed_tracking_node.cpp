@@ -96,8 +96,8 @@ int main(int argc, char **argv) {
         return 1; // Quit if an error occurred
     }
 
-    auto cameraInfo = zed.getCameraInformation();
-    sl::Resolution image_size = cameraInfo.camera_resolution;
+    auto cameraInfo = zed.getCameraInformation().camera_configuration;
+    sl::Resolution image_size = cameraInfo.resolution;
     sl::Mat image_zed(image_size, sl::MAT_TYPE::U8_C4);
     cv::Mat image_ocv = cv::Mat(image_zed.getHeight(), image_zed.getWidth(), CV_8UC4, image_zed.getPtr<sl::uchar1>(sl::MEM::CPU));
     cv::Mat image_ocv_rgb;

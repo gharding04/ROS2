@@ -21,7 +21,7 @@ include_directories(
 
 add_executable(${PROJECT_NAME}_node
 	src/BinaryMessage.cpp
-        src/communication_node.cpp
+        src/communication2_node.cpp
 )
 
 install(TARGETS ${PROJECT_NAME}_node
