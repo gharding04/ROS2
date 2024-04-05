@@ -69,7 +69,7 @@ std_msgs::msg::Empty empty;
 bool silentRunning=true;
 int new_socket;
 rclcpp::Node::SharedPtr nodeHandle;
-
+int total = 0;
 /** @brief Inserts topic into a payload to be sent.
  * 
  * Takes a float topic and an array and stores a byte represenation of the topic.
@@ -130,7 +130,7 @@ int parseInt(uint8_t* array){
 
  
 void send(BinaryMessage message){
-    //RCLCPP_INFO(nodeHandle->get_logger(), "send message");
+    RCLCPP_INFO(nodeHandle->get_logger(), "send message");
     std::shared_ptr<std::list<uint8_t>> byteList = message.getBytes();
 
     std::vector<uint8_t> bytes(byteList->size());
@@ -138,11 +138,36 @@ void send(BinaryMessage message){
     for(auto byteIterator = byteList->begin(); byteIterator != byteList->end(); byteIterator++, index++){
         bytes.at(index) = *byteIterator;
     }
-
-    //RCLCPP_INFO(nodeHandle->get_logger(), "sending %s   bytes = %d", message.getLabel().c_str(), byteList->size());
+    total += byteList->size();
+    RCLCPP_INFO(nodeHandle->get_logger(), "sending %s   bytes = %ld", message.getLabel().c_str(), byteList->size());
+    RCLCPP_INFO(nodeHandle->get_logger(), "Total Bytes Sent: %d", total);
     if(send(new_socket, bytes.data(), byteList->size(), 0)== -1){
-        std::cout << "failed to send message " << errno << std::endl;	    
+        RCLCPP_INFO(nodeHandle->get_logger(), "Failed to send message.");   
     }
+}
+
+
+void send(std::string messageLabel, const messages::msg::FalconOut::SharedPtr talonOut){
+    if(silentRunning)return;
+    //RCLCPP_INFO(nodeHandle->get_logger(), "send talon");
+    BinaryMessage message(messageLabel);
+
+    message.addElementUInt8("Device ID",(uint8_t)talonOut->device_id);
+    float volt = talonOut->bus_voltage *= 10.0;
+    uint8_t voltage = volt;
+    message.addElementUInt8("Bus Voltage",voltage);
+    uint8_t current = talonOut->output_current *= 10;
+    message.addElementUInt8("Output Current",current);
+    message.addElementFloat32("Output Voltage",talonOut->output_voltage);
+    message.addElementFloat32("Output Percent",talonOut->output_percent);
+    message.addElementUInt8("Temperature",(uint8_t)talonOut->temperature);
+    message.addElementUInt16("Sensor Position",(uint8_t)talonOut->sensor_position);
+    message.addElementInt8("Sensor Velocity",(uint8_t)talonOut->sensor_velocity);
+    message.addElementInt8("Closed Loop Error",(uint8_t)talonOut->closed_loop_error);
+    message.addElementInt8("Integral Accumulator",(uint8_t)talonOut->integral_accumulator);
+    message.addElementInt8("Error Derivative",(uint8_t)talonOut->error_derivative);
+
+    send(message);
 }
 
 
@@ -151,17 +176,21 @@ void send(std::string messageLabel, const messages::msg::TalonOut::SharedPtr tal
     //RCLCPP_INFO(nodeHandle->get_logger(), "send talon");
     BinaryMessage message(messageLabel);
 
-    message.addElementFloat32("Device ID",talonOut->device_id);
-    message.addElementFloat32("Bus Voltage",talonOut->bus_voltage);
-    message.addElementFloat32("Output Current",talonOut->output_current);
+    message.addElementInt8("Device ID",talonOut->device_id);
+    float volt = talonOut->bus_voltage *= 10.0;
+    uint8_t voltage = volt;
+    message.addElementUInt8("Bus Voltage",voltage);
+    uint8_t current = talonOut->output_current *= 10;
+    message.addElementFloat32("Output Current",current);
     message.addElementFloat32("Output Voltage",talonOut->output_voltage);
     message.addElementFloat32("Output Percent",talonOut->output_percent);
-    message.addElementFloat32("Temperature",talonOut->temperature);
-    message.addElementFloat32("Sensor Position",talonOut->sensor_position);
-    message.addElementFloat32("Sensor Velocity",talonOut->sensor_velocity);
-    message.addElementFloat32("Closed Loop Error",talonOut->closed_loop_error);
-    message.addElementFloat32("Integral Accumulator",talonOut->integral_accumulator);
-    message.addElementFloat32("Error Derivative",talonOut->error_derivative);
+    message.addElementUInt8("Temperature",(uint8_t)talonOut->temperature);
+    message.addElementUInt16("Sensor Position",talonOut->sensor_position);
+    message.addElementInt8("Sensor Velocity",(int8_t)talonOut->sensor_velocity);
+    message.addElementInt8("Closed Loop Error",(int8_t)talonOut->closed_loop_error);
+    message.addElementInt8("Integral Accumulator",(int8_t)talonOut->integral_accumulator);
+    message.addElementInt8("Error Derivative",(int8_t)talonOut->error_derivative);
+    message.addElementUInt16("Potentiometer",(uint16_t)talonOut->potentiometer);
 
     send(message);
 }
@@ -199,12 +228,12 @@ void send(std::string messageLabel, const messages::msg::LinearOut::SharedPtr li
 
     BinaryMessage message(messageLabel);
 
-    message.addElementInt32("Motor Number", linear->motor_number);
+    message.addElementUInt8("Motor Number", (uint8_t)linear->motor_number);
     message.addElementFloat32("Speed", linear->speed);
-    message.addElementInt32("Potentiometer", linear->potentiometer);
-    message.addElementInt32("Time Without Change", linear->time_without_change);
-    message.addElementInt32("Max", linear->max);
-    message.addElementInt32("Min", linear->min);
+    message.addElementUInt16("Potentiometer", (uint16_t)linear->potentiometer);
+    message.addElementUInt8("Time Without Change", (uint8_t)linear->time_without_change);
+    message.addElementUInt16("Max", (uint16_t)linear->max);
+    message.addElementUInt16("Min", (uint16_t)linear->min);
     message.addElementString("Error", linear->error);
     message.addElementBoolean("Run", linear->run);
     message.addElementBoolean("At Min", linear->at_min);
@@ -267,8 +296,8 @@ void zedPositionCallback(const messages::msg::ZedPosition::SharedPtr zedPosition
  * @return void
  * */
 void powerCallback(const messages::msg::Power::SharedPtr power){
-    //RCLCPP_INFO(nodeHandle->get_logger(), "power callback");
-    send("Power",power);
+    RCLCPP_INFO(nodeHandle->get_logger(), "power callback");
+    //send("Power",power);
 }
 
 /** @brief Callback function for the Talon topic
@@ -280,7 +309,7 @@ void powerCallback(const messages::msg::Power::SharedPtr power){
  * @return void
  * */
 void talon1Callback(const messages::msg::TalonOut::SharedPtr talonOut){
-    //RCLCPP_INFO(nodeHandle->get_logger(), "talon1 callback");
+    RCLCPP_INFO(nodeHandle->get_logger(), "talon1 callback");
     send("Talon 1",talonOut);
 }
 
@@ -293,7 +322,7 @@ void talon1Callback(const messages::msg::TalonOut::SharedPtr talonOut){
  * @return void
  * */
 void talon2Callback(const messages::msg::TalonOut::SharedPtr talonOut){
-    //RCLCPP_INFO(nodeHandle->get_logger(), "talon2 callback");
+    RCLCPP_INFO(nodeHandle->get_logger(), "talon2 callback");
     send("Talon 2",talonOut);
 }
 
@@ -306,7 +335,7 @@ void talon2Callback(const messages::msg::TalonOut::SharedPtr talonOut){
  * @return void
  * */
 void talon3Callback(const messages::msg::TalonOut::SharedPtr talonOut){
-    //RCLCPP_INFO(nodeHandle->get_logger(), "talon3 callback");
+    RCLCPP_INFO(nodeHandle->get_logger(), "talon3 callback");
     send("Talon 3",talonOut);
 }
 
@@ -319,7 +348,7 @@ void talon3Callback(const messages::msg::TalonOut::SharedPtr talonOut){
  * @return void
  * */
 void talon4Callback(const messages::msg::TalonOut::SharedPtr talonOut){
-    //RCLCPP_INFO(nodeHandle->get_logger(), "talon4 callback");
+    RCLCPP_INFO(nodeHandle->get_logger(), "talon4 callback");
     send("Talon 4",talonOut);
 }
 
@@ -333,7 +362,7 @@ void talon4Callback(const messages::msg::TalonOut::SharedPtr talonOut){
  * @return void
  * */
 void falcon1Callback(const messages::msg::FalconOut::SharedPtr talonOut){
-    //RCLCPP_INFO(nodeHandle->get_logger(), "talon4 callback");
+    RCLCPP_INFO(nodeHandle->get_logger(), "falcon1 callback");
     send("Falcon 1",talonOut);
 }
 
@@ -346,7 +375,7 @@ void falcon1Callback(const messages::msg::FalconOut::SharedPtr talonOut){
  * @return void
  * */
 void falcon2Callback(const messages::msg::FalconOut::SharedPtr talonOut){
-    //RCLCPP_INFO(nodeHandle->get_logger(), "talon4 callback");
+    RCLCPP_INFO(nodeHandle->get_logger(), "falcon2 callback");
     send("Falcon 2",talonOut);
 }
 
@@ -359,7 +388,7 @@ void falcon2Callback(const messages::msg::FalconOut::SharedPtr talonOut){
  * @return void
  * */
 void falcon3Callback(const messages::msg::FalconOut::SharedPtr talonOut){
-    //RCLCPP_INFO(nodeHandle->get_logger(), "talon4 callback");
+    RCLCPP_INFO(nodeHandle->get_logger(), "falcon3 callback");
     send("Falcon 3",talonOut);
 }
 
@@ -372,7 +401,7 @@ void falcon3Callback(const messages::msg::FalconOut::SharedPtr talonOut){
  * @return void
  * */
 void falcon4Callback(const messages::msg::FalconOut::SharedPtr talonOut){
-    //RCLCPP_INFO(nodeHandle->get_logger(), "talon4 callback");
+    RCLCPP_INFO(nodeHandle->get_logger(), "falcon4 callback");
     send("Falcon 4",talonOut);
 }
 
@@ -394,6 +423,7 @@ void zedImageCallback(const sensor_msgs::msg::Image::SharedPtr inputImage){
  * @param linearOut 
  */
 void linearOut1Callback(const messages::msg::LinearOut::SharedPtr linearOut){
+    RCLCPP_INFO(nodeHandle->get_logger(), "linear1 callback");
     send("Linear 1", linearOut);
 }
 
@@ -405,6 +435,7 @@ void linearOut1Callback(const messages::msg::LinearOut::SharedPtr linearOut){
  * @param linearOut 
  */
 void linearOut2Callback(const messages::msg::LinearOut::SharedPtr linearOut){
+    RCLCPP_INFO(nodeHandle->get_logger(), "linear2 callback");
     send("Linear 2", linearOut);
 }
 
@@ -416,6 +447,7 @@ void linearOut2Callback(const messages::msg::LinearOut::SharedPtr linearOut){
  * @param linearOut 
  */
 void linearOut3Callback(const messages::msg::LinearOut::SharedPtr linearOut){
+    RCLCPP_INFO(nodeHandle->get_logger(), "linear3 callback");
     send("Linear 3", linearOut);
 }
 
@@ -427,11 +459,13 @@ void linearOut3Callback(const messages::msg::LinearOut::SharedPtr linearOut){
  * @param linearOut 
  */
 void linearOut4Callback(const messages::msg::LinearOut::SharedPtr linearOut){
+    RCLCPP_INFO(nodeHandle->get_logger(), "linear4 callback");
     send("Linear 4", linearOut);
 }
 
 
 void autonomyOutCallback(const messages::msg::AutonomyOut::SharedPtr autonomyOut){
+    RCLCPP_INFO(nodeHandle->get_logger(), "autonomy callback");
     send("Autonomy", autonomyOut);
 }
 
