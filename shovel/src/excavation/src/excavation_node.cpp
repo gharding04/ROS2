@@ -370,59 +370,26 @@ void automationGoCallback(const std_msgs::msg::Bool::SharedPtr msg){
  * which indicates that the actuators are out of sync.
  * @return void
  * */
-void setSyncErrors(){
-    if(abs(linear1.potentiometer - linear2.potentiometer) > thresh1){
-        if(linear1.error == None){
-            linear1.error = ActuatorsSyncError;
+void setSyncErrors(LinearActuator *linear1, LinearActuator *linear2){
+    if(abs(linear1->potentiometer - linear2->potentiometer) > thresh1){
+        if(linear1->error == None){
+            linear1->error = ActuatorsSyncError;
         }
-        if(linear2.error == None){
-            linear2.error = ActuatorsSyncError;
+        if(linear2->error == None){
+            linear2->error = ActuatorsSyncError;
         }
     }
     else{
-        if(linear1.error == ActuatorsSyncError){
-            linear1.error = None;
+        if(linear1->error == ActuatorsSyncError){
+            linear1->error = None;
         }
-        if(linear2.error == ActuatorsSyncError){
-            linear2.error = None;
+        if(linear2->error == ActuatorsSyncError){
+            linear2->error = None;
         }
     }
     sync();
-    if(linear1.speed != 0 || linear2.speed != 0){
+    if(linear1->speed != 0 || linear2->speed != 0){
         publishSpeeds();
-    }
-}
-
-
-/** @brief Function that checks if the linear actuators are out of sync
- * then sets the error state to the correct one
- * 
- * The function checks if the difference between the potentiometers is 
- * greater than the thresh1 value, then checks if the error state is 
- * None. If the error is None, the error is set to ActuatorsSyncError, 
- * which indicates that the actuators are out of sync.
- * @return void
- * */
-void setSyncErrors2(){
-    if(abs(linear3.potentiometer - linear4.potentiometer) > thresh1){
-        if(linear3.error == None){
-            linear3.error = ActuatorsSyncError;
-        }
-        if(linear4.error == None){
-            linear4.error = ActuatorsSyncError;
-        }
-    }
-    else{
-        if(linear3.error == ActuatorsSyncError){
-            linear3.error = None;
-        }
-        if(linear4.error == ActuatorsSyncError){
-            linear4.error = None;
-        }
-    }
-    sync2();
-    if(linear3.speed != 0 || linear4.speed != 0){
-        publishSpeeds2();
     }
 }
 
@@ -443,7 +410,7 @@ void potentiometer1Callback(const std_msgs::msg::Int32::SharedPtr msg){
 
         if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != ConnectionError && linear2.error != PotentiometerError){
             processPotentiometerData(msg->data, &linear1);
-            setSyncErrors();
+            setSyncErrors(&linear1, &linear2);
         }
     }
 }
@@ -465,7 +432,7 @@ void potentiometer2Callback(const std_msgs::msg::Int32::SharedPtr msg){
 
         if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != ConnectionError && linear2.error != PotentiometerError){
             processPotentiometerData(msg->data, &linear2);
-            setSyncErrors();
+            setSyncErrors(&linear1, &linear2);
         }
     }
 }
@@ -487,7 +454,7 @@ void potentiometer3Callback(const std_msgs::msg::Int32::SharedPtr msg){
 
         if(linear3.error != ConnectionError && linear3.error != PotentiometerError){
             processPotentiometerData(msg->data, &linear3);
-            setSyncErrors2();
+            setSyncErrors(&linear3, &linear4);
         }
     }
 }
@@ -509,7 +476,7 @@ void potentiometer4Callback(const std_msgs::msg::Int32::SharedPtr msg){
 
         if(linear4.error != ConnectionError && linear4.error != PotentiometerError){
             processPotentiometerData(msg->data, &linear4);
-            setSyncErrors2();
+            setSyncErrors(&linear3, &linear4);
         }
     }
 }
