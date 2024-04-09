@@ -20,7 +20,6 @@ void Automation1::automate(){
     // Turn slowly until it's seen
 
     if(robotState==ROBOT_IDLE){
-        //setCameraSpeed(1.0);
         setDestPosition(destX, destY);
         robotState = LOCATE;
     }

@@ -34,7 +34,6 @@ messages::msg::LinearOut linearOut4;
  * \li \b potentiometer_data_3
  * \li \b potentiometer_data_4
  * \li \b automationGo
- * \li \b sensorless
  * 
  * 
  * This node publishes the following topics:
@@ -81,25 +80,25 @@ struct LinearActuator{
     float distance = 0.0;           // Distance extended
     float extensionSpeed = 0.0;     // Speed of extension in in/sec
     float timeToExtend = 0.0;       // Time to fully extend actuator
+    bool sensorless = false;
 };
 
 
-LinearActuator linear1{14, 0.0, 0, 0, 0, 1024, ConnectionError, true, false, false, 5.9, 0.0, 0.69, 8.5};
-LinearActuator linear2{15, 0.0, 0, 0, 0, 1024, ConnectionError, true, false, false, 5.9, 0.0, 0.69, 8.5};
-LinearActuator linear3{16, 0.0, 0, 0, 0, 1024, ConnectionError, true, false, false, 9.8, 0.0, 0.85, 11.5};
-LinearActuator linear4{17, 0.0, 0, 0, 0, 1024, ConnectionError, true, false, false, 9.8, 0.0, 0.89, 11.0};
+LinearActuator linear1{14, 0.0, 0, 0, 0, 1024, ConnectionError, true, false, false, 5.9, 0.0, 0.69, 8.5, false};
+LinearActuator linear2{15, 0.0, 0, 0, 0, 1024, ConnectionError, true, false, false, 5.9, 0.0, 0.69, 8.5, false};
+LinearActuator linear3{16, 0.0, 0, 0, 0, 1024, ConnectionError, true, false, false, 9.8, 0.0, 0.85, 11.5, false};
+LinearActuator linear4{17, 0.0, 0, 0, 0, 1024, ConnectionError, true, false, false, 9.8, 0.0, 0.89, 11.0, false};
 
 float currentSpeed = 0.0;
 float currentSpeed2 = 0.0;
-int thresh1 = 15;
-int thresh2 = 30;
-int thresh3 = 45;
-float distThresh1 = 0.1;
-float distThresh2 = 0.2;
-float distThresh3 = 0.3;
+int thresh1 = 5;
+int thresh2 = 10;
+int thresh3 = 15;
+float distThresh1 = 0.05;
+float distThresh2 = 0.10;
+float distThresh3 = 0.15;
 
 bool automationGo = false;
-bool sensorless = false;
 
 
 /** @brief Function to sync the linear actuators. 
@@ -211,7 +210,7 @@ void syncDistance(){
  * */
 void syncDistance2(){
     float diff = abs(linear3.distance - linear4.distance);
-    bool val = (currentSpeed > 0) ? (linear3.distance > linear4.distance) : (linear3.distance < linear4.distance);
+    bool val = (currentSpeed2 > 0) ? (linear3.distance > linear4.distance) : (linear3.distance < linear4.distance);
     if (diff > distThresh3) {
         (val) ? linear3.speed = 0 : linear4.speed = 0;
     }
@@ -432,7 +431,11 @@ void processPotentiometerData(int potentData, LinearActuator *linear){
         if(linear->speed != 0.0){
             linear->timeWithoutChange += 1;
             if(linear->timeWithoutChange >= 5){
-                if(linear->max > 800 && linear->speed > 0.0 && potentData >= linear->max - 20){
+                if(linear->potentiometer >= 100 && linear->potentiometer <= 110){
+                    linear->sensorless = true;
+                    linear->error = PotentiometerError;
+                }
+                else if(linear->max > 800 && linear->speed > 0.0 && potentData >= linear->max - 20){
                     linear->atMax = true;
                     linear->timeWithoutChange = 0;
                 }
@@ -564,7 +567,7 @@ void setSyncErrors2(){
  * @return void
  * */
 void potentiometer1Callback(const std_msgs::msg::Int32::SharedPtr msg){
-    if(!sensorless){
+    if(!linear1.sensorless){
         setPotentiometerError(msg->data, &linear1);
 
         if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != ConnectionError && linear2.error != PotentiometerError){
@@ -586,7 +589,7 @@ void potentiometer1Callback(const std_msgs::msg::Int32::SharedPtr msg){
  * @return void
  * */
 void potentiometer2Callback(const std_msgs::msg::Int32::SharedPtr msg){
-    if(!sensorless){
+    if(!linear2.sensorless){
         setPotentiometerError(msg->data, &linear2);
 
         if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != ConnectionError && linear2.error != PotentiometerError){
@@ -608,7 +611,7 @@ void potentiometer2Callback(const std_msgs::msg::Int32::SharedPtr msg){
  * @return void
  * */
 void potentiometer3Callback(const std_msgs::msg::Int32::SharedPtr msg){
-    if(!sensorless){
+    if(!linear3.sensorless){
         setPotentiometerError(msg->data, &linear3);
 
         if(linear3.error != ConnectionError && linear3.error != PotentiometerError){
@@ -630,7 +633,7 @@ void potentiometer3Callback(const std_msgs::msg::Int32::SharedPtr msg){
  * @return void
  * */
 void potentiometer4Callback(const std_msgs::msg::Int32::SharedPtr msg){
-    if(!sensorless){
+    if(!linear4.sensorless){
         setPotentiometerError(msg->data, &linear4);
 
         if(linear4.error != ConnectionError && linear4.error != PotentiometerError){
@@ -699,6 +702,22 @@ void getLinearOut(messages::msg::LinearOut *linearOut, LinearActuator *linear){
 }
 
 
+void updateMotorPosition(int millis, LinearActuator *linear){
+    linear->distance = linear->speed * linear->extensionSpeed * (millis / 1000.0) + linear->distance;
+    if(linear->distance > linear->stroke){
+        linear->distance = linear->stroke;
+        linear->atMax = true;
+    }
+    else if(linear->distance < 0.0){
+        linear->distance = 0.0;
+        linear->atMin = true;
+    }
+    else{
+        linear->atMin = false;
+        linear->atMax = false;
+    }
+}
+
 /** @brief Function to update the estimated position of the motors when sensorless
  * mode is enabled.  
  * 
@@ -712,80 +731,23 @@ void getLinearOut(messages::msg::LinearOut *linearOut, LinearActuator *linear){
  * @return void
  * */
 void updateMotorPositions(int millis){
-    linear1.distance = linear1.speed * linear1.extensionSpeed * (millis / 1000.0) + linear1.distance;
-    if(linear1.distance > linear1.stroke){
-        linear1.distance = linear1.stroke;
-        linear1.atMax = true;
-    }
-    else if(linear1.distance < 0.0){
-        linear1.distance = 0.0;
-        linear1.atMin = true;
-    }
-    else{
-        linear1.atMin = false;
-        linear1.atMax = false;
-    }
+    updateMotorPosition(millis, &linear1);
     RCLCPP_INFO(nodeHandle->get_logger(), "Linear 1 Distance: %f", linear1.distance);
 
-    linear2.distance = linear2.speed * linear2.extensionSpeed * (millis / 1000.0) + linear2.distance;
-    if(linear2.distance > linear2.stroke){
-        linear2.distance = linear2.stroke;
-        linear2.atMax = true;
-    }
-    else if(linear2.distance < 0.0){
-        linear2.distance = 0.0;
-        linear2.atMin = true;
-    }
-    else{
-        linear2.atMin = false;
-        linear2.atMax = false;
-    }
-    RCLCPP_INFO(nodeHandle->get_logger(), "Linear 1 Distance: %f", linear1.distance);
-    setSpeedsDistance();
+    updateMotorPosition(millis, &linear2);
+    RCLCPP_INFO(nodeHandle->get_logger(), "Linear 2 Distance: %f", linear2.distance);
+    
+    if(linear1.sensorless || linear2.sensorless)
+        setSpeedsDistance();
+    
+    updateMotorPosition(millis, &linear3);
+    RCLCPP_INFO(nodeHandle->get_logger(), "Linear 3 Distance: %f", linear3.distance);
 
-    linear3.distance = linear3.speed * linear3.extensionSpeed * (millis / 1000.0) + linear3.distance;
-    if(linear3.distance > linear3.stroke){
-        linear3.distance = linear3.stroke;
-        linear3.atMax = true;
-    }
-    else if(linear3.distance < 0.0){
-        linear3.distance = 0.0;
-        linear3.atMin = true;
-    }
-    else{
-        linear3.atMin = false;
-        linear3.atMax = false;
-    }
-    RCLCPP_INFO(nodeHandle->get_logger(), "Linear 1 Distance: %f", linear1.distance);
-
-    linear4.distance = linear4.speed * linear4.extensionSpeed * (millis / 1000.0) + linear4.distance;
-    if(linear4.distance > linear4.stroke){
-        linear4.distance = linear4.stroke;
-        linear4.atMax = true;
-    }
-    else if(linear4.distance < 0.0){
-        linear4.distance = 0.0;
-        linear4.atMin = true;
-    }
-    else{
-        linear4.atMin = false;
-        linear4.atMax = false;
-    }
-    RCLCPP_INFO(nodeHandle->get_logger(), "Linear 1 Distance: %f", linear1.distance);
-    setSpeedsDistance2();
-}
-
-
-/** @brief Callback function for the sensorless topic. 
- * 
- * This function sets the sensorless value to the opposite value when
- * this message is received by the node.
- * @param msg - ROS2 message containing sensorless value
- * @return void
- * */
-void sensorlessCallback(const std_msgs::msg::Empty::SharedPtr empty){
-    sensorless = !sensorless;
-    RCLCPP_INFO(nodeHandle->get_logger(), "Excavation sensorless mode: %d", sensorless);
+    updateMotorPosition(millis, &linear4);
+    RCLCPP_INFO(nodeHandle->get_logger(), "Linear 4 Distance: %f", linear4.distance);
+    
+    if(linear3.sensorless || linear4.sensorless)
+        setSpeedsDistance2();
 }
 
 
@@ -794,7 +756,6 @@ int main(int argc, char **argv){
     nodeHandle = rclcpp::Node::make_shared("excavation");
 
     auto automationGoSubscriber = nodeHandle->create_subscription<std_msgs::msg::Bool>("automationGo",1,automationGoCallback);
-    auto sensorlessSubscriber = nodeHandle->create_subscription<std_msgs::msg::Empty>("sensorless",1,sensorlessCallback);
 
     auto armSpeedSubscriber = nodeHandle->create_subscription<std_msgs::msg::Float32>("arm_speed",1,armSpeedCallback);
     auto bucketSpeedSubscriber = nodeHandle->create_subscription<std_msgs::msg::Float32>("bucket_speed",1,bucketSpeedCallback);
@@ -826,8 +787,7 @@ int main(int argc, char **argv){
     while(rclcpp::ok()){
         finish = std::chrono::high_resolution_clock::now();
         if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() > 100){
-            if(sensorless)
-                updateMotorPositions(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() );
+            updateMotorPositions(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() );
             count += 1;
             start = std::chrono::high_resolution_clock::now();
         }

@@ -57,7 +57,6 @@ float maxSpeed=0.4;
 
 bool automationGo=false;
 bool excavationGo = false;
-bool runSensorlessly = false;
 
 Automation* automation=new Automation1();
 
@@ -67,7 +66,6 @@ std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > bucketSpeedPublisher;
 
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Bool_<std::allocator<void> >, std::allocator<void> > > automationGoPublisher;
-std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Empty_<std::allocator<void> > , std::allocator<void> > > sensorlessPublisher;
 
 /** @brief Function to initialize the motors to zero
  * 
@@ -343,10 +341,6 @@ void keyCallback(const messages::msg::KeyState::SharedPtr keyState){
         RCLCPP_INFO(nodeHandle->get_logger(), "Automation invert.  Current state: %d", automationGo);
     }
     if(keyState->key==120 && keyState->state==1){
-        runSensorlessly = !runSensorlessly;
-        automation->setRunSensorlessly(runSensorlessly);
-        std_msgs::msg::Empty empty;
-        sensorlessPublisher->publish(empty);
     }
     if(keyState->key==43 && keyState->state==1){
         updateMaxSpeed(0.1);
@@ -460,7 +454,6 @@ int main(int argc, char **argv){
     armSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("arm_speed",1);
     bucketSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("bucket_speed",1);
     automationGoPublisher = nodeHandle->create_publisher<std_msgs::msg::Bool>("automationGo",1);
-    sensorlessPublisher = nodeHandle->create_publisher<std_msgs::msg::Empty>("sensorless",1);
 
     initSetSpeed();
 
