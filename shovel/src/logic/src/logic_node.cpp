@@ -434,6 +434,40 @@ void linearOut4Callback(const messages::msg::LinearOut::SharedPtr linearOut){
 }
 
 
+void talon1Callback(const messsages::msg::TalonOut::SharedPtr talonOut){
+    automation->setTalon1(talonOut);
+}
+
+void talon2Callback(const messsages::msg::TalonOut::SharedPtr talonOut){
+    automation->setTalon2(talonOut);
+}
+
+void talon3Callback(const messsages::msg::TalonOut::SharedPtr talonOut){
+    automation->setTalon3(talonOut);
+}
+
+void talon4Callback(const messsages::msg::TalonOut::SharedPtr talonOut){
+    automation->setTalon4(talonOut);
+}
+
+
+void falcon1Callback(const messages::msg::FalconOut::SharedPtr falconOut){
+    automation->setFalcon1(falconOut);
+}
+
+void falcon2Callback(const messages::msg::FalconOut::SharedPtr falconOut){
+    automation->setFalcon2(falconOut);
+}
+
+void falcon3Callback(const messages::msg::FalconOut::SharedPtr falconOut){
+    automation->setFalcon3(falconOut);
+}
+
+void falcon4Callback(const messages::msg::FalconOut::SharedPtr falconOut){
+    automation->setFalcon4(falconOut);
+}
+
+
 int main(int argc, char **argv){
     rclcpp::init(argc,argv);
     nodeHandle = rclcpp::Node::make_shared("logic");
@@ -448,6 +482,15 @@ int main(int argc, char **argv){
     auto linearOut2Subscriber = nodeHandle->create_subscription<messages::msg::LinearOut>("linearOut2",1,linearOut2Callback);
     auto linearOut3Subscriber = nodeHandle->create_subscription<messages::msg::LinearOut>("linearOut3",1,linearOut3Callback);
     auto linearOut4Subscriber = nodeHandle->create_subscription<messages::msg::LinearOut>("linearOut4",1,linearOut4Callback);
+    auto talon1Subscriber = nodeHandle->create_subscription<messages::msg::TalonOut>("talon_14_info",1,talon1Callback);
+    auto talon2Subscriber = nodeHandle->create_subscription<messages::msg::TalonOut>("talon_15_info",1,talon2Callback);
+    auto talon3Subscriber = nodeHandle->create_subscription<messages::msg::TalonOut>("talon_16_info",1,talon3Callback);
+    auto talon4Subscriber = nodeHandle->create_subscription<messages::msg::TalonOut>("talon_17_info",1,talon4Callback);
+    auto falcon1Subscriber = nodeHandle->create_subscription<messages::msg::FalconOut>("talon_10_info",1,falcon1Callback);
+    auto falcon2Subscriber = nodeHandle->create_subscription<messages::msg::FalconOut>("talon_11_info",1,falcon2Callback);
+    auto falcon3Subscriber = nodeHandle->create_subscription<messages::msg::FalconOut>("talon_12_info",1,falcon3Callback);
+    auto falcon4Subscriber = nodeHandle->create_subscription<messages::msg::FalconOut>("talon_13_info",1,falcon4Callback);
+
 
     driveLeftSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("drive_left_speed",1);
     driveRightSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("drive_right_speed",1);

@@ -84,10 +84,10 @@ struct LinearActuator{
 };
 
 
-LinearActuator linear1{14, 0.0, 0, 0, 0, 1024, ConnectionError, true, false, false, 5.9, 0.0, 0.69, 8.5, false};
-LinearActuator linear2{15, 0.0, 0, 0, 0, 1024, ConnectionError, true, false, false, 5.9, 0.0, 0.69, 8.5, false};
-LinearActuator linear3{16, 0.0, 0, 0, 0, 1024, ConnectionError, true, false, false, 9.8, 0.0, 0.85, 11.5, false};
-LinearActuator linear4{17, 0.0, 0, 0, 0, 1024, ConnectionError, true, false, false, 9.8, 0.0, 0.89, 11.0, false};
+LinearActuator linear1{16, 0.0, 0, 0, 0, 1024, ConnectionError, true, false, false, 9.8, 0.0, 0.85, 11.5, false};
+LinearActuator linear2{17, 0.0, 0, 0, 0, 1024, ConnectionError, true, false, false, 9.8, 0.0, 0.89, 11.0, false};
+LinearActuator linear3{14, 0.0, 0, 0, 0, 1024, ConnectionError, true, false, false, 5.9, 0.0, 0.69, 8.5, false};
+LinearActuator linear4{15, 0.0, 0, 0, 0, 1024, ConnectionError, true, false, false, 5.9, 0.0, 0.69, 8.5, false};
 
 float currentSpeed = 0.0;
 float currentSpeed2 = 0.0;
@@ -115,7 +115,22 @@ bool automationGo = false;
 void sync(){
     float diff = abs(linear1.potentiometer - linear2.potentiometer);
     // Might change this from ternary to if statements to improve readability
-    bool val = (currentSpeed > 0) ? (linear1.potentiometer > linear2.potentiometer) : (linear1.potentiometer < linear2.potentiometer);
+    /*
+    val truth table:
+    if Current Speed > 0:                   If actuators are extending
+        if linear1.pot >= linear2.pot:      If linear1 is further extended, use first value in ternary operators below
+            val = true
+        else:
+            val = false
+    else:                                   If actuators are retracting
+        if linear1.pot < linear2.pot:       If linear1 is further retracted, use first value in ternary operators below
+            val = true
+        else:
+            val = false
+
+
+    */
+    bool val = (currentSpeed > 0) ? (linear1.potentiometer >= linear2.potentiometer) : (linear1.potentiometer < linear2.potentiometer);
     if (diff > thresh3){
         (val) ? linear1.speed = 0 : linear2.speed = 0;
     }
@@ -148,7 +163,7 @@ void sync(){
 void sync2(){
     float diff = abs(linear3.potentiometer - linear4.potentiometer);
     // Might change this from ternary to if statements to improve readability
-    bool val = (currentSpeed2 > 0) ? (linear3.potentiometer > linear4.potentiometer) : (linear3.potentiometer < linear4.potentiometer);
+    bool val = (currentSpeed2 > 0) ? (linear3.potentiometer >= linear4.potentiometer) : (linear3.potentiometer < linear4.potentiometer);
     if (diff > thresh3){
         (val) ? linear3.speed = 0 : linear4.speed = 0;
     }
@@ -179,9 +194,9 @@ void sync2(){
  * */
 void syncDistance(){
     float diff = abs(linear1.distance - linear2.distance);
-    bool val = (currentSpeed > 0) ? (linear1.distance > linear2.distance) : (linear1.distance < linear2.distance);
+    bool val = (currentSpeed > 0) ? (linear1.distance >= linear2.distance) : (linear1.distance < linear2.distance);
     if (diff > distThresh3) {
-        (val) ? linear1.speed = 0 : linear2.speed = 0;
+        (val) ? linear1.speed = 0.0 : linear2.speed = 0.0;
     }
     else if (diff > distThresh2){
         (val) ? linear1.speed *= 0.5 : linear2.speed *= 0.5;
@@ -210,9 +225,9 @@ void syncDistance(){
  * */
 void syncDistance2(){
     float diff = abs(linear3.distance - linear4.distance);
-    bool val = (currentSpeed2 > 0) ? (linear3.distance > linear4.distance) : (linear3.distance < linear4.distance);
+    bool val = (currentSpeed2 > 0) ? (linear3.distance >= linear4.distance) : (linear3.distance < linear4.distance);
     if (diff > distThresh3) {
-        (val) ? linear3.speed = 0 : linear4.speed = 0;
+        (val) ? linear3.speed = 0.0 : linear4.speed = 0.0;
     }
     else if (diff > distThresh2){
         (val) ? linear3.speed *= 0.5 : linear4.speed *= 0.5;
@@ -517,7 +532,8 @@ void setSyncErrors(){
         }
     }
     sync();
-    if(linear1.speed != 0 || linear2.speed != 0){
+    if(linear1.speed != 0\
+     || linear2.speed != 0){
         publishSpeeds();
     }
 }
@@ -570,9 +586,11 @@ void potentiometer1Callback(const std_msgs::msg::Int32::SharedPtr msg){
     if(!linear1.sensorless){
         setPotentiometerError(msg->data, &linear1);
 
-        if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != ConnectionError && linear2.error != PotentiometerError){
+        if(linear1.error != ConnectionError && linear1.error != PotentiometerError){
             processPotentiometerData(msg->data, &linear1);
-            setSyncErrors();
+            if(!linear1.sensorless && !linear2.sensorless){
+                setSyncErrors();
+            }
         }
     }
 }
@@ -592,9 +610,11 @@ void potentiometer2Callback(const std_msgs::msg::Int32::SharedPtr msg){
     if(!linear2.sensorless){
         setPotentiometerError(msg->data, &linear2);
 
-        if(linear1.error != ConnectionError && linear1.error != PotentiometerError && linear2.error != ConnectionError && linear2.error != PotentiometerError){
+        if(linear2.error != ConnectionError && linear2.error != PotentiometerError){
             processPotentiometerData(msg->data, &linear2);
-            setSyncErrors();
+            if(!linear1.sensorless && !linear2.sensorless){
+                setSyncErrors();
+            }
         }
     }
 }
@@ -616,7 +636,9 @@ void potentiometer3Callback(const std_msgs::msg::Int32::SharedPtr msg){
 
         if(linear3.error != ConnectionError && linear3.error != PotentiometerError){
             processPotentiometerData(msg->data, &linear3);
-            setSyncErrors2();
+            if(!linear3.sensorless && !linear4.sensorless){
+                setSyncErrors2();
+            }
         }
     }
 }
@@ -638,7 +660,9 @@ void potentiometer4Callback(const std_msgs::msg::Int32::SharedPtr msg){
 
         if(linear4.error != ConnectionError && linear4.error != PotentiometerError){
             processPotentiometerData(msg->data, &linear4);
-            setSyncErrors2();
+            if(!linear3.sensorless && !linear4.sensorless){
+                setSyncErrors2();
+            }
         }
     }
 }
@@ -699,6 +723,7 @@ void getLinearOut(messages::msg::LinearOut *linearOut, LinearActuator *linear){
     linearOut->at_min = linear->atMin;
     linearOut->at_max = linear->atMax;
     linearOut->distance = linear->distance;
+    linearOut->sensorless = linear->sensorless;
 }
 
 
@@ -732,19 +757,19 @@ void updateMotorPosition(int millis, LinearActuator *linear){
  * */
 void updateMotorPositions(int millis){
     updateMotorPosition(millis, &linear1);
-    RCLCPP_INFO(nodeHandle->get_logger(), "Linear 1 Distance: %f", linear1.distance);
+    //RCLCPP_INFO(nodeHandle->get_logger(), "Linear 1 Distance: %f", linear1.distance);
 
     updateMotorPosition(millis, &linear2);
-    RCLCPP_INFO(nodeHandle->get_logger(), "Linear 2 Distance: %f", linear2.distance);
+    //RCLCPP_INFO(nodeHandle->get_logger(), "Linear 2 Distance: %f", linear2.distance);
     
     if(linear1.sensorless || linear2.sensorless)
         setSpeedsDistance();
     
     updateMotorPosition(millis, &linear3);
-    RCLCPP_INFO(nodeHandle->get_logger(), "Linear 3 Distance: %f", linear3.distance);
+    //RCLCPP_INFO(nodeHandle->get_logger(), "Linear 3 Distance: %f", linear3.distance);
 
     updateMotorPosition(millis, &linear4);
-    RCLCPP_INFO(nodeHandle->get_logger(), "Linear 4 Distance: %f", linear4.distance);
+    //RCLCPP_INFO(nodeHandle->get_logger(), "Linear 4 Distance: %f", linear4.distance);
     
     if(linear3.sensorless || linear4.sensorless)
         setSpeedsDistance2();

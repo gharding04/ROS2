@@ -260,7 +260,7 @@ int main(int argc,char** argv){
 		std_msgs::msg::Int32 potentiometerData;
 		potentiometerData.data = encoderPosition;
 
-		if(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count() > 250000000){
+		if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() > 100){
 			int deviceID=talonSRX->GetDeviceID();
 			double busVoltage=talonSRX->GetBusVoltage();
 			double outputCurrent=talonSRX->GetOutputCurrent();
@@ -291,7 +291,7 @@ int main(int argc,char** argv){
         	start = std::chrono::high_resolution_clock::now();
 		}
 		
-		if(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start2).count() > 100000000){
+		if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start2).count() > 100){
 			potentiometerPublisher->publish(potentiometerData);
         	start2 = std::chrono::high_resolution_clock::now();
 		}

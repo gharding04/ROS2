@@ -9,3 +9,4 @@ bool run
 bool at_min
 bool at_max
 float32 distance
+bool sensorless

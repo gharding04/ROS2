@@ -5,6 +5,7 @@
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/empty.hpp>
 #include <messages/msg/linear_out.hpp>
+#include <messages/msg/talon_out.hpp>
 #include <messages/msg/autonomy_out.hpp>
 
 #include "AutomationTypes.hpp"
@@ -12,6 +13,13 @@
 
 
 class Automation{
+    private:
+    struct MotorOut{
+        float busVoltage;
+        float outputCurrent;
+        float outputVoltage;
+        float outputPercentage;
+    };
     public:
 
     std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > driveLeftSpeedPublisher;
@@ -28,7 +36,8 @@ class Automation{
     EulerAngles orientation;
     float currentLeftSpeed=0;
     float currentRightSpeed=0;
-    Linear linear1, linear2, linear3, linear4, linear5;
+    Linear linear1, linear2, linear3, linear4;
+    MotorOut talon1, talon2, talon3, talon4, falcon1, falcon2, falcon3, falcon4;
     float destX = 0, destZ = 0, destAngle=0;
     std::stack<Coord> currentPath;
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
@@ -48,6 +57,10 @@ class Automation{
 
     void changeSpeed(float left, float right);
 
+    void setBucketSpeed(float speed);
+
+    void setArmSpeed(float speed);
+
     EulerAngles toEulerAngles(Quaternion q); 
 
     void setGo();
@@ -64,7 +77,21 @@ class Automation{
 
     void setLinear4(const messages::msg::LinearOut::SharedPtr linearOut);
 
-    void setLinear5(const messages::msg::LinearOut::SharedPtr linearOut);
+    void setTalon1(const messages::msg::TalonOut::SharedPtr talonOut);
+
+    void setTalon2(const messages::msg::TalonOut::SharedPtr talonOut);
+
+    void setTalon3(const messages::msg::TalonOut::SharedPtr talonOut);
+
+    void setTalon4(const messages::msg::TalonOut::SharedPtr talonOut);
+
+    void setFalcon1(const messages::msg::FalconOut::SharedPtr falconOut);
+    
+    void setFalcon2(const messages::msg::FalconOut::SharedPtr falconOut);
+    
+    void setFalcon3(const messages::msg::FalconOut::SharedPtr falconOut);
+    
+    void setFalcon4(const messages::msg::FalconOut::SharedPtr falconOut);
 
     bool checkErrors(Linear linear);
 
@@ -87,8 +114,6 @@ class Automation{
     std::chrono::time_point<std::chrono::high_resolution_clock> getBackupStartTime();
 
     void setRunSensorlessly(bool value);
-
-    void setCameraSpeed(float speed);
 
     void setStartPosition(int x, int y);
 

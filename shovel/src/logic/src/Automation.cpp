@@ -73,6 +73,20 @@ void Automation::changeSpeed(float left, float right){
 }
 
 
+void Automation::setBucketSpeed(float speed){
+    std_msgs::msg::Float32 Speed;
+    Speed.data = speed;
+    bucketSpeedPublisher->publish(speed);
+}
+
+
+void Automation::setArmSPeed(float speed){
+    std_msgs::msg::Float32 Speed;
+    Speed.data = speed;
+    armSpeedPublisher->publish(speed);
+}
+
+
 /** @brief Converts raw x,y,z-axis data to Euler angles to orient the bot in 3d space.
  *
  * This function takes in the x,y,z-axis coordinates established in setPosition and 
@@ -121,6 +135,8 @@ void Automation::setLinear1(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear1.atMax = linearOut->at_max;
     this->linear1.atMin = linearOut->at_min;
     this->linear1.error = linearOut->error;
+    this->linear1.distance = linearOut->distance;
+    this->linear1.sensorless = linearOUt->sensorless;
 }
 
 void Automation::setLinear2(const messages::msg::LinearOut::SharedPtr linearOut){
@@ -128,6 +144,8 @@ void Automation::setLinear2(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear2.atMax = linearOut->at_max;
     this->linear2.atMin = linearOut->at_min;
     this->linear2.error = linearOut->error;
+    this->linear2.distance = linearOut->distance;
+    this->linear2.sensorless = linearOUt->sensorless;
 }
 
 void Automation::setLinear3(const messages::msg::LinearOut::SharedPtr linearOut){
@@ -135,6 +153,8 @@ void Automation::setLinear3(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear3.atMax = linearOut->at_max;
     this->linear3.atMin = linearOut->at_min;
     this->linear3.error = linearOut->error;
+    this->linear3.distance = linearOut->distance;
+    this->linear3.sensorless = linearOUt->sensorless;
 }
 
 void Automation::setLinear4(const messages::msg::LinearOut::SharedPtr linearOut){
@@ -142,13 +162,64 @@ void Automation::setLinear4(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear4.atMax = linearOut->at_max;
     this->linear4.atMin = linearOut->at_min;
     this->linear4.error = linearOut->error;
+    this->linear4.distance = linearOut->distance;
+    this->linear4.sensorless = linearOUt->sensorless;
 }
 
-void Automation::setLinear5(const messages::msg::LinearOut::SharedPtr linearOut){
-    this->linear5.speed = linearOut->speed;
-    this->linear5.atMax = linearOut->at_max;
-    this->linear5.atMin = linearOut->at_min;
-    this->linear5.error = linearOut->error;
+void setTalon1(const messages::msg::TalonOut::SharedPtr talonOut){
+    this->talon1.busVoltage = talonOut->bus_voltage;
+    this->talon1.outputCurrent = talonOut->output_current;
+    this->talon1.outputVoltage = talonOut->output_voltage;
+    this->talon1.outputPercentage = talonOut->output_percent;
+}
+
+void setTalon2(const messages::msg::TalonOut::SharedPtr talonOut){
+    this->talon2.busVoltage = talonOut->bus_voltage;
+    this->talon2.outputCurrent = talonOut->output_current;
+    this->talon2.outputVoltage = talonOut->output_voltage;
+    this->talon2.outputPercentage = talonOut->output_percent;
+}
+
+void setTalon3(const messages::msg::TalonOut::SharedPtr talonOut){
+    this->talon3.busVoltage = talonOut->bus_voltage;
+    this->talon3.outputCurrent = talonOut->output_current;
+    this->talon3.outputVoltage = talonOut->output_voltage;
+    this->talon3.outputPercentage = talonOut->output_percent;
+}
+
+void setTalon4(const messages::msg::TalonOut::SharedPtr talonOut){
+    this->talon4.busVoltage = talonOut->bus_voltage;
+    this->talon4.outputCurrent = talonOut->output_current;
+    this->talon4.outputVoltage = talonOut->output_voltage;
+    this->talon4.outputPercentage = talonOut->output_percent;
+}
+
+void setFalcon1(const messages::msg::FalconOut::SharedPtr falconOut){
+    this->falcon1.busVoltage = talonOut->bus_voltage;
+    this->falcon1.outputCurrent = talonOut->output_current;
+    this->falcon1.outputVoltage = talonOut->output_voltage;
+    this->falcon1.outputPercentage = talonOut->output_percent;
+}
+
+void setFalcon2(const messages::msg::FalconOut::SharedPtr falconOut){
+    this->falcon2.busVoltage = talonOut->bus_voltage;
+    this->falcon2.outputCurrent = talonOut->output_current;
+    this->falcon2.outputVoltage = talonOut->output_voltage;
+    this->falcon2.outputPercentage = talonOut->output_percent;
+}
+
+void setFalcon3(const messages::msg::FalconOut::SharedPtr falconOut){
+    this->falcon3.busVoltage = talonOut->bus_voltage;
+    this->falcon3.outputCurrent = talonOut->output_current;
+    this->falcon3.outputVoltage = talonOut->output_voltage;
+    this->falcon3.outputPercentage = talonOut->output_percent;
+}
+
+void setFalcon4(const messages::msg::FalconOut::SharedPtr falconOut){
+    this->falcon4.busVoltage = talonOut->bus_voltage;
+    this->falcon4.outputCurrent = talonOut->output_current;
+    this->falcon4.outputVoltage = talonOut->output_voltage;
+    this->falcon4.outputPercentage = talonOut->output_percent;
 }
 
 bool Automation::checkErrors(Linear linear){
@@ -218,11 +289,6 @@ std::chrono::time_point<std::chrono::high_resolution_clock> Automation::getBacku
 
 void Automation::setRunSensorlessly(bool value){
     this->runSensorlessly = value;
-}
-
-void Automation::setCameraSpeed(float speed){
-    std_msgs::msg::Float32 cameraSpeed;
-    cameraSpeed.data = speed;
 }
 
 void Automation::setStartPosition(int x, int y){

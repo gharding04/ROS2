@@ -20,8 +20,77 @@ void Automation1::automate(){
     // Turn slowly until it's seen
 
     if(robotState==ROBOT_IDLE){
+        
+    }
+
+    if(robotState == INITIAL){
         setDestPosition(destX, destY);
-        robotState = LOCATE;
+        robotState = DIAGNOSTICS;
+        auto start = std::chrono::high_resolution_clock::now();
+        setStartTime(start);
+    }
+
+    if(robotState==DIAGNOSTICS){
+        auto finish = std::chrono::high_resolution_clock::now();
+        if(diagnosticsState==TALON_EXTEND){
+            setBucketSpeed(1.0);
+            setArmSpeed(1.0);
+            if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-getStartTime()).count() > 500){
+                setBucketSpeed(-1.0);
+                setArmSpeed(-1.0);
+                if(talon1.outputCurrent == 0.0){
+                    errorState = TALON_14_ERROR;
+                    robotState = ROBOT_IDLE;
+                }
+                if(talon2.outputCurrent == 0.0){
+                    errorState = TALON_15_ERROR;
+                    robotState = ROBOT_IDLE;
+                }
+                if(talon3.outputCurrent == 0.0){
+                    errorState = TALON_16_ERROR;
+                    robotState = ROBOT_IDLE;
+                }
+                if(talon4.outputCurrent == 0.0){
+                    errorState = TALON_17_ERROR;
+                    robotState = ROBOT_IDLE;
+                }
+                setStartTime(std::chrono::high_resolution_clock::now());
+                diagnosticsState = TALON_RETRACT;
+            }
+        }
+        if(diagnosticsState==TALON_RETRACT){
+            if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-getStartTime()).count() > 500){
+                setBucketSpeed(-1.0);
+                setArmSpeed(-1.0);
+                setStartTime(std::chrono::high_resolution_clock::now());
+                changeSpeed(0.05, 0.05);
+                diagnosticsState = FALCON_FORWARD;
+            }
+        }
+        if(diagnosticsState==FALCON_FORWARD){
+            if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-getStartTime()).count() > 500){
+                changeSpeed(0.0, 0.0);
+                if(falcon1.outputCurrent == 0.0){
+                    errorState = FALCON_10_ERROR;
+                    robotState = ROBOT_IDLE;
+                }
+                if(falcon2.outputCurrent == 0.0){
+                    errorState = FALCON_11_ERROR;
+                    robotState = ROBOT_IDLE;
+                }
+                if(falcon3.outputCurrent == 0.0){
+                    errorState = FALCON_12_ERROR;
+                    robotState = ROBOT_IDLE;
+                }
+                if(falcon4.outputCurrent == 0.0){
+                    errorState = FALCON_13_ERROR;
+                    robotState = ROBOT_IDLE;
+                }
+            }
+            diagnosticsState = DIAGNOSTICS_IDLE;
+            robotState = LOCATE;
+        }
+        
     }
 
     // TODO: Change this to align
@@ -181,6 +250,6 @@ void Automation1::publishAutomationOut(){
     std::string robotStateString = robotStateMap.at(robotState);
     std::string excavationStateString = excavationStateMap.at(excavationState);
     std::string errorStateString = errorStateMap.at(errorState);
-    std::string dumpStateString = dumpStateMap.at(dumpState);
-    publishAutonomyOut(robotStateString, excavationStateString, errorStateString, dumpStateString);
+    std::string diagnosticsStateString = diagnosticsStateMap.at(diagnosticsState);
+    publishAutonomyOut(robotStateString, excavationStateString, errorStateString, diagnosticsStateString);
 }
