@@ -72,10 +72,11 @@ void Automation1::automate(){
         }
         if(diagnosticsState==TALON_RETRACT){
             RCLCPP_INFO(this->node->get_logger(), "Talon Retract");
-
+            setBucketSpeed(-1.0);
+            setArmSpeed(-1.0);
             if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-getStartTime()).count() > 800){
-                setBucketSpeed(-1.0);
-                setArmSpeed(-1.0);
+                setBucketSpeed(0.0);
+                setArmSpeed(0.0);
                 setStartTime(std::chrono::high_resolution_clock::now());
                 changeSpeed(0.05, 0.05);
                 diagnosticsState = FALCON_FORWARD;
