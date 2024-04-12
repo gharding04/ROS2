@@ -24,6 +24,7 @@ void Automation1::automate(){
     }
 
     if(robotState == INITIAL){
+        RCLCPP_INFO(this->node->get_logger(), "Initialize");
         setDestPosition(destX, destY);
         robotState = DIAGNOSTICS;
         auto start = std::chrono::high_resolution_clock::now();
@@ -31,35 +32,44 @@ void Automation1::automate(){
     }
 
     if(robotState==DIAGNOSTICS){
+        RCLCPP_INFO(this->node->get_logger(), "Diagnostics");
         auto finish = std::chrono::high_resolution_clock::now();
         if(diagnosticsState==TALON_EXTEND){
             setBucketSpeed(1.0);
             setArmSpeed(1.0);
-            if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-getStartTime()).count() > 500){
+            if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-getStartTime()).count() > 800){
                 setBucketSpeed(-1.0);
                 setArmSpeed(-1.0);
                 if(linear1.error != "None"){
+                    RCLCPP_INFO(this->node->get_logger(), "linear1.error");
                     errorState = TALON_14_ERROR;
                     robotState = ROBOT_IDLE;
                 }
-                if(linear2.error != "None"){
+                else if(linear2.error != "None"){
+                    RCLCPP_INFO(this->node->get_logger(), "linear2.error");
                     errorState = TALON_15_ERROR;
                     robotState = ROBOT_IDLE;
                 }
-                if(linear3.error != "None"){
+                else if(linear3.error != "None"){
+                    RCLCPP_INFO(this->node->get_logger(), "linear3.error");
                     errorState = TALON_16_ERROR;
                     robotState = ROBOT_IDLE;
                 }
-                if(linear4.error != "None"){
+                else if(linear4.error != "None"){
+                    RCLCPP_INFO(this->node->get_logger(), "linear4.error");
                     errorState = TALON_17_ERROR;
                     robotState = ROBOT_IDLE;
                 }
-                setStartTime(std::chrono::high_resolution_clock::now());
-                diagnosticsState = TALON_RETRACT;
+                else{
+                    setStartTime(std::chrono::high_resolution_clock::now());
+                    diagnosticsState = TALON_RETRACT;
+                }
             }
         }
         if(diagnosticsState==TALON_RETRACT){
-            if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-getStartTime()).count() > 500){
+            RCLCPP_INFO(this->node->get_logger(), "Talon Retract");
+
+            if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-getStartTime()).count() > 800){
                 setBucketSpeed(-1.0);
                 setArmSpeed(-1.0);
                 setStartTime(std::chrono::high_resolution_clock::now());
@@ -68,27 +78,31 @@ void Automation1::automate(){
             }
         }
         if(diagnosticsState==FALCON_FORWARD){
+            RCLCPP_INFO(this->node->get_logger(), "Falcon Forward");
+
             if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-getStartTime()).count() > 500){
                 changeSpeed(0.0, 0.0);
                 if(falcon1.outputCurrent == 0.0){
                     errorState = FALCON_10_ERROR;
                     robotState = ROBOT_IDLE;
                 }
-                if(falcon2.outputCurrent == 0.0){
+                else if(falcon2.outputCurrent == 0.0){
                     errorState = FALCON_11_ERROR;
                     robotState = ROBOT_IDLE;
                 }
-                if(falcon3.outputCurrent == 0.0){
+                else if(falcon3.outputCurrent == 0.0){
                     errorState = FALCON_12_ERROR;
                     robotState = ROBOT_IDLE;
                 }
-                if(falcon4.outputCurrent == 0.0){
+                else if(falcon4.outputCurrent == 0.0){
                     errorState = FALCON_13_ERROR;
                     robotState = ROBOT_IDLE;
                 }
+                else{
+                    diagnosticsState = DIAGNOSTICS_IDLE;
+                    robotState = LOCATE;
+                }
             }
-            diagnosticsState = DIAGNOSTICS_IDLE;
-            robotState = LOCATE;
         }
         
     }
