@@ -76,14 +76,14 @@ void Automation::changeSpeed(float left, float right){
 void Automation::setBucketSpeed(float speed){
     std_msgs::msg::Float32 Speed;
     Speed.data = speed;
-    bucketSpeedPublisher->publish(speed);
+    bucketSpeedPublisher->publish(Speed);
 }
 
 
 void Automation::setArmSpeed(float speed){
     std_msgs::msg::Float32 Speed;
     Speed.data = speed;
-    armSpeedPublisher->publish(speed);
+    armSpeedPublisher->publish(Speed);
 }
 
 
