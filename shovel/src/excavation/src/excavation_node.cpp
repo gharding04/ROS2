@@ -400,7 +400,7 @@ void setPotentiometerError(int potentData, LinearActuator *linear){
             linear->error = None;
         }
     }
-    if(potentData == 1024){
+    if(potentData >= 100 && potentData <= 110 && linear->timeWithoutChange > 0){
         linear->error = PotentiometerError;
         RCLCPP_INFO(nodeHandle->get_logger(),"EXCAVATION ERROR: PotentiometerError");
     }
@@ -515,7 +515,7 @@ void automationGoCallback(const std_msgs::msg::Bool::SharedPtr msg){
  * @return void
  * */
 void setSyncErrors(){
-    if(abs(linear1.potentiometer - linear2.potentiometer) > thresh1){
+    if(abs(linear1.potentiometer - linear2.potentiometer) > thresh3){
         if(linear1.error == None){
             linear1.error = ActuatorsSyncError;
         }
@@ -532,8 +532,7 @@ void setSyncErrors(){
         }
     }
     sync();
-    if(linear1.speed != 0\
-     || linear2.speed != 0){
+    if(linear1.speed != 0 || linear2.speed != 0){
         publishSpeeds();
     }
 }
@@ -549,7 +548,7 @@ void setSyncErrors(){
  * @return void
  * */
 void setSyncErrors2(){
-    if(abs(linear3.potentiometer - linear4.potentiometer) > thresh1){
+    if(abs(linear3.potentiometer - linear4.potentiometer) > thresh3){
         if(linear3.error == None){
             linear3.error = ActuatorsSyncError;
         }
