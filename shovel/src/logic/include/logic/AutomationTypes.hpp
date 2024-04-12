@@ -21,4 +21,5 @@ struct Linear {
     std::string error = "ConnectionError";
     bool atMin = false;
     bool atMax = false;
+    float distance = 0.0;
 };

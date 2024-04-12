@@ -80,7 +80,7 @@ void Automation::setBucketSpeed(float speed){
 }
 
 
-void Automation::setArmSPeed(float speed){
+void Automation::setArmSpeed(float speed){
     std_msgs::msg::Float32 Speed;
     Speed.data = speed;
     armSpeedPublisher->publish(speed);
@@ -136,7 +136,7 @@ void Automation::setLinear1(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear1.atMin = linearOut->at_min;
     this->linear1.error = linearOut->error;
     this->linear1.distance = linearOut->distance;
-    this->linear1.sensorless = linearOUt->sensorless;
+    this->linear1.sensorless = linearOut->sensorless;
 }
 
 void Automation::setLinear2(const messages::msg::LinearOut::SharedPtr linearOut){
@@ -145,7 +145,7 @@ void Automation::setLinear2(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear2.atMin = linearOut->at_min;
     this->linear2.error = linearOut->error;
     this->linear2.distance = linearOut->distance;
-    this->linear2.sensorless = linearOUt->sensorless;
+    this->linear2.sensorless = linearOut->sensorless;
 }
 
 void Automation::setLinear3(const messages::msg::LinearOut::SharedPtr linearOut){
@@ -154,7 +154,7 @@ void Automation::setLinear3(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear3.atMin = linearOut->at_min;
     this->linear3.error = linearOut->error;
     this->linear3.distance = linearOut->distance;
-    this->linear3.sensorless = linearOUt->sensorless;
+    this->linear3.sensorless = linearOut->sensorless;
 }
 
 void Automation::setLinear4(const messages::msg::LinearOut::SharedPtr linearOut){
@@ -163,59 +163,59 @@ void Automation::setLinear4(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear4.atMin = linearOut->at_min;
     this->linear4.error = linearOut->error;
     this->linear4.distance = linearOut->distance;
-    this->linear4.sensorless = linearOUt->sensorless;
+    this->linear4.sensorless = linearOut->sensorless;
 }
 
-void setTalon1(const messages::msg::TalonOut::SharedPtr talonOut){
+void Automation::setTalon1(const messages::msg::TalonOut::SharedPtr talonOut){
     this->talon1.busVoltage = talonOut->bus_voltage;
     this->talon1.outputCurrent = talonOut->output_current;
     this->talon1.outputVoltage = talonOut->output_voltage;
     this->talon1.outputPercentage = talonOut->output_percent;
 }
 
-void setTalon2(const messages::msg::TalonOut::SharedPtr talonOut){
+void Automation::setTalon2(const messages::msg::TalonOut::SharedPtr talonOut){
     this->talon2.busVoltage = talonOut->bus_voltage;
     this->talon2.outputCurrent = talonOut->output_current;
     this->talon2.outputVoltage = talonOut->output_voltage;
     this->talon2.outputPercentage = talonOut->output_percent;
 }
 
-void setTalon3(const messages::msg::TalonOut::SharedPtr talonOut){
+void Automation::setTalon3(const messages::msg::TalonOut::SharedPtr talonOut){
     this->talon3.busVoltage = talonOut->bus_voltage;
     this->talon3.outputCurrent = talonOut->output_current;
     this->talon3.outputVoltage = talonOut->output_voltage;
     this->talon3.outputPercentage = talonOut->output_percent;
 }
 
-void setTalon4(const messages::msg::TalonOut::SharedPtr talonOut){
+void Automation::setTalon4(const messages::msg::TalonOut::SharedPtr talonOut){
     this->talon4.busVoltage = talonOut->bus_voltage;
     this->talon4.outputCurrent = talonOut->output_current;
     this->talon4.outputVoltage = talonOut->output_voltage;
     this->talon4.outputPercentage = talonOut->output_percent;
 }
 
-void setFalcon1(const messages::msg::FalconOut::SharedPtr falconOut){
+void Automation::setFalcon1(const messages::msg::FalconOut::SharedPtr falconOut){
     this->falcon1.busVoltage = talonOut->bus_voltage;
     this->falcon1.outputCurrent = talonOut->output_current;
     this->falcon1.outputVoltage = talonOut->output_voltage;
     this->falcon1.outputPercentage = talonOut->output_percent;
 }
 
-void setFalcon2(const messages::msg::FalconOut::SharedPtr falconOut){
+void Automation::setFalcon2(const messages::msg::FalconOut::SharedPtr falconOut){
     this->falcon2.busVoltage = talonOut->bus_voltage;
     this->falcon2.outputCurrent = talonOut->output_current;
     this->falcon2.outputVoltage = talonOut->output_voltage;
     this->falcon2.outputPercentage = talonOut->output_percent;
 }
 
-void setFalcon3(const messages::msg::FalconOut::SharedPtr falconOut){
+void Automation::setFalcon3(const messages::msg::FalconOut::SharedPtr falconOut){
     this->falcon3.busVoltage = talonOut->bus_voltage;
     this->falcon3.outputCurrent = talonOut->output_current;
     this->falcon3.outputVoltage = talonOut->output_voltage;
     this->falcon3.outputPercentage = talonOut->output_percent;
 }
 
-void setFalcon4(const messages::msg::FalconOut::SharedPtr falconOut){
+void Automation::setFalcon4(const messages::msg::FalconOut::SharedPtr falconOut){
     this->falcon4.busVoltage = talonOut->bus_voltage;
     this->falcon4.outputCurrent = talonOut->output_current;
     this->falcon4.outputVoltage = talonOut->output_voltage;
@@ -267,7 +267,7 @@ void Automation::publishAutonomyOut(std::string robotStateString, std::string ex
     aOut.robot_state = robotStateString;
     aOut.excavation_state = excavationStateString;
     aOut.error_state = errorStateString;
-    aOut.dump_state = dumpStateString;
+    aOut.diagnostics_state = diagnosticsStateString;
     autonomyOutPublisher->publish(aOut);
 }
 

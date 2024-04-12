@@ -58,8 +58,9 @@ class Automation1 : public Automation{
 
     std::map<DiagnosticsState, const char*> diagnosticsStateMap = {
         {DIAGNOSTICS_IDLE, "Diagnostics Idle"},
-        {TALON, "Talon"},
-        {FALCON, "Falcon"}
+        {TALON_EXTEND, "Talon Extend"},
+        {TALON_RETRACT, "Talon Retract"},
+        {FALCON_FORWARD, "Falcon Forward"}
     };
 
     void automate();

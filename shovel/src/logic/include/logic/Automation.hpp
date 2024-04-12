@@ -6,6 +6,7 @@
 #include <std_msgs/msg/empty.hpp>
 #include <messages/msg/linear_out.hpp>
 #include <messages/msg/talon_out.hpp>
+#include <messages/msg/falcon_out.hpp>
 #include <messages/msg/autonomy_out.hpp>
 
 #include "AutomationTypes.hpp"
