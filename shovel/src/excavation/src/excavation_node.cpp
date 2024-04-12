@@ -442,10 +442,10 @@ void processPotentiometerData(int potentData, LinearActuator *linear){
         linear->max = potentData;
     }
 
-    if(linear->potentiometer >= potentData - 10 && linear->potentiometer <= potentData + 10){
+    if(linear->potentiometer >= potentData - 5 && linear->potentiometer <= potentData + 5){
         if(linear->speed != 0.0){
             linear->timeWithoutChange += 1;
-            if(linear->timeWithoutChange >= 5){
+            if(linear->timeWithoutChange >= 3){
                 if(linear->potentiometer >= 100 && linear->potentiometer <= 110){
                     linear->sensorless = true;
                     linear->error = PotentiometerError;
