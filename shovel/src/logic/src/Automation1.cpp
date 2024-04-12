@@ -38,19 +38,19 @@ void Automation1::automate(){
             if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-getStartTime()).count() > 500){
                 setBucketSpeed(-1.0);
                 setArmSpeed(-1.0);
-                if(talon1.outputCurrent == 0.0){
+                if(linear1.error != "None"){
                     errorState = TALON_14_ERROR;
                     robotState = ROBOT_IDLE;
                 }
-                if(talon2.outputCurrent == 0.0){
+                if(linear2.error != "None"){
                     errorState = TALON_15_ERROR;
                     robotState = ROBOT_IDLE;
                 }
-                if(talon3.outputCurrent == 0.0){
+                if(linear3.error != "None"){
                     errorState = TALON_16_ERROR;
                     robotState = ROBOT_IDLE;
                 }
-                if(talon4.outputCurrent == 0.0){
+                if(linear4.error != "None"){
                     errorState = TALON_17_ERROR;
                     robotState = ROBOT_IDLE;
                 }
