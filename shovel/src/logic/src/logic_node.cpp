@@ -13,6 +13,9 @@
 #include <messages/msg/key_state.hpp>
 #include <messages/msg/zed_position.hpp>
 #include <messages/msg/autonomy_out.hpp>
+#include <messages/msg/talon_out.hpp>
+#include <messages/msg/falcon_out.hpp>
+#include <messages/msg/linear_out.hpp>
 
 #include "logic/Automation1.hpp"
 #include "logic/AutomationTypes.hpp"
@@ -434,19 +437,19 @@ void linearOut4Callback(const messages::msg::LinearOut::SharedPtr linearOut){
 }
 
 
-void talon1Callback(const messsages::msg::TalonOut::SharedPtr talonOut){
+void talon1Callback(const messages::msg::TalonOut::SharedPtr talonOut){
     automation->setTalon1(talonOut);
 }
 
-void talon2Callback(const messsages::msg::TalonOut::SharedPtr talonOut){
+void talon2Callback(const messages::msg::TalonOut::SharedPtr talonOut){
     automation->setTalon2(talonOut);
 }
 
-void talon3Callback(const messsages::msg::TalonOut::SharedPtr talonOut){
+void talon3Callback(const messages::msg::TalonOut::SharedPtr talonOut){
     automation->setTalon3(talonOut);
 }
 
-void talon4Callback(const messsages::msg::TalonOut::SharedPtr talonOut){
+void talon4Callback(const messages::msg::TalonOut::SharedPtr talonOut){
     automation->setTalon4(talonOut);
 }
 
