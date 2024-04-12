@@ -253,6 +253,7 @@ int main(int argc,char** argv){
 	rclcpp::Rate rate(20);
 	auto start2 = std::chrono::high_resolution_clock::now();
 	auto start = std::chrono::high_resolution_clock::now();
+	float maxCurrent = 0.0;
 	while(rclcpp::ok()){
 		if(GO)ctre::phoenix::unmanaged::FeedEnable(100);
 		auto finish = std::chrono::high_resolution_clock::now();
@@ -288,6 +289,10 @@ int main(int argc,char** argv){
 			talonOut.potentiometer=encoderPosition;
 
 			talonOutPublisher->publish(talonOut);
+			if(outputCurrent > maxCurrent){
+				maxCurrent = outputCurrent;
+			}
+			RCLCPP_INFO(nodeHandle->get_logger(), "Talon %d Max Current: %f", deviceID, maxCurrent);
         	start = std::chrono::high_resolution_clock::now();
 		}
 		

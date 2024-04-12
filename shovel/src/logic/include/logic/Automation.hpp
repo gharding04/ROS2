@@ -20,6 +20,7 @@ class Automation{
         float outputCurrent;
         float outputVoltage;
         float outputPercentage;
+        float maxCurrent = 0.0;
     };
     public:
 
