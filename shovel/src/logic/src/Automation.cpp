@@ -195,31 +195,31 @@ void Automation::setTalon4(const messages::msg::TalonOut::SharedPtr talonOut){
 }
 
 void Automation::setFalcon1(const messages::msg::FalconOut::SharedPtr falconOut){
-    this->falcon1.busVoltage = talonOut->bus_voltage;
-    this->falcon1.outputCurrent = talonOut->output_current;
-    this->falcon1.outputVoltage = talonOut->output_voltage;
-    this->falcon1.outputPercentage = talonOut->output_percent;
+    this->falcon1.busVoltage = falconOut->bus_voltage;
+    this->falcon1.outputCurrent = falconOut->output_current;
+    this->falcon1.outputVoltage = falconOut->output_voltage;
+    this->falcon1.outputPercentage = falconOut->output_percent;
 }
 
 void Automation::setFalcon2(const messages::msg::FalconOut::SharedPtr falconOut){
-    this->falcon2.busVoltage = talonOut->bus_voltage;
-    this->falcon2.outputCurrent = talonOut->output_current;
-    this->falcon2.outputVoltage = talonOut->output_voltage;
-    this->falcon2.outputPercentage = talonOut->output_percent;
+    this->falcon2.busVoltage = falconOut->bus_voltage;
+    this->falcon2.outputCurrent = falconOut->output_current;
+    this->falcon2.outputVoltage = falconOut->output_voltage;
+    this->falcon2.outputPercentage = falconOut->output_percent;
 }
 
 void Automation::setFalcon3(const messages::msg::FalconOut::SharedPtr falconOut){
-    this->falcon3.busVoltage = talonOut->bus_voltage;
-    this->falcon3.outputCurrent = talonOut->output_current;
-    this->falcon3.outputVoltage = talonOut->output_voltage;
-    this->falcon3.outputPercentage = talonOut->output_percent;
+    this->falcon3.busVoltage = falconOut->bus_voltage;
+    this->falcon3.outputCurrent = falconOut->output_current;
+    this->falcon3.outputVoltage = falconOut->output_voltage;
+    this->falcon3.outputPercentage = falconOut->output_percent;
 }
 
 void Automation::setFalcon4(const messages::msg::FalconOut::SharedPtr falconOut){
-    this->falcon4.busVoltage = talonOut->bus_voltage;
-    this->falcon4.outputCurrent = talonOut->output_current;
-    this->falcon4.outputVoltage = talonOut->output_voltage;
-    this->falcon4.outputPercentage = talonOut->output_percent;
+    this->falcon4.busVoltage = falconOut->bus_voltage;
+    this->falcon4.outputCurrent = falconOut->output_current;
+    this->falcon4.outputVoltage = falconOut->output_voltage;
+    this->falcon4.outputPercentage = falconOut->output_percent;
 }
 
 bool Automation::checkErrors(Linear linear){
