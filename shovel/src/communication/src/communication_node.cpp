@@ -154,9 +154,9 @@ void send(std::string messageLabel, const messages::msg::FalconOut::SharedPtr ta
 
     message.addElementUInt8("Device ID",(uint8_t)talonOut->device_id);
     float volt = talonOut->bus_voltage *= 100.0;
-    uint8_t voltage = volt;
+    uint16_t voltage = volt;
     message.addElementUInt16("Bus Voltage",voltage);
-    uint8_t current = talonOut->output_current *= 100.0;
+    uint16_t current = talonOut->output_current *= 100.0;
     message.addElementUInt16("Output Current",current);
     message.addElementFloat32("Output Voltage",talonOut->output_voltage);
     message.addElementFloat32("Output Percent",talonOut->output_percent);
@@ -178,9 +178,9 @@ void send(std::string messageLabel, const messages::msg::TalonOut::SharedPtr tal
 
     message.addElementInt8("Device ID",talonOut->device_id);
     float volt = talonOut->bus_voltage *= 100.0;
-    uint8_t voltage = volt;
+    uint16_t voltage = volt;
     message.addElementUInt16("Bus Voltage",voltage);
-    uint8_t current = talonOut->output_current *= 100.0;
+    uint16_t current = talonOut->output_current *= 100.0;
     message.addElementUInt16("Output Current",current);
     message.addElementFloat32("Output Voltage",talonOut->output_voltage);
     message.addElementFloat32("Output Percent",talonOut->output_percent);
