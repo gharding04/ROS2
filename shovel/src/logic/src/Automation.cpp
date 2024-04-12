@@ -262,7 +262,7 @@ void Automation::setDestZ(float meters){
     this->destZ = meters;
 }
 
-void Automation::publishAutonomyOut(std::string robotStateString, std::string excavationStateString, std::string errorStateString, std::string dumpStateString){
+void Automation::publishAutonomyOut(std::string robotStateString, std::string excavationStateString, std::string errorStateString, std::string diagnosticsStateString){
     messages::msg::AutonomyOut aOut;
     aOut.robot_state = robotStateString;
     aOut.excavation_state = excavationStateString;
