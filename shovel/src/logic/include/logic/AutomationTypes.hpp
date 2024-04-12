@@ -23,4 +23,5 @@ struct Linear {
     bool atMax = false;
     float distance = 0.0;
     bool sensorless = false;
+    float maxCurrent = 0.0;
 };

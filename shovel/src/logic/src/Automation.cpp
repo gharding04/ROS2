@@ -171,6 +171,9 @@ void Automation::setTalon1(const messages::msg::TalonOut::SharedPtr talonOut){
     this->talon1.outputCurrent = talonOut->output_current;
     this->talon1.outputVoltage = talonOut->output_voltage;
     this->talon1.outputPercentage = talonOut->output_percent;
+    if(talonOut->output_current > this->talon1.maxCurrent){
+        this->talon1.maxCurrent = talonOut->output_current;
+    }
 }
 
 void Automation::setTalon2(const messages::msg::TalonOut::SharedPtr talonOut){
@@ -178,6 +181,9 @@ void Automation::setTalon2(const messages::msg::TalonOut::SharedPtr talonOut){
     this->talon2.outputCurrent = talonOut->output_current;
     this->talon2.outputVoltage = talonOut->output_voltage;
     this->talon2.outputPercentage = talonOut->output_percent;
+    if(talonOut->output_current > this->talon2.maxCurrent){
+        this->talon2.maxCurrent = talonOut->output_current;
+    }
 }
 
 void Automation::setTalon3(const messages::msg::TalonOut::SharedPtr talonOut){
@@ -185,6 +191,9 @@ void Automation::setTalon3(const messages::msg::TalonOut::SharedPtr talonOut){
     this->talon3.outputCurrent = talonOut->output_current;
     this->talon3.outputVoltage = talonOut->output_voltage;
     this->talon3.outputPercentage = talonOut->output_percent;
+    if(talonOut->output_current > this->talon3.maxCurrent){
+        this->talon3.maxCurrent = talonOut->output_current;
+    }
 }
 
 void Automation::setTalon4(const messages::msg::TalonOut::SharedPtr talonOut){
@@ -192,6 +201,9 @@ void Automation::setTalon4(const messages::msg::TalonOut::SharedPtr talonOut){
     this->talon4.outputCurrent = talonOut->output_current;
     this->talon4.outputVoltage = talonOut->output_voltage;
     this->talon4.outputPercentage = talonOut->output_percent;
+    if(talonOut->output_current > this->talon4.maxCurrent){
+        this->talon4.maxCurrent = talonOut->output_current;
+    }
 }
 
 void Automation::setFalcon1(const messages::msg::FalconOut::SharedPtr falconOut){

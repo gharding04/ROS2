@@ -40,29 +40,41 @@ void Automation1::automate(){
             if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-getStartTime()).count() > 800){
                 setBucketSpeed(-1.0);
                 setArmSpeed(-1.0);
-                if(linear1.error == "ActuatorNotMovingError"){
+                if(linear1.error == "ActuatorNotMovingError" && talon1.maxCurrent == 0.0){
                     RCLCPP_INFO(this->node->get_logger(), "linear1.error");
                     RCLCPP_INFO(this->node->get_logger(), "%s", linear1.error.c_str());
+                    RCLCPP_INFO(this->node->get_logger(), "Talon1.maxCurrent: %f", talon1.maxCurrent);
                     errorState = TALON_14_ERROR;
                     robotState = ROBOT_IDLE;
+                    setBucketSpeed(0.0);
+                    setArmSpeed(0.0);
                 }
-                else if(linear2.error == "ActuatorNotMovingError"){
+                else if(linear2.error == "ActuatorNotMovingError" && talon2.maxCurrent == 0.0){
                     RCLCPP_INFO(this->node->get_logger(), "linear2.error");
                     RCLCPP_INFO(this->node->get_logger(), "%s", linear2.error.c_str());
+                    RCLCPP_INFO(this->node->get_logger(), "Talon2.maxCurrent: %f", talon2.maxCurrent);
                     errorState = TALON_15_ERROR;
                     robotState = ROBOT_IDLE;
+                    setBucketSpeed(0.0);
+                    setArmSpeed(0.0);
                 }
-                else if(linear3.error == "ActuatorNotMovingError"){
+                else if(linear3.error == "ActuatorNotMovingError" && talon3.maxCurrent == 0.0){
                     RCLCPP_INFO(this->node->get_logger(), "linear3.error");
                     RCLCPP_INFO(this->node->get_logger(), "%s", linear3.error.c_str());
+                    RCLCPP_INFO(this->node->get_logger(), "Talon3.maxCurrent: %f", talon3.maxCurrent);
                     errorState = TALON_16_ERROR;
                     robotState = ROBOT_IDLE;
+                    setBucketSpeed(0.0);
+                    setArmSpeed(0.0);
                 }
-                else if(linear4.error == "ActuatorNotMovingError"){
+                else if(linear4.error == "ActuatorNotMovingError" && talon4.maxCurrent == 0.0){
                     RCLCPP_INFO(this->node->get_logger(), "linear4.error");
                     RCLCPP_INFO(this->node->get_logger(), "%s", linear4.error.c_str());
+                    RCLCPP_INFO(this->node->get_logger(), "Talon4.maxCurrent: %f", talon4.maxCurrent);
                     errorState = TALON_17_ERROR;
                     robotState = ROBOT_IDLE;
+                    setBucketSpeed(0.0);
+                    setArmSpeed(0.0);
                 }
                 else{
                     setStartTime(std::chrono::high_resolution_clock::now());
