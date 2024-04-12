@@ -400,7 +400,7 @@ void setPotentiometerError(int potentData, LinearActuator *linear){
             linear->error = None;
         }
     }
-    if(potentData >= 100 && potentData <= 110 && linear->timeWithoutChange > 0){
+    if(potentData >= 100 && potentData <= 110 && linear->timeWithoutChange > 2){
         linear->error = PotentiometerError;
         RCLCPP_INFO(nodeHandle->get_logger(),"EXCAVATION ERROR: PotentiometerError");
     }
@@ -516,6 +516,14 @@ void automationGoCallback(const std_msgs::msg::Bool::SharedPtr msg){
  * */
 void setSyncErrors(){
     if(abs(linear1.potentiometer - linear2.potentiometer) > thresh3){
+        if(linear1.potentiometer >= 100 && linear1.potentiometer <= 110){
+            linear1.error = PotentiometerError;
+            linear1.sensorless = true;
+        }
+        if(linear2.potentiometer >= 100 && linear2.potentiometer <= 110){
+            linear2.error = PotentiometerError;
+            linear2.sensorless = true;
+        }
         if(linear1.error == None){
             linear1.error = ActuatorsSyncError;
         }
@@ -531,9 +539,11 @@ void setSyncErrors(){
             linear2.error = None;
         }
     }
-    sync();
-    if(linear1.speed != 0 || linear2.speed != 0){
-        publishSpeeds();
+    if(linear1.error != PotentiometerError && linear2.error != PotentiometerError){
+        sync();
+        if(linear1.speed != 0 || linear2.speed != 0){
+            publishSpeeds();
+        }
     }
 }
 
@@ -549,6 +559,14 @@ void setSyncErrors(){
  * */
 void setSyncErrors2(){
     if(abs(linear3.potentiometer - linear4.potentiometer) > thresh3){
+        if(linear3.potentiometer >= 100 && linear3.potentiometer <= 110){
+            linear3.error = PotentiometerError;
+            linear3.sensorless = true;
+        }
+        if(linear4.potentiometer >= 100 && linear4.potentiometer <= 110){
+            linear4.error = PotentiometerError;
+            linear4.sensorless = true;
+        }
         if(linear3.error == None){
             linear3.error = ActuatorsSyncError;
         }
@@ -564,9 +582,11 @@ void setSyncErrors2(){
             linear4.error = None;
         }
     }
-    sync2();
-    if(linear3.speed != 0 || linear4.speed != 0){
-        publishSpeeds2();
+    if(linear3.error != PotentiometerError && linear4.error != PotentiometerError){
+        sync2();
+        if(linear3.speed != 0 || linear4.speed != 0){
+            publishSpeeds2();
+        }
     }
 }
 
