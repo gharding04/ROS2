@@ -40,22 +40,22 @@ void Automation1::automate(){
             if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-getStartTime()).count() > 800){
                 setBucketSpeed(-1.0);
                 setArmSpeed(-1.0);
-                if(linear1.error != "None"){
+                if(linear1.error != "None" && linear1.error != "PotentiometerError"){
                     RCLCPP_INFO(this->node->get_logger(), "linear1.error");
                     errorState = TALON_14_ERROR;
                     robotState = ROBOT_IDLE;
                 }
-                else if(linear2.error != "None"){
+                else if(linear2.error != "None" && linear1.error != "PotentiometerError"){
                     RCLCPP_INFO(this->node->get_logger(), "linear2.error");
                     errorState = TALON_15_ERROR;
                     robotState = ROBOT_IDLE;
                 }
-                else if(linear3.error != "None"){
+                else if(linear3.error != "None" && linear1.error != "PotentiometerError"){
                     RCLCPP_INFO(this->node->get_logger(), "linear3.error");
                     errorState = TALON_16_ERROR;
                     robotState = ROBOT_IDLE;
                 }
-                else if(linear4.error != "None"){
+                else if(linear4.error != "None" && linear1.error != "PotentiometerError"){
                     RCLCPP_INFO(this->node->get_logger(), "linear4.error");
                     errorState = TALON_17_ERROR;
                     robotState = ROBOT_IDLE;
