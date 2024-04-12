@@ -604,7 +604,7 @@ void setSyncErrors(){
  * @return void
  * */
 void setSyncErrors2(){
-    if(abs(linear3.potentiometer - linear4.potentiometer) > thresh3){
+    if(abs(linear3.potentiometer - linear4.potentiometer) > thresh3*2){
         if(linear3.potentiometer >= 100 && linear3.potentiometer <= 110){
             linear3.error = PotentiometerError;
             linear3.sensorless = true;
