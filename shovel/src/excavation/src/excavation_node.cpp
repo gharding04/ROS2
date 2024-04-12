@@ -196,17 +196,39 @@ void syncDistance(){
     float diff = abs(linear1.distance - linear2.distance);
     bool val = (currentSpeed > 0) ? (linear1.distance >= linear2.distance) : (linear1.distance < linear2.distance);
     if (diff > distThresh3) {
-        (val) ? linear1.speed = 0.0 : linear2.speed = 0.0;
+        if(!linear1.sensorless)
+            linear1.error = ActuatorsSyncError;
+        if(!linear2.sensorless)
+            linear2.error = ActuatorsSyncError;
+        (val) ? linear3.speed = 0.0 : linear4.speed = 0.0;
     }
     else if (diff > distThresh2){
         (val) ? linear1.speed *= 0.5 : linear2.speed *= 0.5;
+        if(!linear1.sensorless)
+            if(linear1.error == ActuatorsSyncError)
+                linear1.error = None;
+        if(!linear2.sensorless)
+            if(linear2.error == ActuatorsSyncError)
+                linear2.error = None;
     }
     else if (diff > distThresh1) {
         (val) ? linear1.speed *= 0.9 : linear2.speed *= 0.9;
+        if(!linear1.sensorless)
+            if(linear1.error == ActuatorsSyncError)
+                linear1.error = None;
+        if(!linear2.sensorless)
+            if(linear2.error == ActuatorsSyncError)
+                linear2.error = None;
     }
     else{
         linear1.speed = currentSpeed;
 	    linear2.speed = currentSpeed;
+        if(!linear1.sensorless)
+            if(linear1.error == ActuatorsSyncError)
+                linear1.error = None;
+        if(!linear2.sensorless)
+            if(linear2.error == ActuatorsSyncError)
+                linear2.error = None;
     }
 }
 
@@ -227,17 +249,41 @@ void syncDistance2(){
     float diff = abs(linear3.distance - linear4.distance);
     bool val = (currentSpeed2 > 0) ? (linear3.distance >= linear4.distance) : (linear3.distance < linear4.distance);
     if (diff > distThresh3) {
+        if(!linear3.sensorless)
+            linear3.error = ActuatorsSyncError;
+        if(!linear4.sensorless)
+            linear4.error = ActuatorsSyncError;
         (val) ? linear3.speed = 0.0 : linear4.speed = 0.0;
     }
     else if (diff > distThresh2){
         (val) ? linear3.speed *= 0.5 : linear4.speed *= 0.5;
+        if(!linear3.sensorless)
+            if(linear3.error == ActuatorsSyncError)
+                linear3.error = None;
+        if(!linear4.sensorless)
+            if(linear4.error == ActuatorsSyncError)
+                linear4.error = None;
     }
     else if (diff > distThresh1){
         (val) ? linear3.speed *= 0.9 : linear4.speed *= 0.9;
+        if(!linear3.sensorless)
+            if(linear3.error == ActuatorsSyncError)
+                linear3.error = None;
+        if(!linear4.sensorless)
+            if(linear4.error == ActuatorsSyncError)
+                linear4.error = None;
+
     }
     else{
         linear3.speed = currentSpeed2;
 	    linear4.speed = currentSpeed2;
+        if(!linear3.sensorless)
+            if(linear3.error == ActuatorsSyncError)
+                linear3.error = None;
+        if(!linear4.sensorless)
+            if(linear4.error == ActuatorsSyncError)
+                linear4.error = None;
+
     }
 }
 
