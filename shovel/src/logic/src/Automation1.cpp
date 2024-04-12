@@ -40,27 +40,27 @@ void Automation1::automate(){
             if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-getStartTime()).count() > 800){
                 setBucketSpeed(-1.0);
                 setArmSpeed(-1.0);
-                if(linear1.error != "None" && linear1.error != "PotentiometerError"){
+                if(linear1.error == "ActuatorNotMovingError"){
                     RCLCPP_INFO(this->node->get_logger(), "linear1.error");
-                    RCLCPP_INFO(this->node->get_logger(), "%s", linear1.error);
+                    RCLCPP_INFO(this->node->get_logger(), "%s", linear1.error.c_str());
                     errorState = TALON_14_ERROR;
                     robotState = ROBOT_IDLE;
                 }
-                else if(linear2.error != "None" && linear2.error != "PotentiometerError"){
+                else if(linear2.error == "ActuatorNotMovingError"){
                     RCLCPP_INFO(this->node->get_logger(), "linear2.error");
-                    RCLCPP_INFO(this->node->get_logger(), "%s", linear2.error);
+                    RCLCPP_INFO(this->node->get_logger(), "%s", linear2.error.c_str());
                     errorState = TALON_15_ERROR;
                     robotState = ROBOT_IDLE;
                 }
-                else if(linear3.error != "None" && linear3.error != "PotentiometerError"){
+                else if(linear3.error == "ActuatorNotMovingError"){
                     RCLCPP_INFO(this->node->get_logger(), "linear3.error");
-                    RCLCPP_INFO(this->node->get_logger(), "%s", linear3.error);
+                    RCLCPP_INFO(this->node->get_logger(), "%s", linear3.error.c_str());
                     errorState = TALON_16_ERROR;
                     robotState = ROBOT_IDLE;
                 }
-                else if(linear4.error != "None" && linear4.error != "PotentiometerError"){
+                else if(linear4.error == "ActuatorNotMovingError"){
                     RCLCPP_INFO(this->node->get_logger(), "linear4.error");
-                    RCLCPP_INFO(this->node->get_logger(), "%s", linear4.error);
+                    RCLCPP_INFO(this->node->get_logger(), "%s", linear4.error.c_str());
                     errorState = TALON_17_ERROR;
                     robotState = ROBOT_IDLE;
                 }
