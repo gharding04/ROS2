@@ -125,10 +125,7 @@ void stopCallback(std_msgs::msg::Empty::SharedPtr empty){
  * actuator to a lower value.
  * @return void
  * */
-void sync(){
-    float diff = abs(linear1.potentiometer - linear2.potentiometer);
-    // Might change this from ternary to if statements to improve readability
-    /*
+/*
     val truth table:
     if Current Speed > 0:                   If actuators are extending
         if linear1.pot >= linear2.pot:      If linear1 is further extended, use first value in ternary operators below
@@ -140,55 +137,22 @@ void sync(){
             val = true
         else:
             val = false
-
-
     */
-    bool val = (currentSpeed > 0) ? (linear1.potentiometer >= linear2.potentiometer) : (linear1.potentiometer < linear2.potentiometer);
+void sync(LinearActuator *linear1, LinearActuator *linear2, float currentSpeed){
+    float diff = abs(linear1->potentiometer - linear2->potentiometer);
+    bool val = (currentSpeed > 0) ? (linear1->potentiometer >= linear2->potentiometer) : (linear1->potentiometer < linear2->potentiometer);
     if (diff > thresh3){
-        (val) ? linear1.speed = 0 : linear2.speed = 0;
+        (val) ? linear1->speed = 0 : linear2->speed = 0;
     }
     else if (diff > thresh2){
-        (val) ? linear1.speed *= 0.5 : linear2.speed *= 0.5;
+        (val) ? linear1->speed *= 0.5 : linear2->speed *= 0.5;
     }
     else if (diff > thresh1){
-        (val) ? linear1.speed *= 0.9 : linear2.speed *= 0.9;
+        (val) ? linear1->speed *= 0.9 : linear2->speed *= 0.9;
     }
     else{
-        linear1.speed = currentSpeed;
-        linear2.speed = currentSpeed;
-    }
-}
-
-
-/** @brief Function to sync the second pair of linear actuators. 
- * 
- * The sync function works by checking if the currentSpeed2 is
- * greater than zero. If the speed is greater than zero, the val
- * checks which actuator is more extended and sets the speed of
- * the actuator to a lower value if the diff is greater than the 
- * thresh values.  If the value is less than zero, the val checks 
- * which actuator is less extended and sets the speed of the 
- * actuator to a lower value. This was added to eliminate memory
- * issues arising from earlier functions that used pointers and 
- * had unexpected behavior. Future updates may remove this.
- * @return void
- * */
-void sync2(){
-    float diff = abs(linear3.potentiometer - linear4.potentiometer);
-    // Might change this from ternary to if statements to improve readability
-    bool val = (currentSpeed2 > 0) ? (linear3.potentiometer >= linear4.potentiometer) : (linear3.potentiometer < linear4.potentiometer);
-    if (diff > thresh3){
-        (val) ? linear3.speed = 0 : linear4.speed = 0;
-    }
-    else if (diff > thresh2){
-        (val) ? linear3.speed *= 0.5 : linear4.speed *= 0.5;
-    }
-    else if (diff > thresh1){
-        (val) ? linear3.speed *= 0.9 : linear4.speed *= 0.9;
-    }
-    else{
-        linear3.speed = currentSpeed2;
-        linear4.speed = currentSpeed2;
+        linear1->speed = currentSpeed;
+        linear2->speed = currentSpeed;
     }
 }
 
@@ -205,98 +169,43 @@ void sync2(){
  * actuator to a lower value. 
  * @return void
  * */
-void syncDistance(){
-    float diff = abs(linear1.distance - linear2.distance);
-    bool val = (currentSpeed > 0) ? (linear1.distance >= linear2.distance) : (linear1.distance < linear2.distance);
+void syncDistance(LinearActuator *linear1, LinearActuator *linear2, float currentSpeed){
+    float diff = abs(linear1->distance - linear2->distance);
+    bool val = (currentSpeed > 0) ? (linear1->distance >= linear2->distance) : (linear1->distance < linear2->distance);
     if (diff > distThresh3) {
-        if(!linear1.sensorless)
-            linear1.error = ActuatorsSyncError;
-        if(!linear2.sensorless)
-            linear2.error = ActuatorsSyncError;
-        (val) ? linear3.speed = 0.0 : linear4.speed = 0.0;
+        if(!linear1->sensorless)
+            linear1->error = ActuatorsSyncError;
+        if(!linear2->sensorless)
+            linear2->error = ActuatorsSyncError;
+        (val) ? linear1->speed = 0.0 : linear2->speed = 0.0;
     }
     else if (diff > distThresh2){
-        (val) ? linear1.speed *= 0.5 : linear2.speed *= 0.5;
-        if(!linear1.sensorless)
-            if(linear1.error == ActuatorsSyncError)
-                linear1.error = None;
-        if(!linear2.sensorless)
-            if(linear2.error == ActuatorsSyncError)
-                linear2.error = None;
+        (val) ? linear1->speed *= 0.5 : linear2->speed *= 0.5;
+        if(!linear1->sensorless)
+            if(linear1->error == ActuatorsSyncError)
+                linear1->error = None;
+        if(!linear2->sensorless)
+            if(linear2->error == ActuatorsSyncError)
+                linear2->error = None;
     }
     else if (diff > distThresh1) {
-        (val) ? linear1.speed *= 0.9 : linear2.speed *= 0.9;
-        if(!linear1.sensorless)
-            if(linear1.error == ActuatorsSyncError)
-                linear1.error = None;
-        if(!linear2.sensorless)
-            if(linear2.error == ActuatorsSyncError)
-                linear2.error = None;
+        (val) ? linear1->speed *= 0.9 : linear2->speed *= 0.9;
+        if(!linear1->sensorless)
+            if(linear1->error == ActuatorsSyncError)
+                linear1->error = None;
+        if(!linear2->sensorless)
+            if(linear2->error == ActuatorsSyncError)
+                linear2->error = None;
     }
     else{
-        linear1.speed = currentSpeed;
-	    linear2.speed = currentSpeed;
-        if(!linear1.sensorless)
-            if(linear1.error == ActuatorsSyncError)
-                linear1.error = None;
-        if(!linear2.sensorless)
-            if(linear2.error == ActuatorsSyncError)
-                linear2.error = None;
-    }
-}
-
-
-/** @brief Function to sync the linear actuators when using the distance 
- * calculated from the time running. 
- * 
- * The sync function works by checking if the currentSpeed is
- * greater than zero. If the speed is greater than zero, the val
- * checks which actuator is more extended and sets the speed of
- * the actuator to a lower value if the diff is greater than the 
- * thresh values.  If the value is less than zero, the val checks 
- * which actuator is less extended and sets the speed of the 
- * actuator to a lower value. 
- * @return void
- * */
-void syncDistance2(){
-    float diff = abs(linear3.distance - linear4.distance);
-    bool val = (currentSpeed2 > 0) ? (linear3.distance >= linear4.distance) : (linear3.distance < linear4.distance);
-    if (diff > distThresh3) {
-        if(!linear3.sensorless)
-            linear3.error = ActuatorsSyncError;
-        if(!linear4.sensorless)
-            linear4.error = ActuatorsSyncError;
-        (val) ? linear3.speed = 0.0 : linear4.speed = 0.0;
-    }
-    else if (diff > distThresh2){
-        (val) ? linear3.speed *= 0.5 : linear4.speed *= 0.5;
-        if(!linear3.sensorless)
-            if(linear3.error == ActuatorsSyncError)
-                linear3.error = None;
-        if(!linear4.sensorless)
-            if(linear4.error == ActuatorsSyncError)
-                linear4.error = None;
-    }
-    else if (diff > distThresh1){
-        (val) ? linear3.speed *= 0.9 : linear4.speed *= 0.9;
-        if(!linear3.sensorless)
-            if(linear3.error == ActuatorsSyncError)
-                linear3.error = None;
-        if(!linear4.sensorless)
-            if(linear4.error == ActuatorsSyncError)
-                linear4.error = None;
-
-    }
-    else{
-        linear3.speed = currentSpeed2;
-	linear4.speed = currentSpeed2;
-        if(!linear3.sensorless)
-            if(linear3.error == ActuatorsSyncError)
-                linear3.error = None;
-        if(!linear4.sensorless)
-            if(linear4.error == ActuatorsSyncError)
-                linear4.error = None;
-
+        linear1->speed = currentSpeed;
+	    linear2->speed = currentSpeed;
+        if(!linear1->sensorless)
+            if(linear1->error == ActuatorsSyncError)
+                linear1->error = None;
+        if(!linear2->sensorless)
+            if(linear2->error == ActuatorsSyncError)
+                linear2->error = None;
     }
 }
 
@@ -340,7 +249,7 @@ void setSpeeds(){
         }
     }
     if(linear1.error != PotentiometerError && linear2.error != PotentiometerError){
-        sync();
+        sync(&linear1, &linear2, currentSpeed);
         setSpeedAtEnd();
     }
 }
@@ -365,7 +274,7 @@ void setSpeeds2(){
         }
     }
     if(linear3.error != PotentiometerError && linear4.error != PotentiometerError){
-        sync2();
+        sync(&linear3, &linear4, currentSpeed2);
         setSpeedAtEnd2();
     }
 }
@@ -420,7 +329,7 @@ void publishSpeeds2(){
 void setSpeedsDistance(){
     linear1.speed = currentSpeed;
     linear2.speed = currentSpeed;
-    syncDistance();
+    syncDistance(&linear1, &linear2, currentSpeed);
     setSpeedAtEnd();
     if(linear1.speed != linear1.previous || linear2.speed != linear2.previous){
         publishSpeeds();
@@ -439,7 +348,7 @@ void setSpeedsDistance(){
 void setSpeedsDistance2(){
     linear3.speed = currentSpeed2;
     linear4.speed = currentSpeed2;
-    syncDistance2();
+    syncDistance(&linear3, &linear4, currentSpeed2);
     setSpeedAtEnd2();
     if(linear3.speed != linear3.previous || linear4.speed != linear4.previous){
         publishSpeeds2();
@@ -601,7 +510,7 @@ void setSyncErrors(){
         }
     }
     if(linear1.error != PotentiometerError && linear2.error != PotentiometerError){
-        sync();
+        sync(&linear1, &linear2, currentSpeed);
         if(linear1.speed != linear1.previous || linear2.speed != linear2.previous){
             publishSpeeds();
         }
@@ -644,7 +553,7 @@ void setSyncErrors2(){
         }
     }
     if(linear3.error != PotentiometerError && linear4.error != PotentiometerError){
-        sync2();
+        sync(&linear3, &linear4, currentSpeed2);
         if(linear3.speed != linear3.previous || linear4.speed != linear4.previous){
             publishSpeeds2();
         }
