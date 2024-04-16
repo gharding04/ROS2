@@ -245,31 +245,6 @@ void setSpeeds(LinearActuator *linear1, LinearActuator *linear2, float currentSp
 }
 
 
-/** @brief Function that sets the speeds of the second pair of linear
- * actuators, then syncs the motors. 
- * 
- * The setSpeed function checks if the linear actuators are at the min
- * or max, then sets the speed to 0.0 if either are true.
- * @return void
- * */
-void setSpeeds2(){
-    if(!automationGo){
-        linear3.speed = currentSpeed2;
-        linear4.speed = currentSpeed2;
-    }
-    else{
-        if(linear3.error != PotentiometerError && linear4.error != PotentiometerError){
-            linear3.speed = currentSpeed2;
-            linear4.speed = currentSpeed2;
-        }
-    }
-    if(linear3.error != PotentiometerError && linear4.error != PotentiometerError){
-        sync(&linear3, &linear4, currentSpeed2);
-        setSpeedAtEnd(&linear3, &linear4, currentSpeed2);
-    }
-}
-
-
 /** @brief Function to publish the speeds of the first pair of 
  * actuators to Talons 14 and 15. 
  * 
@@ -316,32 +291,18 @@ void publishSpeeds2(){
  * published if either is not zero or the currentSpeed is not zero.
  * @return void
  * */
-void setSpeedsDistance(){
-    linear1.speed = currentSpeed;
-    linear2.speed = currentSpeed;
-    syncDistance(&linear1, &linear2, currentSpeed);
-    setSpeedAtEnd(&linear1, &linear2, currentSpeed);
-    if(linear1.speed != linear1.previous || linear2.speed != linear2.previous){
-        publishSpeeds();
-    }
-}
-
-
-/** @brief Function that sets the speeds of the second pair of linear
- * actuators, then syncs the motors.
- * 
- * The setSpeed function checks if the linear actuators are at the min
- * or max, then sets the speed to 0.0 if either are true. The values are
- * published if either is not zero or the currentSpeed2 is not zero.
- * @return void
- * */
-void setSpeedsDistance2(){
-    linear3.speed = currentSpeed2;
-    linear4.speed = currentSpeed2;
-    syncDistance(&linear3, &linear4, currentSpeed2);
-    setSpeedAtEnd(&linear3, &linear4, currentSpeed2);
-    if(linear3.speed != linear3.previous || linear4.speed != linear4.previous){
-        publishSpeeds2();
+void setSpeedsDistance(LinearActuator *linear1, LinearActuator *linear2, float currentSpeed){
+    linear1->speed = currentSpeed;
+    linear2->speed = currentSpeed;
+    syncDistance(linear1, linear2, currentSpeed);
+    setSpeedAtEnd(linear1, linear2, currentSpeed);
+    if(linear1->speed != linear1->previous || linear2->speed != linear2->previous){
+        if(linear1->motorNumber == 14){
+            publishSpeeds();
+	}
+	else{
+            publishSpeeds2();
+	}
     }
 }
 
@@ -474,84 +435,45 @@ void automationGoCallback(const std_msgs::msg::Bool::SharedPtr msg){
  * which indicates that the actuators are out of sync.
  * @return void
  * */
-void setSyncErrors(){
-    if(abs(linear1.potentiometer - linear2.potentiometer) > thresh3*2){
-        if(linear1.potentiometer >= 100 && linear1.potentiometer <= 110 && !linear1.initialized){
-            linear1.error = PotentiometerError;
-            linear1.sensorless = true;
+void setSyncErrors(LinearActuator *linear1, LinearActuator *linear2, float currentSpeed){
+    if(abs(linear1->potentiometer - linear2->potentiometer) > thresh3*2){
+        if(linear1->potentiometer >= 100 && linear1->potentiometer <= 110 && !linear1->initialized){
+            linear1->error = PotentiometerError;
+            linear1->sensorless = true;
         }
-        if(linear2.potentiometer >= 100 && linear2.potentiometer <= 110 && !linear2.initialized){
-            linear2.error = PotentiometerError;
-            linear2.sensorless = true;
+        if(linear2->potentiometer >= 100 && linear2->potentiometer <= 110 && !linear2->initialized){
+            linear2->error = PotentiometerError;
+            linear2->sensorless = true;
         }
-        if(linear1.error == None){
-            linear1.error = ActuatorsSyncError;
+        if(linear1->error == None){
+            linear1->error = ActuatorsSyncError;
         }
-        if(linear2.error == None){
-            linear2.error = ActuatorsSyncError;
+        if(linear2->error == None){
+            linear2->error = ActuatorsSyncError;
         }
     }
     else{
-        if(linear1.error == ActuatorsSyncError){
-            linear1.error = None;
+        if(linear1->error == ActuatorsSyncError){
+            linear1->error = None;
         }
-        if(linear2.error == ActuatorsSyncError){
-            linear2.error = None;
+        if(linear2->error == ActuatorsSyncError){
+            linear2->error = None;
         }
     }
-    if(linear1.error != PotentiometerError && linear2.error != PotentiometerError){
-        sync(&linear1, &linear2, currentSpeed);
-        if(linear1.speed != linear1.previous || linear2.speed != linear2.previous){
-            publishSpeeds();
+    if(linear1->error != PotentiometerError && linear2->error != PotentiometerError){
+        sync(linear1, linear2, currentSpeed);
+        if(linear1->speed != linear1->previous || linear2->speed != linear2->previous){
+            if(linear1->motorNumber == 14){
+                publishSpeeds();
+	    }
+	    else{
+                publishSpeeds2();
+	    }
         }
     }
 }
 
-
-/** @brief Function that checks if the linear actuators are out of sync
- * then sets the error state to the correct one
- * 
- * The function checks if the difference between the potentiometers is 
- * greater than the thresh1 value, then checks if the error state is 
- * None. If the error is None, the error is set to ActuatorsSyncError, 
- * which indicates that the actuators are out of sync.
- * @return void
- * */
-void setSyncErrors2(){
-    if(abs(linear3.potentiometer - linear4.potentiometer) > thresh3*2){
-        if(linear3.potentiometer >= 100 && linear3.potentiometer <= 110 && !linear3.initialized){
-            linear3.error = PotentiometerError;
-            linear3.sensorless = true;
-        }
-        if(linear4.potentiometer >= 100 && linear4.potentiometer <= 110 && !linear4.initialized){
-            linear4.error = PotentiometerError;
-            linear4.sensorless = true;
-        }
-        if(linear3.error == None){
-            linear3.error = ActuatorsSyncError;
-        }
-        if(linear4.error == None){
-            linear4.error = ActuatorsSyncError;
-        }
-    }
-    else{
-        if(linear3.error == ActuatorsSyncError){
-            linear3.error = None;
-        }
-        if(linear4.error == ActuatorsSyncError){
-            linear4.error = None;
-        }
-    }
-    if(linear3.error != PotentiometerError && linear4.error != PotentiometerError){
-        sync(&linear3, &linear4, currentSpeed2);
-        if(linear3.speed != linear3.previous || linear4.speed != linear4.previous){
-            publishSpeeds2();
-        }
-    }
-}
-
-
-/** @brief Callback function for potentiometer 1
+/*
  * 
  * The function sets the error state of linear actuator 1, then
  * processes the potentiometer data and sets the sync errors if the 
@@ -568,7 +490,7 @@ void potentiometer1Callback(const std_msgs::msg::Int32::SharedPtr msg){
         if(linear1.error != PotentiometerError){
             processPotentiometerData(msg->data, &linear1);
             if(!linear1.sensorless && !linear2.sensorless){
-                setSyncErrors();
+                setSyncErrors(&linear1, &linear2, currentSpeed);
             }
         }
     }
@@ -592,7 +514,7 @@ void potentiometer2Callback(const std_msgs::msg::Int32::SharedPtr msg){
         if(linear2.error != PotentiometerError){
             processPotentiometerData(msg->data, &linear2);
             if(!linear1.sensorless && !linear2.sensorless){
-                setSyncErrors();
+                setSyncErrors(&linear1, &linear2, currentSpeed);
             }
         }
     }
@@ -616,7 +538,7 @@ void potentiometer3Callback(const std_msgs::msg::Int32::SharedPtr msg){
         if(linear3.error != PotentiometerError){
             processPotentiometerData(msg->data, &linear3);
             if(!linear3.sensorless && !linear4.sensorless){
-                setSyncErrors2();
+                setSyncErrors(&linear3, &linear4, currentSpeed2);
             }
         }
     }
@@ -640,7 +562,7 @@ void potentiometer4Callback(const std_msgs::msg::Int32::SharedPtr msg){
         if(linear4.error != PotentiometerError){
             processPotentiometerData(msg->data, &linear4);
             if(!linear3.sensorless && !linear4.sensorless){
-                setSyncErrors2();
+                setSyncErrors(&linear3, &linear4, currentSpeed2);
             }
         }
     }
@@ -675,7 +597,7 @@ void armSpeedCallback(const std_msgs::msg::Float32::SharedPtr speed){
 void bucketSpeedCallback(const std_msgs::msg::Float32::SharedPtr speed){
     currentSpeed2 = speed->data;
     RCLCPP_INFO(nodeHandle->get_logger(),"currentSpeed: %f", currentSpeed2);
-    setSpeeds2();
+    setSpeeds(&linear3, &linear4, currentSpeed2);
     publishSpeeds2();
     RCLCPP_INFO(nodeHandle->get_logger(),"Bucket speeds: %f, %f", linear3.speed, linear4.speed);
 
@@ -744,7 +666,7 @@ void updateMotorPositions(int millis){
     //RCLCPP_INFO(nodeHandle->get_logger(), "Linear 2 Distance: %f", linear2.distance);
     
     if(linear1.sensorless || linear2.sensorless)
-        setSpeedsDistance();
+        setSpeedsDistance(&linear1, &linear2, currentSpeed);
     
     updateMotorPosition(millis, &linear3);
     //RCLCPP_INFO(nodeHandle->get_logger(), "Linear 3 Distance: %f", linear3.distance);
@@ -753,7 +675,7 @@ void updateMotorPositions(int millis){
     //RCLCPP_INFO(nodeHandle->get_logger(), "Linear 4 Distance: %f", linear4.distance);
     
     if(linear3.sensorless || linear4.sensorless)
-        setSpeedsDistance2();
+        setSpeedsDistance(&linear3, &linear4, currentSpeed2);
 }
 
 
