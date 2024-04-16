@@ -210,22 +210,12 @@ void syncDistance(LinearActuator *linear1, LinearActuator *linear2, float curren
 }
 
 
-void setSpeedAtEnd(){
-    if((linear1.atMax && currentSpeed > 0) || (linear1.atMin && currentSpeed < 0)){
-        linear1.speed = 0.0;
+void setSpeedAtEnd(LinearActuator *linear1, LinearActuator *linear2, float currentSpeed){
+    if((linear1->atMax && currentSpeed > 0) || (linear1->atMin && currentSpeed < 0)){
+        linear1->speed = 0.0;
     }
-    if((linear2.atMax && currentSpeed > 0) || (linear2.atMin && currentSpeed < 0)){
-        linear2.speed = 0.0;
-    }
-}
-
-
-void setSpeedAtEnd2(){
-    if((linear3.atMax && currentSpeed2 > 0) || (linear3.atMin && currentSpeed2 < 0)){
-        linear3.speed = 0.0;
-    }
-    if((linear4.atMax && currentSpeed2 > 0) || (linear4.atMin && currentSpeed2 < 0)){
-        linear4.speed = 0.0;
+    if((linear2->atMax && currentSpeed > 0) || (linear2->atMin && currentSpeed < 0)){
+        linear2->speed = 0.0;
     }
 }
 
@@ -237,20 +227,20 @@ void setSpeedAtEnd2(){
  * or max, then sets the speed to 0.0 if either are true.
  * @return void
  * */
-void setSpeeds(){
+void setSpeeds(LinearActuator *linear1, LinearActuator *linear2, float currentSpeed){
     if(!automationGo){
-        linear1.speed = currentSpeed;
-        linear2.speed = currentSpeed;
+        linear1->speed = currentSpeed;
+        linear2->speed = currentSpeed;
     }
     else{
-        if(linear1.error != PotentiometerError && linear2.error != PotentiometerError){
-            linear1.speed = currentSpeed;
-            linear2.speed = currentSpeed;
+        if(linear1->error != PotentiometerError && linear2->error != PotentiometerError){
+            linear1->speed = currentSpeed;
+            linear2->speed = currentSpeed;
         }
     }
-    if(linear1.error != PotentiometerError && linear2.error != PotentiometerError){
-        sync(&linear1, &linear2, currentSpeed);
-        setSpeedAtEnd();
+    if(linear1->error != PotentiometerError && linear2->error != PotentiometerError){
+        sync(linear1, linear2, currentSpeed);
+        setSpeedAtEnd(linear1, linear2, currentSpeed);
     }
 }
 
@@ -275,7 +265,7 @@ void setSpeeds2(){
     }
     if(linear3.error != PotentiometerError && linear4.error != PotentiometerError){
         sync(&linear3, &linear4, currentSpeed2);
-        setSpeedAtEnd2();
+        setSpeedAtEnd(&linear3, &linear4, currentSpeed2);
     }
 }
 
@@ -330,7 +320,7 @@ void setSpeedsDistance(){
     linear1.speed = currentSpeed;
     linear2.speed = currentSpeed;
     syncDistance(&linear1, &linear2, currentSpeed);
-    setSpeedAtEnd();
+    setSpeedAtEnd(&linear1, &linear2, currentSpeed);
     if(linear1.speed != linear1.previous || linear2.speed != linear2.previous){
         publishSpeeds();
     }
@@ -349,7 +339,7 @@ void setSpeedsDistance2(){
     linear3.speed = currentSpeed2;
     linear4.speed = currentSpeed2;
     syncDistance(&linear3, &linear4, currentSpeed2);
-    setSpeedAtEnd2();
+    setSpeedAtEnd(&linear3, &linear4, currentSpeed2);
     if(linear3.speed != linear3.previous || linear4.speed != linear4.previous){
         publishSpeeds2();
     }
@@ -668,7 +658,7 @@ void potentiometer4Callback(const std_msgs::msg::Int32::SharedPtr msg){
 void armSpeedCallback(const std_msgs::msg::Float32::SharedPtr speed){
     currentSpeed = speed->data;
     RCLCPP_INFO(nodeHandle->get_logger(),"currentSpeed: %f", currentSpeed);
-    setSpeeds();
+    setSpeeds(&linear1, &linear2, currentSpeed);
     publishSpeeds();
     RCLCPP_INFO(nodeHandle->get_logger(),"Arm speeds: %f, %f", linear1.speed, linear2.speed);
 }
