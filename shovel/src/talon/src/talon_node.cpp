@@ -292,7 +292,7 @@ int main(int argc,char** argv){
 			if(outputCurrent > maxCurrent){
 				maxCurrent = outputCurrent;
 			}
-			RCLCPP_INFO(nodeHandle->get_logger(), "Talon %d Max Current: %f", deviceID, maxCurrent);
+			//RCLCPP_INFO(nodeHandle->get_logger(), "Talon %d Max Current: %f", deviceID, maxCurrent);
         	start = std::chrono::high_resolution_clock::now();
 		}
 		
