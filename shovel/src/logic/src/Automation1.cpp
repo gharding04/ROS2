@@ -16,9 +16,6 @@ int destX = 10, destY = 10;
  * */
 
 void Automation1::automate(){
-    // Initially start with locating the Aruco marker
-    // Turn slowly until it's seen
-
     if(robotState==ROBOT_IDLE){
         
     }
@@ -26,9 +23,9 @@ void Automation1::automate(){
     if(robotState == INITIAL){
         RCLCPP_INFO(this->node->get_logger(), "Initialize");
         setDestPosition(destX, destY);
-        robotState = DIAGNOSTICS;
         auto start = std::chrono::high_resolution_clock::now();
         setStartTime(start);
+        robotState=LOCATE;
     }
 
     if(robotState==DIAGNOSTICS){
@@ -117,7 +114,7 @@ void Automation1::automate(){
                 }
                 else{
                     diagnosticsState = DIAGNOSTICS_IDLE;
-                    robotState = LOCATE;
+                    robotState = ROBOT_IDLE;
                 }
             }
         }
@@ -283,4 +280,12 @@ void Automation1::publishAutomationOut(){
     std::string errorStateString = errorStateMap.at(errorState);
     std::string diagnosticsStateString = diagnosticsStateMap.at(diagnosticsState);
     publishAutonomyOut(robotStateString, excavationStateString, errorStateString, diagnosticsStateString);
+}
+
+void Automation1::setDiagnostics(){
+    robotState = DIAGNOSTICS;
+}
+
+void Automation1::startAutonomy(){
+    robotState = INITIAL;
 }

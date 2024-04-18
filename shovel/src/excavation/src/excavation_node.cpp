@@ -94,9 +94,6 @@ LinearActuator linear4{17, 0.0, 0, 0, 0, 1024, None, true, false, false, 5.9, 0.
 
 float currentSpeed = 0.0;
 float currentSpeed2 = 0.0;
-int thresh1 = 5;
-int thresh2 = 10;
-int thresh3 = 15;
 float distThresh1 = 0.05;
 float distThresh2 = 0.10;
 float distThresh3 = 0.15;
@@ -141,13 +138,14 @@ void stopCallback(std_msgs::msg::Empty::SharedPtr empty){
 void sync(LinearActuator *linear1, LinearActuator *linear2, float currentSpeed){
     float diff = abs(linear1->potentiometer - linear2->potentiometer);
     bool val = (currentSpeed > 0) ? (linear1->potentiometer >= linear2->potentiometer) : (linear1->potentiometer < linear2->potentiometer);
-    if (diff > thresh3){
+    
+    if (diff > ((950 / linear1->stroke)/6)){
         (val) ? linear1->speed = 0 : linear2->speed = 0;
     }
-    else if (diff > thresh2){
+    else if (diff > ((950 / linear1->stroke)/9)){
         (val) ? linear1->speed *= 0.5 : linear2->speed *= 0.5;
     }
-    else if (diff > thresh1){
+    else if (diff > ((950 / linear1->stroke)/12)){
         (val) ? linear1->speed *= 0.9 : linear2->speed *= 0.9;
     }
     else{
@@ -436,7 +434,7 @@ void automationGoCallback(const std_msgs::msg::Bool::SharedPtr msg){
  * @return void
  * */
 void setSyncErrors(LinearActuator *linear1, LinearActuator *linear2, float currentSpeed){
-    if(abs(linear1->potentiometer - linear2->potentiometer) > thresh3*2){
+    if(abs(linear1->potentiometer - linear2->potentiometer) > ((950 / linear1->stroke) / 6)){
         if(linear1->potentiometer >= 100 && linear1->potentiometer <= 110 && !linear1->initialized){
             linear1->error = PotentiometerError;
             linear1->sensorless = true;

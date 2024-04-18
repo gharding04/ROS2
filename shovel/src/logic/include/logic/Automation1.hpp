@@ -67,4 +67,7 @@ class Automation1 : public Automation{
 
     void publishAutomationOut();
 
+    void setDiagnostics();
+
+    void startAutonomy();
 };

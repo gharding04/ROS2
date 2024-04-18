@@ -69,6 +69,10 @@ class Automation{
 
     void setStop();
 
+    virtual void setDiagnostics() = 0;
+    
+    virtual void startAutonomy() = 0; 
+    
     void stopActuators();
 
     void setLinear1(const messages::msg::LinearOut::SharedPtr linearOut);
