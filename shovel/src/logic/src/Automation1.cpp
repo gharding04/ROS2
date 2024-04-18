@@ -120,7 +120,7 @@ void Automation1::automate(){
             }
         }
         if(diagnosticsState==DIAGNOSTICS_ERROR_RECOVERY){
-            RCLCPP_INFO(this->node->get_logger(), "Error Recovery")
+            RCLCPP_INFO(this->node->get_logger(), "Error Recovery");
             if(errorState == TALON_14_ERROR){
                 
             }

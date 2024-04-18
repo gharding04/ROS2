@@ -33,7 +33,7 @@ class Automation1 : public Automation{
 
     std::map<ExcavationState, const char*> excavationStateMap = {
         {EXCAVATION_IDLE, "Idle"},
-        {ERROR_RECOVERY, "Error Recovery"}
+        {EXCAVATION_ERROR_RECOVERY, "Excavation Error Recovery"}
     };
 
     std::map<ErrorState, const char*> errorStateMap = {
@@ -53,7 +53,7 @@ class Automation1 : public Automation{
         {TALON_EXTEND, "Talon Extend"},
         {TALON_RETRACT, "Talon Retract"},
         {FALCON_FORWARD, "Falcon Forward"},
-        {ERROR_RECOVERY, "Error Recovery"}
+        {DIAGNOSTICS_ERROR_RECOVERY, "Diagnostics Error Recovery"}
     };
 
     void automate();
