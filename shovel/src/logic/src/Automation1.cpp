@@ -42,6 +42,7 @@ void Automation1::automate(){
                     RCLCPP_INFO(this->node->get_logger(), "%s", linear1.error.c_str());
                     RCLCPP_INFO(this->node->get_logger(), "Talon1.maxCurrent: %f", talon1.maxCurrent);
                     errorState = TALON_14_ERROR;
+                    diagnosticsState = DIAGNOSTICS_ERROR_RECOVERY;
                     robotState = ROBOT_IDLE;
                     setBucketSpeed(0.0);
                     setArmSpeed(0.0);
@@ -51,7 +52,7 @@ void Automation1::automate(){
                     RCLCPP_INFO(this->node->get_logger(), "%s", linear2.error.c_str());
                     RCLCPP_INFO(this->node->get_logger(), "Talon2.maxCurrent: %f", talon2.maxCurrent);
                     errorState = TALON_15_ERROR;
-                    robotState = ROBOT_IDLE;
+                    diagnosticsState = DIAGNOSTICS_ERROR_RECOVERY;
                     setBucketSpeed(0.0);
                     setArmSpeed(0.0);
                 }
@@ -60,7 +61,7 @@ void Automation1::automate(){
                     RCLCPP_INFO(this->node->get_logger(), "%s", linear3.error.c_str());
                     RCLCPP_INFO(this->node->get_logger(), "Talon3.maxCurrent: %f", talon3.maxCurrent);
                     errorState = TALON_16_ERROR;
-                    robotState = ROBOT_IDLE;
+                    diagnosticsState = DIAGNOSTICS_ERROR_RECOVERY;
                     setBucketSpeed(0.0);
                     setArmSpeed(0.0);
                 }
@@ -69,7 +70,7 @@ void Automation1::automate(){
                     RCLCPP_INFO(this->node->get_logger(), "%s", linear4.error.c_str());
                     RCLCPP_INFO(this->node->get_logger(), "Talon4.maxCurrent: %f", talon4.maxCurrent);
                     errorState = TALON_17_ERROR;
-                    robotState = ROBOT_IDLE;
+                    diagnosticsState = DIAGNOSTICS_ERROR_RECOVERY;
                     setBucketSpeed(0.0);
                     setArmSpeed(0.0);
                 }
@@ -116,6 +117,25 @@ void Automation1::automate(){
                     diagnosticsState = DIAGNOSTICS_IDLE;
                     robotState = ROBOT_IDLE;
                 }
+            }
+        }
+        if(diagnosticsState==DIAGNOSTICS_ERROR_RECOVERY){
+            RCLCPP_INFO(this->node->get_logger(), "Error Recovery")
+            if(errorState == TALON_14_ERROR){
+                
+            }
+            else if(errorState == TALON_15_ERROR){
+            
+            }
+            else if(errorState == TALON_16_ERROR){
+
+            }
+            else if(errorState == TALON_17_ERROR){
+
+            }
+            if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-getStartTime()).count() > 500){
+                diagnosticsState = DIAGNOSTICS_IDLE;
+                robotState = ROBOT_IDLE;
             }
         }
         
@@ -284,8 +304,12 @@ void Automation1::publishAutomationOut(){
 
 void Automation1::setDiagnostics(){
     robotState = DIAGNOSTICS;
+    auto start = std::chrono::high_resolution_clock::now();
+    setStartTime(start);
 }
 
 void Automation1::startAutonomy(){
     robotState = INITIAL;
+    auto start = std::chrono::high_resolution_clock::now();
+    setStartTime(start);
 }

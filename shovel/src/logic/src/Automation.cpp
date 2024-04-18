@@ -235,7 +235,7 @@ void Automation::setFalcon4(const messages::msg::FalconOut::SharedPtr falconOut)
 }
 
 bool Automation::checkErrors(Linear linear){
-    if(linear.error == "PotentiometerError" || linear.error == "ActuatorNotMovingError" || linear.error == "ConnectionError"){
+    if(linear.error == "PotentiometerError" || linear.error == "ActuatorNotMovingError"){
         return true;
     }
     else{

@@ -257,9 +257,6 @@ int main(int argc,char** argv){
 	while(rclcpp::ok()){
 		if(GO)ctre::phoenix::unmanaged::FeedEnable(100);
 		auto finish = std::chrono::high_resolution_clock::now();
-		int encoderPosition = talonSRX->GetSelectedSensorPosition();
-		std_msgs::msg::Int32 potentiometerData;
-		potentiometerData.data = encoderPosition;
 
 		if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() > 100){
 			int deviceID=talonSRX->GetDeviceID();
@@ -286,21 +283,16 @@ int main(int argc,char** argv){
 			talonOut.closed_loop_error=closedLoopError0;
 			talonOut.integral_accumulator=integralAccumulator0;
 			talonOut.error_derivative=errorDerivative0;
-			talonOut.potentiometer=encoderPosition;
 
 			talonOutPublisher->publish(talonOut);
 			if(outputCurrent > maxCurrent){
 				maxCurrent = outputCurrent;
 			}
+			talonOut.max_current = maxCurrent;
 			//RCLCPP_INFO(nodeHandle->get_logger(), "Talon %d Max Current: %f", deviceID, maxCurrent);
         	start = std::chrono::high_resolution_clock::now();
 		}
 		
-		if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start2).count() > 100){
-			potentiometerPublisher->publish(potentiometerData);
-        	start2 = std::chrono::high_resolution_clock::now();
-		}
-
 		rate.sleep();
 		rclcpp::spin_some(nodeHandle);
         }

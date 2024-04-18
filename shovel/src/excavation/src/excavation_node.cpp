@@ -55,6 +55,7 @@ enum Error {
     ActuatorsSyncError,
     ActuatorNotMovingError,
     PotentiometerError,
+    MotorConnectionError,
     None
 };
 
@@ -62,6 +63,7 @@ enum Error {
 std::map<Error, const char*> errorMap = {{ActuatorsSyncError, "ActuatorsSyncError"},
     {ActuatorNotMovingError, "ActuatorNotMovingError"},
     {PotentiometerError, "PotentiometerError"},
+    {MotorConnectionError, "MotorConnectionError"}
     {None, "None"}};
 
 
@@ -297,10 +299,10 @@ void setSpeedsDistance(LinearActuator *linear1, LinearActuator *linear2, float c
     if(linear1->speed != linear1->previous || linear2->speed != linear2->previous){
         if(linear1->motorNumber == 14){
             publishSpeeds();
-	}
-	else{
+        }
+        else{
             publishSpeeds2();
-	}
+        }
     }
 }
 
@@ -481,12 +483,13 @@ void setSyncErrors(LinearActuator *linear1, LinearActuator *linear2, float curre
  * @param msg - ROS2 message containing the value of the potentiomter
  * @return void
  * */
-void potentiometer1Callback(const std_msgs::msg::Int32::SharedPtr msg){
+void potentiometer1Callback(const std_msgs::msg::TalonOut::SharedPtr msg){
+    linear1->maxCurrent = msg->max_current;
     if(!linear1.sensorless){
-        setPotentiometerError(msg->data, &linear1);
+        setPotentiometerError(msg->potentiometer, &linear1);
 
         if(linear1.error != PotentiometerError){
-            processPotentiometerData(msg->data, &linear1);
+            processPotentiometerData(msg->potentiometer, &linear1);
             if(!linear1.sensorless && !linear2.sensorless){
                 setSyncErrors(&linear1, &linear2, currentSpeed);
             }
@@ -505,12 +508,13 @@ void potentiometer1Callback(const std_msgs::msg::Int32::SharedPtr msg){
  * @param msg - ROS2 message containing the value of the potentiomter
  * @return void
  * */
-void potentiometer2Callback(const std_msgs::msg::Int32::SharedPtr msg){
+void potentiometer2Callback(const std_msgs::msg::TalonOut::SharedPtr msg){
+    linear2->maxCurrent = msg->max_current;
     if(!linear2.sensorless){
-        setPotentiometerError(msg->data, &linear2);
+        setPotentiometerError(msg->potentiometer, &linear2);
 
         if(linear2.error != PotentiometerError){
-            processPotentiometerData(msg->data, &linear2);
+            processPotentiometerData(msg->potentiometer, &linear2);
             if(!linear1.sensorless && !linear2.sensorless){
                 setSyncErrors(&linear1, &linear2, currentSpeed);
             }
@@ -529,12 +533,13 @@ void potentiometer2Callback(const std_msgs::msg::Int32::SharedPtr msg){
  * @param msg - ROS2 message containing the value of the potentiomter
  * @return void
  * */
-void potentiometer3Callback(const std_msgs::msg::Int32::SharedPtr msg){
+void potentiometer3Callback(const std_msgs::msg::TalonOut::SharedPtr msg){
+    linear3->maxCurrent = msg->max_current;
     if(!linear3.sensorless){
-        setPotentiometerError(msg->data, &linear3);
+        setPotentiometerError(msg->potentiometer, &linear3);
 
         if(linear3.error != PotentiometerError){
-            processPotentiometerData(msg->data, &linear3);
+            processPotentiometerData(msg->potentiometer, &linear3);
             if(!linear3.sensorless && !linear4.sensorless){
                 setSyncErrors(&linear3, &linear4, currentSpeed2);
             }
@@ -553,12 +558,13 @@ void potentiometer3Callback(const std_msgs::msg::Int32::SharedPtr msg){
  * @param msg - ROS2 message containing the value of the potentiomter
  * @return void
  * */
-void potentiometer4Callback(const std_msgs::msg::Int32::SharedPtr msg){
+void potentiometer4Callback(const std_msgs::msg::TalonOut::SharedPtr msg){
+    linear4->maxCurrent = msg->max_current;
     if(!linear4.sensorless){
-        setPotentiometerError(msg->data, &linear4);
+        setPotentiometerError(msg->potentiometer, &linear4);
 
         if(linear4.error != PotentiometerError){
-            processPotentiometerData(msg->data, &linear4);
+            processPotentiometerData(msg->potentiometer, &linear4);
             if(!linear3.sensorless && !linear4.sensorless){
                 setSyncErrors(&linear3, &linear4, currentSpeed2);
             }
@@ -688,11 +694,10 @@ int main(int argc, char **argv){
     auto armSpeedSubscriber = nodeHandle->create_subscription<std_msgs::msg::Float32>("arm_speed",1,armSpeedCallback);
     auto bucketSpeedSubscriber = nodeHandle->create_subscription<std_msgs::msg::Float32>("bucket_speed",1,bucketSpeedCallback);
 
-    auto potentiometerDataSubscriber1 = nodeHandle->create_subscription<std_msgs::msg::Int32>("potentiometer_1_data",1,potentiometer1Callback);
-    auto potentiometerDataSubscriber2 = nodeHandle->create_subscription<std_msgs::msg::Int32>("potentiometer_2_data",1,potentiometer2Callback);
-    auto potentiometerDataSubscriber3 = nodeHandle->create_subscription<std_msgs::msg::Int32>("potentiometer_3_data",1,potentiometer3Callback);
-    auto potentiometerDataSubscriber4 = nodeHandle->create_subscription<std_msgs::msg::Int32>("potentiometer_4_data",1,potentiometer4Callback);
-
+    auto talon1Subscriber = nodeHandle->create_subscription<messages::msg::TalonOut>("talon_14_info",1,potentiometer1Callback);
+    auto talon2Subscriber = nodeHandle->create_subscription<messages::msg::TalonOut>("talon_15_info",1,potentiometer2Callback);
+    auto talon3Subscriber = nodeHandle->create_subscription<messages::msg::TalonOut>("talon_16_info",1,potentiometer3Callback);
+    auto talon4Subscriber = nodeHandle->create_subscription<messages::msg::TalonOut>("talon_17_info",1,potentiometer4Callback);
 
     talon14Publisher = nodeHandle->create_publisher<std_msgs::msg::Float32>("talon_14_speed",1);
     talon15Publisher = nodeHandle->create_publisher<std_msgs::msg::Float32>("talon_15_speed",1);

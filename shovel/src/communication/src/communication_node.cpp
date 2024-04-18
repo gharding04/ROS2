@@ -190,7 +190,7 @@ void send(std::string messageLabel, const messages::msg::TalonOut::SharedPtr tal
     message.addElementInt8("Closed Loop Error",(int8_t)talonOut->closed_loop_error);
     message.addElementInt8("Integral Accumulator",(int8_t)talonOut->integral_accumulator);
     message.addElementInt8("Error Derivative",(int8_t)talonOut->error_derivative);
-    message.addElementUInt16("Potentiometer",(uint16_t)talonOut->potentiometer);
+    message.addElementFloat32("Max Current",talonOut->max_current);
 
     send(message);
 }

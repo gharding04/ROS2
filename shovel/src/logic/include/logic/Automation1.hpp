@@ -6,11 +6,10 @@
 class Automation1 : public Automation{
 
     enum RobotState{INITIAL,DIAGNOSTICS,LOCATE,ALIGN,GO_TO_DIG_SITE,EXCAVATE,OBSTACLE,GO_TO_HOME,DOCK,DUMP,RETURN_TO_START,ROBOT_IDLE};
-    enum ExcavationState{EXCAVATION_IDLE,ERROR_RECOVERY};
-    enum ErrorState {TALON_14_ERROR, TALON_15_ERROR, TALON_16_ERROR, TALON_17_ERROR, FALCON_10_ERROR, FALCON_11_ERROR, FALCON_12_ERROR, FALCON_13_ERROR,
-        LOWER_ASSEMBLY_ERROR,LOWER_LADDER_ERROR,DIG_ERROR,RAISE_LADDER_ERROR,RAISE_ASSEMBLY_ERROR,RAISE_BIN_ERROR,LOWER_BIN_ERROR,NONE};
-    enum DiagnosticsState{DIAGNOSTICS_IDLE,TALON_EXTEND,TALON_RETRACT,FALCON_FORWARD};
-    RobotState robotState=INITIAL;
+    enum ExcavationState{EXCAVATION_IDLE,EXCAVATION_ERROR_RECOVERY};
+    enum ErrorState {TALON_14_ERROR, TALON_15_ERROR, TALON_16_ERROR, TALON_17_ERROR, FALCON_10_ERROR, FALCON_11_ERROR, FALCON_12_ERROR, FALCON_13_ERROR,NONE};
+    enum DiagnosticsState{DIAGNOSTICS_IDLE,TALON_EXTEND,TALON_RETRACT,FALCON_FORWARD,DIAGNOSTICS_ERROR_RECOVERY};
+    RobotState robotState=ROBOT_IDLE;
     RobotState previousState = ROBOT_IDLE;
     ExcavationState excavationState = EXCAVATION_IDLE;
     ErrorState errorState = NONE;
@@ -46,13 +45,6 @@ class Automation1 : public Automation{
         {FALCON_11_ERROR, "Falcon 11 Error"},
         {FALCON_12_ERROR, "Falcon 12 Error"},
         {FALCON_13_ERROR, "Falcon 13 Error"},
-        {LOWER_ASSEMBLY_ERROR, "Lower Assembly Error"},
-        {LOWER_LADDER_ERROR, "Lower Ladder Error"},
-        {DIG_ERROR, "Dig Error"},
-        {RAISE_LADDER_ERROR, "Raise Ladder Error"},
-        {RAISE_ASSEMBLY_ERROR, "Raise Assembly Error"},
-        {RAISE_BIN_ERROR, "Raise Bin Error"},
-        {LOWER_BIN_ERROR, "Lower Bin Error"},
         {NONE, "None"}
     };
 
@@ -60,7 +52,8 @@ class Automation1 : public Automation{
         {DIAGNOSTICS_IDLE, "Diagnostics Idle"},
         {TALON_EXTEND, "Talon Extend"},
         {TALON_RETRACT, "Talon Retract"},
-        {FALCON_FORWARD, "Falcon Forward"}
+        {FALCON_FORWARD, "Falcon Forward"},
+        {ERROR_RECOVERY, "Error Recovery"}
     };
 
     void automate();
