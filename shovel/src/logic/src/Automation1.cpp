@@ -304,6 +304,7 @@ void Automation1::publishAutomationOut(){
 
 void Automation1::setDiagnostics(){
     robotState = DIAGNOSTICS;
+    diagnosticsState = TALON_EXTEND;
     auto start = std::chrono::high_resolution_clock::now();
     setStartTime(start);
 }
