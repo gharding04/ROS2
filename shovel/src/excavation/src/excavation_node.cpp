@@ -63,7 +63,7 @@ enum Error {
 std::map<Error, const char*> errorMap = {{ActuatorsSyncError, "ActuatorsSyncError"},
     {ActuatorNotMovingError, "ActuatorNotMovingError"},
     {PotentiometerError, "PotentiometerError"},
-    {MotorConnectionError, "MotorConnectionError"}
+    {MotorConnectionError, "MotorConnectionError"},
     {None, "None"}};
 
 
@@ -483,7 +483,7 @@ void setSyncErrors(LinearActuator *linear1, LinearActuator *linear2, float curre
  * @param msg - ROS2 message containing the value of the potentiomter
  * @return void
  * */
-void potentiometer1Callback(const std_msgs::msg::TalonOut::SharedPtr msg){
+void potentiometer1Callback(const messages::msg::TalonOut::SharedPtr msg){
     linear1->maxCurrent = msg->max_current;
     if(!linear1.sensorless){
         setPotentiometerError(msg->potentiometer, &linear1);
@@ -508,7 +508,7 @@ void potentiometer1Callback(const std_msgs::msg::TalonOut::SharedPtr msg){
  * @param msg - ROS2 message containing the value of the potentiomter
  * @return void
  * */
-void potentiometer2Callback(const std_msgs::msg::TalonOut::SharedPtr msg){
+void potentiometer2Callback(const messages::msg::TalonOut::SharedPtr msg){
     linear2->maxCurrent = msg->max_current;
     if(!linear2.sensorless){
         setPotentiometerError(msg->potentiometer, &linear2);
@@ -533,7 +533,7 @@ void potentiometer2Callback(const std_msgs::msg::TalonOut::SharedPtr msg){
  * @param msg - ROS2 message containing the value of the potentiomter
  * @return void
  * */
-void potentiometer3Callback(const std_msgs::msg::TalonOut::SharedPtr msg){
+void potentiometer3Callback(const messages::msg::TalonOut::SharedPtr msg){
     linear3->maxCurrent = msg->max_current;
     if(!linear3.sensorless){
         setPotentiometerError(msg->potentiometer, &linear3);
@@ -558,7 +558,7 @@ void potentiometer3Callback(const std_msgs::msg::TalonOut::SharedPtr msg){
  * @param msg - ROS2 message containing the value of the potentiomter
  * @return void
  * */
-void potentiometer4Callback(const std_msgs::msg::TalonOut::SharedPtr msg){
+void potentiometer4Callback(const messages::msg::TalonOut::SharedPtr msg){
     linear4->maxCurrent = msg->max_current;
     if(!linear4.sensorless){
         setPotentiometerError(msg->potentiometer, &linear4);
