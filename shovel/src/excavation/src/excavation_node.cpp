@@ -484,12 +484,12 @@ void setSyncErrors(LinearActuator *linear1, LinearActuator *linear2, float curre
  * @return void
  * */
 void potentiometer1Callback(const messages::msg::TalonOut::SharedPtr msg){
-    linear1->maxCurrent = msg->max_current;
+    linear1.maxCurrent = msg->max_current;
     if(!linear1.sensorless){
-        setPotentiometerError(msg->potentiometer, &linear1);
+        setPotentiometerError(msg->sensor_position, &linear1);
 
         if(linear1.error != PotentiometerError){
-            processPotentiometerData(msg->potentiometer, &linear1);
+            processPotentiometerData(msg->sensor_position, &linear1);
             if(!linear1.sensorless && !linear2.sensorless){
                 setSyncErrors(&linear1, &linear2, currentSpeed);
             }
@@ -509,12 +509,12 @@ void potentiometer1Callback(const messages::msg::TalonOut::SharedPtr msg){
  * @return void
  * */
 void potentiometer2Callback(const messages::msg::TalonOut::SharedPtr msg){
-    linear2->maxCurrent = msg->max_current;
+    linear2.maxCurrent = msg->max_current;
     if(!linear2.sensorless){
-        setPotentiometerError(msg->potentiometer, &linear2);
+        setPotentiometerError(msg->sensor_position, &linear2);
 
         if(linear2.error != PotentiometerError){
-            processPotentiometerData(msg->potentiometer, &linear2);
+            processPotentiometerData(msg->sensor_position, &linear2);
             if(!linear1.sensorless && !linear2.sensorless){
                 setSyncErrors(&linear1, &linear2, currentSpeed);
             }
@@ -534,12 +534,12 @@ void potentiometer2Callback(const messages::msg::TalonOut::SharedPtr msg){
  * @return void
  * */
 void potentiometer3Callback(const messages::msg::TalonOut::SharedPtr msg){
-    linear3->maxCurrent = msg->max_current;
+    linear3.maxCurrent = msg->max_current;
     if(!linear3.sensorless){
-        setPotentiometerError(msg->potentiometer, &linear3);
+        setPotentiometerError(msg->sensor_position, &linear3);
 
         if(linear3.error != PotentiometerError){
-            processPotentiometerData(msg->potentiometer, &linear3);
+            processPotentiometerData(msg->sensor_position, &linear3);
             if(!linear3.sensorless && !linear4.sensorless){
                 setSyncErrors(&linear3, &linear4, currentSpeed2);
             }
@@ -559,12 +559,12 @@ void potentiometer3Callback(const messages::msg::TalonOut::SharedPtr msg){
  * @return void
  * */
 void potentiometer4Callback(const messages::msg::TalonOut::SharedPtr msg){
-    linear4->maxCurrent = msg->max_current;
+    linear4.maxCurrent = msg->max_current;
     if(!linear4.sensorless){
-        setPotentiometerError(msg->potentiometer, &linear4);
+        setPotentiometerError(msg->sensor_position, &linear4);
 
         if(linear4.error != PotentiometerError){
-            processPotentiometerData(msg->potentiometer, &linear4);
+            processPotentiometerData(msg->sensor_position, &linear4);
             if(!linear3.sensorless && !linear4.sensorless){
                 setSyncErrors(&linear3, &linear4, currentSpeed2);
             }
