@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
 
     cv::Matx<float, 4, 1> dist_coeffs = cv::Vec4f::zeros();
 
-    float actual_marker_size_meters = 0.1305f; // real marker size in meters
+    float actual_marker_size_meters = 0.127; // real marker size in meters
    // float actual_marker_size_meters = 0.16f; //fake marker size in meters
     auto dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_100);
 
@@ -127,7 +127,13 @@ int main(int argc, char **argv) {
     std::string zed_rotation_txt;
     std::string aruco_position_txt;
     sl::float3 angles;
-    float distance;
+
+    sl::SensorsData sensors_data;
+    sl::SensorsData::IMUData imu_data;
+
+    bool initialized = false;
+
+    double x_acc, y_acc, z_acc, x_vel, y_vel, z_vel;
 
     int currentRow=0;
     float pastValues[ROW_COUNT][7];
@@ -164,7 +170,10 @@ int main(int argc, char **argv) {
                 arucoPose.setTranslation(sl::float3(tvecs[0](0), tvecs[0](1), tvecs[0](2)));
                 arucoPose.setRotationVector(sl::float3(rvecs[0](0), rvecs[0](1), rvecs[0](2)));
                 arucoPose.inverse();
-                zed.resetPositionalTracking(arucoPose);
+                if(!initialized){
+                    zed.resetPositionalTracking(arucoPose);
+                    initialized = true;                
+                }
                 angles = zedPose.getEulerAngles(false);
                 zedPosition.aruco_pitch = angles[2];
                 zedPosition.aruco_yaw = angles[1];
@@ -175,6 +184,14 @@ int main(int argc, char **argv) {
 	            zedPosition.aruco_visible=false;
 	        }
 
+            zed.getSensorsData(sensors_data, TIME_REFERENCE::IMAGE);
+
+            imu_data = sensors_data.imu;
+
+            x_acc, y_acc, z_acc = imu_data.linear_acceleration;
+            x_vel, y_vel, z_vel = imu_data.angular_velocity;
+
+/*
             zed.retrieveImage(image_zed, sl::VIEW::LEFT);
             zed.retrieveMeasure(depth, sl::MEASURE::DEPTH);
             zed.retrieveMeasure(point_cloud, sl::MEASURE::XYZRGBA);
@@ -192,38 +209,11 @@ int main(int argc, char **argv) {
             else{
                 distance = -1;
             }
+*/
             
             sl::POSITIONAL_TRACKING_STATE tracking_state = zed.getPosition(zedPose, sl::REFERENCE_FRAME::WORLD);
 
             if (tracking_state == sl::POSITIONAL_TRACKING_STATE::OK) {
-                /*
-		for(int col=0;col<7;col++){    
-                    average[col]-=pastValues[currentRow][col]/ROW_COUNT;
-                }
-
-                pastValues[currentRow][0]=zedPose.getTranslation().x;
-                pastValues[currentRow][1]=zedPose.getTranslation().y;
-                pastValues[currentRow][2]=zedPose.getTranslation().z;
-                pastValues[currentRow][3]=zedPose.getOrientation().ox;
-                pastValues[currentRow][4]=zedPose.getOrientation().oy;
-                pastValues[currentRow][5]=zedPose.getOrientation().oz;
-                pastValues[currentRow][6]=zedPose.getOrientation().ow;
-
-                for(int col=0;col<7;col++){    
-                    average[col]+=pastValues[currentRow][col]/ROW_COUNT;
-                }
-                currentRow++;
-
-                if(currentRow==ROW_COUNT)currentRow=0;*/
-/*
-                zedPosition.x=average[0];
-                zedPosition.y=average[1];
-                zedPosition.z=average[2];
-                zedPosition.ox=average[3];
-                zedPosition.oy=average[4];
-                zedPosition.oz=average[5];
-                zedPosition.ow=average[6];
-*/
                 angles = zedPose.getEulerAngles(false);
     	        zedPosition.x=zedPose.getTranslation().x;
         	    zedPosition.y=zedPose.getTranslation().y;
@@ -235,7 +225,12 @@ int main(int argc, char **argv) {
                 zedPosition.pitch = angles[0];
                 zedPosition.yaw = angles[1];
                 zedPosition.roll = angles[2];
-                zedPosition.distance = distance;
+                zedPostion.x_acc = x_acc;
+                zedPostion.y_acc = y_acc;
+                zedPostion.z_acc = z_acc;
+                zedPostion.x_vel = x_vel;
+                zedPostion.y_vel = y_vel;
+                zedPostion.z_vel = z_vel;
                 zedPositionPublisher->publish(zedPosition);
             }
 

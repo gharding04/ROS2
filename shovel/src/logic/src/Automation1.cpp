@@ -145,6 +145,7 @@ void Automation1::automate(){
     if(robotState==LOCATE){
         changeSpeed(0.15,-0.15);
         if(position.arucoVisible==true){
+            RCLCPP_INFO(nodeHandle->get_logger(), "Roll: %f Pitch: %f Yaw: %f", postion.roll, position.pitch, position.yaw);
             setDestAngle(position.yaw + 90.0);
             changeSpeed(0,0);
             robotState=ALIGN;

@@ -271,10 +271,6 @@ void zedPositionCallback(const messages::msg::ZedPosition::SharedPtr zedPosition
     message.addElementFloat32("X", zedPosition->x);
     message.addElementFloat32("Y", zedPosition->y);
     message.addElementFloat32("Z", zedPosition->z);
-    message.addElementFloat32("oX", zedPosition->ox);
-    message.addElementFloat32("oY", zedPosition->oy);
-    message.addElementFloat32("oZ", zedPosition->oz);
-    message.addElementFloat32("oW", zedPosition->ow);
     message.addElementFloat32("roll", zedPosition->roll);
     message.addElementFloat32("pitch", zedPosition->pitch);
     message.addElementFloat32("yaw", zedPosition->yaw);
@@ -282,6 +278,12 @@ void zedPositionCallback(const messages::msg::ZedPosition::SharedPtr zedPosition
     message.addElementFloat32("aruco pitch", zedPosition->aruco_pitch);
     message.addElementFloat32("aruco yaw", zedPosition->aruco_yaw);
     message.addElementBoolean("aruco", zedPosition->aruco_visible);
+    message.addElementFloat32("x_acc", zedPosition->x_acc);
+    message.addElementFloat32("y_acc", zedPosition->y_acc);
+    message.addElementFloat32("z_acc", zedPosition->z_acc);
+    message.addElementFloat32("x_vel", zedPosition->x_vel);
+    message.addElementFloat32("y_vel", zedPosition->y_vel);
+    message.addElementFloat32("z_vel", zedPosition->z_vel);
     send(message);
 }
 
