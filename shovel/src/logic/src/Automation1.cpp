@@ -145,7 +145,7 @@ void Automation1::automate(){
     if(robotState==LOCATE){
         changeSpeed(0.15,-0.15);
         if(position.arucoVisible==true){
-            RCLCPP_INFO(nodeHandle->get_logger(), "Roll: %f Pitch: %f Yaw: %f", postion.roll, position.pitch, position.yaw);
+            RCLCPP_INFO(this->nodeHandle->get_logger(), "Roll: %f Pitch: %f Yaw: %f", position.roll, position.pitch, position.yaw);
             setDestAngle(position.yaw + 90.0);
             changeSpeed(0,0);
             robotState=ALIGN;
@@ -179,11 +179,6 @@ void Automation1::automate(){
         RCLCPP_INFO(this->node->get_logger(), "GO_TO_DIG_SITE");
         RCLCPP_INFO(this->node->get_logger(), "ZedPosition.z: %f", this->position.z);
         //TODO: Take rotation of robot into account
-        if(position.distance < normalDistance - 0.5 || position.distance > normalDistance + 0.5){
-            changeSpeed(0, 0);
-            robotState = OBSTACLE;
-            previousState = GO_TO_DIG_SITE;
-        }
         if (!(position.yaw < this->destAngle+2 && position.yaw > this->destAngle-2)) {
             if(position.yaw - this->destAngle > 180 || position.yaw - this->destAngle < 0){
                 changeSpeed(0.15, -0.15);
@@ -277,10 +272,9 @@ void Automation1::automate(){
     }
 
     if(robotState == OBSTACLE){
-        RCLCPP_INFO(this->node->get_logger(), "position.distance: %f", position.distance);
         setStartPosition(this->search.row - std::ceil(position.z * 10), std::ceil(position.x * 10));
         int x = this->search.row - std::ceil(position.z * 10);
-        int y = std::ceil(position.x * 10) + std::floor(position.distance);
+        int y = std::ceil(position.x * 10);
         this->search.setObstacle(x, y, 2);
         aStar();
         RCLCPP_INFO(this->node->get_logger(), "Current Position: %d, %d", this->search.startX, this->search.startY);

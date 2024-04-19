@@ -184,12 +184,18 @@ int main(int argc, char **argv) {
 	            zedPosition.aruco_visible=false;
 	        }
 
-            zed.getSensorsData(sensors_data, TIME_REFERENCE::IMAGE);
+            zed.getSensorsData(sensors_data, sl::TIME_REFERENCE::IMAGE);
 
             imu_data = sensors_data.imu;
 
-            x_acc, y_acc, z_acc = imu_data.linear_acceleration;
-            x_vel, y_vel, z_vel = imu_data.angular_velocity;
+            sl::float3 lin = imu_data.linear_acceleration;
+            sl::float3 vel = imu_data.angular_velocity;
+            x_acc = lin[0];
+            y_acc = lin[1];
+            z_acc = lin[2];
+            x_vel = vel[0];
+            y_vel = vel[1];
+            z_vel = vel[2];
 
 /*
             zed.retrieveImage(image_zed, sl::VIEW::LEFT);
@@ -225,12 +231,12 @@ int main(int argc, char **argv) {
                 zedPosition.pitch = angles[0];
                 zedPosition.yaw = angles[1];
                 zedPosition.roll = angles[2];
-                zedPostion.x_acc = x_acc;
-                zedPostion.y_acc = y_acc;
-                zedPostion.z_acc = z_acc;
-                zedPostion.x_vel = x_vel;
-                zedPostion.y_vel = y_vel;
-                zedPostion.z_vel = z_vel;
+                zedPosition.x_acc = x_acc;
+                zedPosition.y_acc = y_acc;
+                zedPosition.z_acc = z_acc;
+                zedPosition.x_vel = x_vel;
+                zedPosition.y_vel = y_vel;
+                zedPosition.z_vel = z_vel;
                 zedPositionPublisher->publish(zedPosition);
             }
 
