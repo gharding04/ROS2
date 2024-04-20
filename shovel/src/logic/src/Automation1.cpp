@@ -225,28 +225,34 @@ void Automation1::automate(){
     // sequence
     // Check that the potentiometers are in the correct range
     if(robotState==EXCAVATE){
+        RCLCPP_INFO(this->node->get_logger(), "EXCAVATE");
         if(excavationState == RAISE_ARM){
-            if(linear1.potentiometer > 330 && linear1.potentiometer < 350){
+        RCLCPP_INFO(this->node->get_logger(), "RAISE_ARM");
+        RCLCPP_INFO(this->node->get_logger(), "linear1.potentiometer: %d", linear1.potentiometer);
+        RCLCPP_INFO(this->node->get_logger(), "linear3.potentiometer: %d", linear3.potentiometer);
+            if(linear1.potentiometer > 310 && linear1.potentiometer < 350){
+                RCLCPP_INFO(this->node->get_logger(), "STOP ARM");
                 setArmSpeed(0.0);
             }
             if(linear3.potentiometer > 405 && linear3.potentiometer < 425){
+                RCLCPP_INFO(this->node->get_logger(), "STOP BUCKET");
                 setBucketSpeed(0.0);
             }
-            if(linear1.potentiometer > 330 && linear3.potentiometer > 405){
+            if(linear1.potentiometer > 310 && linear3.potentiometer > 405){
                 changeSpeed(0.2, 0.2);
                 excavationState = COLLECT;
+                auto start = std::chrono::high_resolution_clock::now();
+                setStartTime(start);
             }
         }
         if(excavationState == COLLECT){
             if(deltaX < falcon1.outputPercentage * 0.05 || deltaZ < falcon1.outputPercentage * 0.05){
                 // Raise arm by 10
-                auto start = std::chrono::high_resolution_clock::now();
-                setStartTime(start);
                 changeSpeed(0.0, 0.0);
-                setArmSpeed(1.0);
+                //setArmSpeed(1.0);
                 auto finish = std::chrono::high_resolution_clock::now();
                 if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() > 250){
-                    setArmSpeed(1.0);
+                    //setArmSpeed(1.0);
                     changeSpeed(0.2, 0.2);
                 }
             }
@@ -313,13 +319,13 @@ void Automation1::automate(){
         RCLCPP_INFO(this->node->get_logger(), "linear1.potentiometer: %d", linear1.potentiometer);
         RCLCPP_INFO(this->node->get_logger(), "linear3.potentiometer: %d", linear3.potentiometer);
 
-        if(linear1.potentiometer > 330 && linear1.potentiometer < 350){
+        if(linear1.potentiometer > 310 && linear1.potentiometer < 350){
             setArmSpeed(0.0);
         }
         if(linear3.potentiometer > 405 && linear3.potentiometer < 425){
             setBucketSpeed(0.0);
         }
-        if(linear1.potentiometer > 330 && linear3.potentiometer > 405){
+        if(linear1.potentiometer > 310 && linear3.potentiometer > 405){
             robotState = DUMP;
             setBucketSpeed(1.0);
             setArmSpeed(1.0);
