@@ -391,23 +391,6 @@ void zedPositionCallback(const messages::msg::ZedPosition::SharedPtr zedPosition
     position.z_vel = zedPosition->z_vel;
 
     automation->setPosition(position);
-    double yawRadians=automation->orientation.roll;
-
-    double facingUnitX=-sin(yawRadians);
-    double facingUnitZ=cos(yawRadians);
-    double directionX=-5-position.x;
-    double directionZ=2-position.z;
-
-    double theta = acos((facingUnitX*directionX + facingUnitZ*directionZ)/(sqrt(directionX*directionX + directionZ*directionZ)))*180/M_PI;
-    double yaw = yawRadians * 180/M_PI;
-    double deltaYaw = theta-yaw;
-    double yawTolerance=5;
-    //std::cout << "roll:" << automation->orientation.roll*180/M_PI << ", pitch:" << automation->orientation.pitch*180/M_PI << ", yaw" << automation->orientation.yaw*180/ M_PI << "   "
-    //          << "   \tx:" << position.x << " y: " << position.y << " z:" << position.z
-    //          << "   \tox:" << position.ox << "  oy:" << position.oy << " oz:" << position.oz << "  ow:" << position.ow
-    //          << "   \tfUX:" << facingUnitX << " fUZ:" << facingUnitZ << "   yaw:" << yaw << " dYaw:" << deltaYaw << " theta:" << theta
-    //          << "   \tvisible:" << position.arucoVisible << std::endl;
-    //RCLCPP_INFO(nodeHandle->get_logger(), "roll: %f, pitch: %f, yaw: %f", automation->orientation.roll*180/M_PI, automation->orientation.pitch*180/M_PI, automation->orientation.yaw*180/ M_PI);
 }
 
 
