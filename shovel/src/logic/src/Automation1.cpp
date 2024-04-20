@@ -261,13 +261,13 @@ void Automation1::automate(){
 
     // After reaching start position, dock at dump bin
     if(robotState==DOCK){
-        if(talon1.potentiometer > 330 && talon1.potentiometer < 350){
+        if(linear1.potentiometer > 330 && linear1.potentiometer < 350){
             setBucketSpeed(0.0);
         }
-        if(talon3.potentiometer > 405 && talon3.potentiometer < 435){
+        if(linear3.potentiometer > 405 && linear3.potentiometer < 435){
             setArmSpeed(0.0);
         }
-        if((talon1.potentiometer > 330 && talon1.potentiometer < 350) && (talon3.potentiometer > 405 && talon3.potentiometer < 435)){
+        if((linear1.potentiometer > 330 && linear1.potentiometer < 350) && (linear3.potentiometer > 405 && linear3.potentiometer < 435)){
             robotState = DUMP;
             setBucketSpeed(1.0);
             setArmSpeed(1.0);
@@ -276,13 +276,13 @@ void Automation1::automate(){
 
     // Dump the collected rocks in the dump bin
     if(robotState==DUMP){
-        if(talon1.potentiometer > 820 && talon1.potentiometer < 840){
+        if(linear1.potentiometer > 820 && linear1.potentiometer < 840){
             setBucketSpeed(0.0);
         }
-        if(talon3.potentiometer > 920){
+        if(linear3.potentiometer > 920){
             setArmSpeed(0.0);
         }
-        if((talon1.potentiometer > 330 && talon1.potentiometer < 350) && (talon3.potentiometer > 920)){
+        if((linear1.potentiometer > 330 && linear1.potentiometer < 350) && (linear3.potentiometer > 920)){
             robotState = INITIAL;
             setBucketSpeed(-1.0);
             setArmSpeed(-1.0);
