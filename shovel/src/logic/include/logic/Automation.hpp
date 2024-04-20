@@ -123,11 +123,15 @@ class Automation{
 
     void aStar(bool includeHoles = false);
 
-    void setArmPosition(int potent);
+    void setArmTarget(int potent);
 
-    void setBucketPosition(int potent);
+    void setBucketTarget(int potent);
 
     int checkArmPosition(int thresh);
 
     int checkBucketPosition(int thresh);
+
+    void setArmPosition(int potent);
+
+    void setBucketPosition(int potent);
 };

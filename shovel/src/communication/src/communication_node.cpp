@@ -235,7 +235,6 @@ void send(std::string messageLabel, const messages::msg::LinearOut::SharedPtr li
     message.addElementUInt16("Max", (uint16_t)linear->max);
     message.addElementUInt16("Min", (uint16_t)linear->min);
     message.addElementString("Error", linear->error);
-    message.addElementBoolean("Run", linear->run);
     message.addElementBoolean("At Min", linear->at_min);
     message.addElementBoolean("At Max", linear->at_max);
     message.addElementFloat32("Distance", linear->distance);

@@ -624,11 +624,13 @@ void getLinearOut(messages::msg::LinearOut *linearOut, LinearActuator *linear){
     linearOut->max = linear->max;
     linearOut->min = linear->min;
     linearOut->error = errorMap.at(linear->error);
-    linearOut->run = linear->run;
     linearOut->at_min = linear->atMin;
     linearOut->at_max = linear->atMax;
     linearOut->distance = linear->distance;
     linearOut->sensorless = linear->sensorless;
+    linearOut->stroke = linear->stroke;
+    linearOut->extension_speed = linear->extensionSpeed;
+    linearOut->time_to_extend = linear->timeToExtend;
 }
 
 

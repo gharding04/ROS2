@@ -149,6 +149,9 @@ void Automation::setLinear1(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear1.atMin = linearOut->at_min;
     this->linear1.error = linearOut->error;
     this->linear1.distance = linearOut->distance;
+    this->linear1.stroke = linearOut->stroke;
+    this->linear1.extensionSpeed = linearOut->extension_speed;
+    this->linear1.timeToExtend = linearOut->time_to_extend;
     this->linear1.potentiometer = linearOut->potentiometer;
     this->linear1.sensorless = linearOut->sensorless;
 }
@@ -159,6 +162,9 @@ void Automation::setLinear2(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear2.atMin = linearOut->at_min;
     this->linear2.error = linearOut->error;
     this->linear2.distance = linearOut->distance;
+    this->linear2.stroke = linearOut->stroke;
+    this->linear2.extensionSpeed = linearOut->extension_speed;
+    this->linear2.timeToExtend = linearOut->time_to_extend;
     this->linear2.potentiometer = linearOut->potentiometer;
     this->linear2.sensorless = linearOut->sensorless;
 }
@@ -169,6 +175,9 @@ void Automation::setLinear3(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear3.atMin = linearOut->at_min;
     this->linear3.error = linearOut->error;
     this->linear3.distance = linearOut->distance;
+    this->linear3.stroke = linearOut->stroke;
+    this->linear3.extensionSpeed = linearOut->extension_speed;
+    this->linear3.timeToExtend = linearOut->time_to_extend;
     this->linear3.potentiometer = linearOut->potentiometer;
     this->linear3.sensorless = linearOut->sensorless;
 }
@@ -179,6 +188,9 @@ void Automation::setLinear4(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear4.atMin = linearOut->at_min;
     this->linear4.error = linearOut->error;
     this->linear4.distance = linearOut->distance;
+    this->linear4.stroke = linearOut->stroke;
+    this->linear4.extensionSpeed = linearOut->extension_speed;
+    this->linear4.timeToExtend = linearOut->time_to_extend;
     this->linear4.potentiometer = linearOut->potentiometer;
     this->linear4.sensorless = linearOut->sensorless;
 }
@@ -334,11 +346,11 @@ void Automation::aStar(bool includeHoles){
     this->currentPath = this->search.aStar(includeHoles);
 }
 
-void Automation::setArmPosition(int potent){
+void Automation::setArmTarget(int potent){
     target1 = potent;
 }
 
-void Automation::setBucketPosition(int potent){
+void Automation::setBucketTarget(int potent){
     target3 = potent;
 }
 
@@ -366,4 +378,32 @@ int Automation::checkBucketPosition(int thresh){
         return 2;
     }
     return -1;
+}
+
+void Automation::setArmPosition(int potent){
+    int current = linear1.potentiometer;
+    float timeToRun = (potent / 900.0) * linear1.timeToExtend * 100;
+    if(potent > current){
+        setArmSpeed(1.0);
+    }
+    else{
+        setArmSpeed(-1.0);
+    }
+    auto start = std::chrono::high_resolution_clock::now();
+    while(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()-start).count() < timeToRun){}
+    setArmSpeed(0.0);
+}
+
+void Automation::setBucketPosition(int potent){
+    int current = linear3.potentiometer;
+    float timeToRun = (potent / 900.0) * linear3.timeToExtend * 100;
+    if(potent > current){
+        setBucketSpeed(1.0);
+    }
+    else{
+        setBucketSpeed(-1.0);
+    }
+    auto start = std::chrono::high_resolution_clock::now();
+    while(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()-start).count() < timeToRun){}
+    setBucketSpeed(0.0);
 }

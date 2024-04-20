@@ -22,8 +22,12 @@ struct Linear {
     bool atMin = false;
     bool atMax = false;
     float distance = 0.0;
+    float stroke = 0.0;
+    float extensionSpeed = 0.0;
+    float timeToExtend = 0.0;
     int potentiometer = 0;
     bool sensorless = false;
+    float maxCurrent = 0.0;
 };
 
 struct MotorOut{
