@@ -36,7 +36,7 @@ void Automation1::automate(){
         setBucketSpeed(1.0);
         RCLCPP_INFO(this->node->get_logger(), "linear1.potentiometer: %d", linear1.potentiometer);
         RCLCPP_INFO(this->node->get_logger(), "linear3.potentiometer: %d", linear3.potentiometer);
-        robotState = ROBOT_IDLE;
+        robotState = EXCAVATE;
         excavationState = RAISE_ARM;
     }
 
@@ -262,7 +262,7 @@ void Automation1::automate(){
             }
             if(armPosition == 1 && bucketPosition == 1){
                 changeSpeed(0.2, 0.2);
-                excavationState = COLLECT;
+                excavationState = EXCAVATION_IDLE;
                 auto start = std::chrono::high_resolution_clock::now();
                 setStartTime(start);
             }
@@ -270,7 +270,7 @@ void Automation1::automate(){
         if(excavationState == COLLECT){
             if(deltaX < falcon1.outputPercentage * 0.05 || deltaZ < falcon1.outputPercentage * 0.05){
                 // Raise arm by 10
-                setArmPosition(linear1.potentiomter + 10);
+                setArmPosition(linear1.potentiometer + 10);
             }
             else{
                 
