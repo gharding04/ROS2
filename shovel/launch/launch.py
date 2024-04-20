@@ -200,11 +200,11 @@ def generate_launch_description():
                 {"kF": 0.0}
             ]
         )
-#	    ,
-#        Node(
-#            package='zed_tracking',
-#            name='zed_tracking',
-#            executable='zed_tracking_node'
-#        )
+	    ,
+        Node(
+            package='zed_tracking',
+            name='zed_tracking',
+            executable='zed_tracking_node'
+        )
     ]
 )
