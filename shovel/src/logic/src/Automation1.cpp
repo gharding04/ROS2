@@ -264,11 +264,11 @@ void Automation1::automate(){
         RCLCPP_INFO(this->node->get_logger(), "linear1.potentiometer: %d", linear1.potentiometer);
         RCLCPP_INFO(this->node->get_logger(), "linear3.potentiometer: %d", linear3.potentiometer);
 
-        if(linear1.potentiometer > 330){
-            setBucketSpeed(0.0);
-        }
-        if(linear3.potentiometer > 405){
+        if(linear1.potentiometer > 330 && linear1.potentiometer < 350){
             setArmSpeed(0.0);
+        }
+        if(linear3.potentiometer > 405 && linear3.potentiometer < 425){
+            setBucketSpeed(0.0);
         }
         if(linear1.potentiometer > 330 && linear3.potentiometer > 405){
             robotState = DUMP;
@@ -280,10 +280,10 @@ void Automation1::automate(){
     // Dump the collected rocks in the dump bin
     if(robotState==DUMP){
         if(linear1.potentiometer > 820){
-            setBucketSpeed(0.0);
+            setArmSpeed(0.0);
         }
         if(linear3.potentiometer > 920){
-            setArmSpeed(0.0);
+            setBucketSpeed(0.0);
         }
         if(linear1.potentiometer > 820 && (linear3.potentiometer > 920)){
             robotState = INITIAL;
