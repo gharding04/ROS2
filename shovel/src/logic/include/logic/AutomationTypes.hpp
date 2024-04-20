@@ -22,6 +22,7 @@ struct Linear {
     bool atMin = false;
     bool atMax = false;
     float distance = 0.0;
+    int potentiometer = 0;
     bool sensorless = false;
 };
 

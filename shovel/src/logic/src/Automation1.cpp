@@ -17,9 +17,10 @@ int destX = 10, destY = 10;
 
 void Automation1::automate(){
     if(robotState==ROBOT_IDLE){
-        if(deltaX < falcon1.outputPercentage * 0.05 || deltaZ < falcon1.outputPercentage * 0.05){
-            RCLCPP_INFO(this->node->get_logger(), "ERROR: Robot not moving");
-        }
+        //if(deltaX < falcon1.outputPercentage * 0.05 || deltaZ < falcon1.outputPercentage * 0.05){
+        //    RCLCPP_INFO(this->node->get_logger(), "ERROR: Robot not moving");
+        //}
+
     }
 
     if(robotState == INITIAL){
@@ -27,7 +28,9 @@ void Automation1::automate(){
         setDestPosition(destX, destY);
         auto start = std::chrono::high_resolution_clock::now();
         setStartTime(start);
-        robotState=LOCATE;
+        setBucketSpeed(1.0);
+        setArmSpeed(1.0);
+        robotState=DOCK;
     }
 
     if(robotState==DIAGNOSTICS){
@@ -258,12 +261,32 @@ void Automation1::automate(){
 
     // After reaching start position, dock at dump bin
     if(robotState==DOCK){
-
-        robotState = DUMP;
+        if(talon1.potentiometer > 330 && talon1.potentiometer < 350){
+            setBucketSpeed(0.0);
+        }
+        if(talon3.potentiometer > 405 && talon3.potentiometer < 435){
+            setArmSpeed(0.0);
+        }
+        if((talon1.potentiometer > 330 && talon1.potentiometer < 350) && (talon3.potentiometer > 405 && talon3.potentiometer < 435)){
+            robotState = DUMP;
+            setBucketSpeed(1.0);
+            setArmSpeed(1.0);
+        }
     }
 
     // Dump the collected rocks in the dump bin
     if(robotState==DUMP){
+        if(talon1.potentiometer > 820 && talon1.potentiometer < 840){
+            setBucketSpeed(0.0);
+        }
+        if(talon3.potentiometer > 920){
+            setArmSpeed(0.0);
+        }
+        if((talon1.potentiometer > 330 && talon1.potentiometer < 350) && (talon3.potentiometer > 920)){
+            robotState = INITIAL;
+            setBucketSpeed(-1.0);
+            setArmSpeed(-1.0);
+        }
     }
 
     // After dumping the rocks, return to start position and

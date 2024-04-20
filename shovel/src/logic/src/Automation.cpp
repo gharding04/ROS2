@@ -149,6 +149,7 @@ void Automation::setLinear1(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear1.atMin = linearOut->at_min;
     this->linear1.error = linearOut->error;
     this->linear1.distance = linearOut->distance;
+    this->linear1.potentiometer = linearOut->potentiometer;
     this->linear1.sensorless = linearOut->sensorless;
 }
 
@@ -158,6 +159,7 @@ void Automation::setLinear2(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear2.atMin = linearOut->at_min;
     this->linear2.error = linearOut->error;
     this->linear2.distance = linearOut->distance;
+    this->linear2.potentiometer = linearOut->potentiometer;
     this->linear2.sensorless = linearOut->sensorless;
 }
 
@@ -167,6 +169,7 @@ void Automation::setLinear3(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear3.atMin = linearOut->at_min;
     this->linear3.error = linearOut->error;
     this->linear3.distance = linearOut->distance;
+    this->linear3.potentiometer = linearOut->potentiometer;
     this->linear3.sensorless = linearOut->sensorless;
 }
 
@@ -176,6 +179,7 @@ void Automation::setLinear4(const messages::msg::LinearOut::SharedPtr linearOut)
     this->linear4.atMin = linearOut->at_min;
     this->linear4.error = linearOut->error;
     this->linear4.distance = linearOut->distance;
+    this->linear4.potentiometer = linearOut->potentiometer;
     this->linear4.sensorless = linearOut->sensorless;
 }
 
