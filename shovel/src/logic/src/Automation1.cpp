@@ -26,14 +26,12 @@ void Automation1::automate(){
     if(robotState == INITIAL){
         RCLCPP_INFO(this->node->get_logger(), "Initialize");
         setDestPosition(destX, destY);
-        //setBucketSpeed(1.0);
-        //setArmSpeed(1.0);
-        //setArmTarget(330);
-        //setBucketTarget(410);
+        setArmTarget(330);
+        setBucketTarget(410);
         auto start = std::chrono::high_resolution_clock::now();
         setStartTime(start);
-        setArmPosition(linear1.potentiometer + 20);
-        setBucketPosition(linear3.potentiometer + 20);
+        setArmPosition(330);
+        setBucketPosition(410);
         RCLCPP_INFO(this->node->get_logger(), "linear1.potentiometer: %d", linear1.potentiometer);
         RCLCPP_INFO(this->node->get_logger(), "linear3.potentiometer: %d", linear3.potentiometer);
         robotState = ROBOT_IDLE;
