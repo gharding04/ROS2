@@ -345,7 +345,7 @@ void Automation1::automate(){
         if(checkBucketPosition(20)){
             setBucketSpeed(0.0);
         }
-        if(checkArmPosition(30) && checkBucketPositon(30)){
+        if(checkArmPosition(30) && checkBucketPosition(30)){
             robotState = DUMP;
             setBucketSpeed(1.0);
             setArmSpeed(1.0);
