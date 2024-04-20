@@ -382,7 +382,7 @@ int Automation::checkBucketPosition(int thresh){
 
 void Automation::setArmPosition(int potent){
     int current = linear1.potentiometer;
-    float timeToRun = potent * (linear1.timeToExtend / 900.0) * 1000;
+    float timeToRun = abs(current - potent) * (linear1.timeToExtend / 900.0) * 1000;
     RCLCPP_INFO(this->node->get_logger(), "Arm potent: %d", potent);
     RCLCPP_INFO(this->node->get_logger(), "Arm timeToExtend: %f", linear1.timeToExtend);
     RCLCPP_INFO(this->node->get_logger(), "Arm timeToRuN: %f", timeToRun);
@@ -399,7 +399,7 @@ void Automation::setArmPosition(int potent){
 
 void Automation::setBucketPosition(int potent){
     int current = linear3.potentiometer;
-    float timeToRun = potent * (linear3.timeToExtend / 900.0) * 1000;
+    float timeToRun = abs(current - potent) * (linear3.timeToExtend / 900.0) * 1000;
     RCLCPP_INFO(this->node->get_logger(), "Bucket potent: %d", potent);
     RCLCPP_INFO(this->node->get_logger(), "Bucket timeToExtend: %f", linear3.timeToExtend);
     RCLCPP_INFO(this->node->get_logger(), "Bucket timeToRuN: %f", timeToRun);
