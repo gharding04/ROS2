@@ -36,6 +36,7 @@ class Automation{
     float destX = 0, destZ = 0, destAngle=0;
     float prevX = 0.0, prevY = 0.0, prevZ = 0.0;
     float deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0;
+    int target1 = 0, target3 = 0;
     std::stack<Coord> currentPath;
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
     std::chrono::time_point<std::chrono::high_resolution_clock> startBackupTime;
@@ -125,4 +126,8 @@ class Automation{
     void setArmPosition(int potent);
 
     void setBucketPosition(int potent);
+
+    int checkArmPosition(int thresh);
+
+    int checkBucketPosition(int thresh);
 };

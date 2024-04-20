@@ -28,6 +28,8 @@ void Automation1::automate(){
         setDestPosition(destX, destY);
         setBucketSpeed(1.0);
         setArmSpeed(1.0);
+        setArmPosition(330);
+        setBucketPosition(410);
         auto start = std::chrono::high_resolution_clock::now();
         setStartTime(start);
         RCLCPP_INFO(this->node->get_logger(), "linear1.potentiometer: %d", linear1.potentiometer);
@@ -230,15 +232,33 @@ void Automation1::automate(){
         RCLCPP_INFO(this->node->get_logger(), "RAISE_ARM");
         RCLCPP_INFO(this->node->get_logger(), "linear1.potentiometer: %d", linear1.potentiometer);
         RCLCPP_INFO(this->node->get_logger(), "linear3.potentiometer: %d", linear3.potentiometer);
-            if(linear1.potentiometer > 310 && linear1.potentiometer < 350){
+            int armPosition = checkArmPosition(20);
+            if(armPosition == 0){
+                RCLCPP_INFO(this->node->get_logger(), "RAISE ARM");
+                setArmSpeed(1.0);
+            }
+            if(armPosition == 1){
                 RCLCPP_INFO(this->node->get_logger(), "STOP ARM");
                 setArmSpeed(0.0);
             }
-            if(linear3.potentiometer > 405 && linear3.potentiometer < 425){
+            if(armPosition == 2){
+                RCLCPP_INFO(this->node->get_logger(), "LOWER ARM");
+                setArmSpeed(-1.0);
+            }
+            int bucketPosition = checkBucketPosition(20);
+            if(bucketPosition == 0){
+                RCLCPP_INFO(this->node->get_logger(), "RAISE BUCKET");
+                setBucketSpeed(1.0);
+            }
+            if(bucketPosition == 1){
                 RCLCPP_INFO(this->node->get_logger(), "STOP BUCKET");
                 setBucketSpeed(0.0);
             }
-            if(linear1.potentiometer > 310 && linear3.potentiometer > 405){
+            if(bucketPosition == 2){
+                RCLCPP_INFO(this->node->get_logger(), "LOWER BUCKET");
+                setBucketSpeed(-1.0);
+            }
+            if(armPosition == 1 && bucketPosition == 1){
                 changeSpeed(0.2, 0.2);
                 excavationState = COLLECT;
                 auto start = std::chrono::high_resolution_clock::now();
@@ -319,13 +339,13 @@ void Automation1::automate(){
         RCLCPP_INFO(this->node->get_logger(), "linear1.potentiometer: %d", linear1.potentiometer);
         RCLCPP_INFO(this->node->get_logger(), "linear3.potentiometer: %d", linear3.potentiometer);
 
-        if(linear1.potentiometer > 310 && linear1.potentiometer < 350){
+        if(checkArmPosition(20)){
             setArmSpeed(0.0);
         }
-        if(linear3.potentiometer > 405 && linear3.potentiometer < 425){
+        if(checkBucketPosition(20)){
             setBucketSpeed(0.0);
         }
-        if(linear1.potentiometer > 310 && linear3.potentiometer > 405){
+        if(checkArmPosition(30) && checkBucketPositon(30)){
             robotState = DUMP;
             setBucketSpeed(1.0);
             setArmSpeed(1.0);
