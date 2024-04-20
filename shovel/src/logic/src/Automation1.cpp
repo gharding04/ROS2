@@ -279,13 +279,13 @@ void Automation1::automate(){
 
     // Dump the collected rocks in the dump bin
     if(robotState==DUMP){
-        if(linear1.potentiometer > 820 && linear1.potentiometer < 840){
+        if(linear1.potentiometer > 820){
             setBucketSpeed(0.0);
         }
         if(linear3.potentiometer > 920){
             setArmSpeed(0.0);
         }
-        if((linear1.potentiometer > 330 && linear1.potentiometer < 350) && (linear3.potentiometer > 920)){
+        if(linear1.potentiometer > 820 && (linear3.potentiometer > 920)){
             robotState = INITIAL;
             setBucketSpeed(-1.0);
             setArmSpeed(-1.0);
