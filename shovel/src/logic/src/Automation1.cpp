@@ -261,6 +261,9 @@ void Automation1::automate(){
 
     // After reaching start position, dock at dump bin
     if(robotState==DOCK){
+        RCLCPP_INFO(this->node->get_logger(), "linear1.potentiometer: %f", linear1.potentiometer);
+        RCLCPP_INFO(this->node->get_logger(), "linear3.potentiometer: %f", linear3.potentiometer);
+
         if(linear1.potentiometer > 330 && linear1.potentiometer < 350){
             setBucketSpeed(0.0);
         }
