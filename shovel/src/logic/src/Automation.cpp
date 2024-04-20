@@ -49,6 +49,19 @@ void Automation::setPosition(Position position){
     this->orientationQuaternion.z=position.oz;
     this->orientationQuaternion.w=position.ow;
     this->orientation=toEulerAngles(this->orientationQuaternion);
+    if(prevX == 0.0 && prevY == 0.0 && prevZ == 0.0){
+        prevX = position.x;
+        prevY = position.y;
+        prevZ = position.z;
+    }
+    else{
+        deltaX = prevX - position.x;
+        deltaY = prevY - position.y;
+        deltaZ = prevZ - position.z;
+        prevX = position.x;
+        prevY = position.y;
+        prevZ = position.z;
+    }
 }
 
 

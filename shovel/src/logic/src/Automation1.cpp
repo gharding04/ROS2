@@ -17,7 +17,9 @@ int destX = 10, destY = 10;
 
 void Automation1::automate(){
     if(robotState==ROBOT_IDLE){
-        
+        if(deltaX < falcon1.outputPercentage * 0.05 || deltaZ < falcon1.outputPercentage * 0.05){
+            RCLCPP_INFO(this->node->get_logger(), "ERROR: Robot not moving");
+        }
     }
 
     if(robotState == INITIAL){

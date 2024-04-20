@@ -15,13 +15,6 @@
 
 class Automation{
     private:
-    struct MotorOut{
-        float busVoltage;
-        float outputCurrent;
-        float outputVoltage;
-        float outputPercentage;
-        float maxCurrent = 0.0;
-    };
     public:
 
     std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > driveLeftSpeedPublisher;
@@ -41,6 +34,8 @@ class Automation{
     Linear linear1, linear2, linear3, linear4;
     MotorOut talon1, talon2, talon3, talon4, falcon1, falcon2, falcon3, falcon4;
     float destX = 0, destZ = 0, destAngle=0;
+    float prevX = 0.0, prevY = 0.0, prevZ = 0.0;
+    float deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0;
     std::stack<Coord> currentPath;
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
     std::chrono::time_point<std::chrono::high_resolution_clock> startBackupTime;

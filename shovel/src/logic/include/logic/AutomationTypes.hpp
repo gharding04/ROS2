@@ -18,9 +18,17 @@ struct EulerAngles {
 
 struct Linear {
     float speed = 0.0;
-    std::string error = "ConnectionError";
+    std::string error = "None";
     bool atMin = false;
     bool atMax = false;
     float distance = 0.0;
     bool sensorless = false;
+};
+
+struct MotorOut{
+    float busVoltage;
+    float outputCurrent;
+    float outputVoltage;
+    float outputPercentage;
+    float maxCurrent = 0.0;
 };
