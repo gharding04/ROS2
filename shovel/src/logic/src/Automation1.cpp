@@ -264,13 +264,13 @@ void Automation1::automate(){
         RCLCPP_INFO(this->node->get_logger(), "linear1.potentiometer: %d", linear1.potentiometer);
         RCLCPP_INFO(this->node->get_logger(), "linear3.potentiometer: %d", linear3.potentiometer);
 
-        if(linear1.potentiometer > 330 && linear1.potentiometer < 350){
+        if(linear1.potentiometer > 330){
             setBucketSpeed(0.0);
         }
-        if(linear3.potentiometer > 405 && linear3.potentiometer < 435){
+        if(linear3.potentiometer > 405){
             setArmSpeed(0.0);
         }
-        if((linear1.potentiometer > 330 && linear1.potentiometer < 350) && (linear3.potentiometer > 405 && linear3.potentiometer < 435)){
+        if(linear1.potentiometer > 330 && linear3.potentiometer > 405){
             robotState = DUMP;
             setBucketSpeed(1.0);
             setArmSpeed(1.0);
