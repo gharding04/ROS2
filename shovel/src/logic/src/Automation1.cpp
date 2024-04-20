@@ -26,11 +26,14 @@ void Automation1::automate(){
     if(robotState == INITIAL){
         RCLCPP_INFO(this->node->get_logger(), "Initialize");
         setDestPosition(destX, destY);
-        auto start = std::chrono::high_resolution_clock::now();
-        setStartTime(start);
         setBucketSpeed(1.0);
         setArmSpeed(1.0);
-        robotState=DOCK;
+        auto start = std::chrono::high_resolution_clock::now();
+        setStartTime(start);
+        RCLCPP_INFO(this->node->get_logger(), "linear1.potentiometer: %d", linear1.potentiometer);
+        RCLCPP_INFO(this->node->get_logger(), "linear3.potentiometer: %d", linear3.potentiometer);
+        robotState = EXCAVATE;
+        excavationState = RAISE_ARM;
     }
 
     if(robotState==DIAGNOSTICS){
@@ -220,7 +223,53 @@ void Automation1::automate(){
 
     // After reaching the excavation area, go through mining
     // sequence
+    // Check that the potentiometers are in the correct range
     if(robotState==EXCAVATE){
+        if(excavationState == RAISE_ARM){
+            if(linear1.potentiometer > 330 && linear1.potentiometer < 350){
+                setArmSpeed(0.0);
+            }
+            if(linear3.potentiometer > 405 && linear3.potentiometer < 425){
+                setBucketSpeed(0.0);
+            }
+            if(linear1.potentiometer > 330 && linear3.potentiometer > 405){
+                changeSpeed(0.2, 0.2);
+                excavationState = COLLECT;
+            }
+        }
+        if(excavationState == COLLECT){
+            if(deltaX < falcon1.outputPercentage * 0.05 || deltaZ < falcon1.outputPercentage * 0.05){
+                // Raise arm by 10
+                auto start = std::chrono::high_resolution_clock::now();
+                setStartTime(start);
+                changeSpeed(0.0, 0.0);
+                setArmSpeed(1.0);
+                auto finish = std::chrono::high_resolution_clock::now();
+                if(if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() > 250)){
+                    setArmSpeed(1.0);
+                    changeSpeed(0.2, 0.2);
+                }
+            }
+            else{
+                
+            }
+        }
+        if(excavationState == RAISE_BUCKET){
+
+        }
+        if(excavationState == LOWER_ARM){
+
+        }
+        if(excavationState == LOWER_ARM){
+        }
+
+        if(excavationState == LOWER_BUCKET){
+
+        }
+        if(excavationState == EXCAVATION_ERROR_RECOVERY){
+            
+        }
+
     }
 
     // After mining, return to start position
@@ -282,10 +331,10 @@ void Automation1::automate(){
         if(linear1.potentiometer > 820){
             setArmSpeed(0.0);
         }
-        if(linear3.potentiometer > 920){
+        if(linear3.potentiometer > 850){
             setBucketSpeed(0.0);
         }
-        if(linear1.potentiometer > 820 && (linear3.potentiometer > 920)){
+        if(linear1.potentiometer > 820 && (linear3.potentiometer > 850)){
             robotState = INITIAL;
             setBucketSpeed(-1.0);
             setArmSpeed(-1.0);

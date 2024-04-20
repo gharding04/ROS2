@@ -333,3 +333,11 @@ void Automation::setDestPosition(int x, int y){
 void Automation::aStar(bool includeHoles){
     this->currentPath = this->search.aStar(includeHoles);
 }
+
+void Automation::setArmPosition(int potent){
+
+}
+
+void Automation::setBucketPosition(int potent){
+    
+}

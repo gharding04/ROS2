@@ -121,4 +121,8 @@ class Automation{
     void setDestPosition(int x, int y);
 
     void aStar(bool includeHoles = false);
+
+    void setArmPosition(int potent);
+
+    void setBucketPosition(int potent);
 };

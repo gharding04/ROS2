@@ -718,7 +718,7 @@ int main(int argc, char **argv){
     auto finish = std::chrono::high_resolution_clock::now();
     while(rclcpp::ok()){
         finish = std::chrono::high_resolution_clock::now();
-        if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() > 100){
+        if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() > 33){
             updateMotorPositions(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() );
             getLinearOut(&linearOut1, &linear1);
             linearOut1Publisher->publish(linearOut1);

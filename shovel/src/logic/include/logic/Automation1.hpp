@@ -6,7 +6,7 @@
 class Automation1 : public Automation{
 
     enum RobotState{INITIAL,DIAGNOSTICS,LOCATE,ALIGN,GO_TO_DIG_SITE,EXCAVATE,OBSTACLE,GO_TO_HOME,DOCK,DUMP,RETURN_TO_START,ROBOT_IDLE};
-    enum ExcavationState{EXCAVATION_IDLE,EXCAVATION_ERROR_RECOVERY};
+    enum ExcavationState{EXCAVATION_IDLE,RAISE_ARM,RAISE_BUCKET,COLLECT,LOWER_ARM,LOWER_BUCKET,EXCAVATION_ERROR_RECOVERY};
     enum ErrorState {TALON_14_ERROR, TALON_15_ERROR, TALON_16_ERROR, TALON_17_ERROR, FALCON_10_ERROR, FALCON_11_ERROR, FALCON_12_ERROR, FALCON_13_ERROR,NONE};
     enum DiagnosticsState{DIAGNOSTICS_IDLE,TALON_EXTEND,TALON_RETRACT,FALCON_FORWARD,DIAGNOSTICS_ERROR_RECOVERY};
     RobotState robotState=ROBOT_IDLE;
@@ -33,7 +33,12 @@ class Automation1 : public Automation{
 
     std::map<ExcavationState, const char*> excavationStateMap = {
         {EXCAVATION_IDLE, "Idle"},
-        {EXCAVATION_ERROR_RECOVERY, "Excavation Error Recovery"}
+        {RAISE_ARM, "Raise Arm"},
+        {RAISE_BUCKET, "Raise Bucket"},
+        {COLLECT, "Collect"},
+        {LOWER_ARM, "Lower Arm"},
+        {LOWER_BUCKET, "Lower Bucket"},
+        {EXCAVATION_ERROR_RECOVERY, "Error Recovery"}
     };
 
     std::map<ErrorState, const char*> errorStateMap = {
@@ -49,11 +54,11 @@ class Automation1 : public Automation{
     };
 
     std::map<DiagnosticsState, const char*> diagnosticsStateMap = {
-        {DIAGNOSTICS_IDLE, "Diagnostics Idle"},
+        {DIAGNOSTICS_IDLE, "Idle"},
         {TALON_EXTEND, "Talon Extend"},
         {TALON_RETRACT, "Talon Retract"},
         {FALCON_FORWARD, "Falcon Forward"},
-        {DIAGNOSTICS_ERROR_RECOVERY, "Diagnostics Error Recovery"}
+        {DIAGNOSTICS_ERROR_RECOVERY, "Error Recovery"}
     };
 
     void automate();
