@@ -343,25 +343,27 @@ void Automation::setBucketPosition(int potent){
 }
 
 int Automation::checkArmPosition(int thresh){
-    if(linear1.potentiometer < target1 - thresh){
+    if(linear1.potentiometer <= target1 - thresh){
         return 0;
     }
     if(linear1.potentiometer > (target1 - thresh) && linear1.potentiometer < (target1 + thresh)){
         return 1;
     }
-    if(linear1.potentiometer > (target1 + thresh)){
+    if(linear1.potentiometer >= (target1 + thresh)){
         return 2;
     }
+    return -1;
 }
 
 int Automation::checkBucketPosition(int thresh){
-    if(linear3.potentiometer < target3 - thresh){
+    if(linear3.potentiometer <= target3 - thresh){
         return 0;
     }
     if(linear3.potentiometer > (target3 - thresh) && linear3.potentiometer < (target3 + thresh)){
         return 1;
     }
-    if(linear3.potentiometer > (target3 + thresh)){
+    if(linear3.potentiometer >= (target3 + thresh)){
         return 2;
     }
+    return -1;
 }
