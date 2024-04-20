@@ -251,7 +251,7 @@ void Automation1::automate(){
                 changeSpeed(0.0, 0.0);
                 //setArmSpeed(1.0);
                 auto finish = std::chrono::high_resolution_clock::now();
-                if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() > 250){
+                if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-getStartTime()).count() > 250){
                     //setArmSpeed(1.0);
                     changeSpeed(0.2, 0.2);
                 }
