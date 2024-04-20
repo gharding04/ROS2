@@ -33,7 +33,7 @@ void Automation1::automate(){
         auto start = std::chrono::high_resolution_clock::now();
         setStartTime(start);
         setArmPosition(linear1.potentiometer + 20);
-        setBucketPosition(linear3.potentiomter + 20);
+        setBucketPosition(linear3.potentiometer + 20);
         RCLCPP_INFO(this->node->get_logger(), "linear1.potentiometer: %d", linear1.potentiometer);
         RCLCPP_INFO(this->node->get_logger(), "linear3.potentiometer: %d", linear3.potentiometer);
         robotState = ROBOT_IDLE;
