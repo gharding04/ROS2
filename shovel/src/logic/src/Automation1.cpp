@@ -4,7 +4,7 @@
 #include "logic/Automation.hpp"
 #include "logic/Automation1.hpp"
 
-int destX = -2, destY = -2;
+int destX = 2, destY = 2;
 
 /** @file
  *
@@ -270,7 +270,7 @@ void Automation1::automate(){
                 // Raise arm by 10
                 setArmPosition(linear1.potentiometer + 10);
             }
-            if(abs(this->position.x) > abs(this->destX)){
+            if(abs(this->position.z) > abs(this->destX)){
                 changeSpeed(0, 0);
                 setArmTarget(900);
                 setBucketTarget(850);
@@ -278,10 +278,10 @@ void Automation1::automate(){
                 setBucketSpeed(1.0);
                 robotState = DUMP;
             }
-            else if(abs(this->position.x) > abs(this->destX) - 0.1){
+            else if(abs(this->position.z) > abs(this->destX) - 0.1){
                 changeSpeed(0.1, 0.1);
             }
-            else if(abs(this->position.x) > abs(this->destX) - 0.25){
+            else if(abs(this->position.z) > abs(this->destX) - 0.25){
                 changeSpeed(0.15, 0.15);
             }
             else{
