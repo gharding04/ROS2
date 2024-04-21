@@ -4,7 +4,7 @@
 #include "logic/Automation.hpp"
 #include "logic/Automation1.hpp"
 
-int destX = 10, destY = 10;
+int destX = -2, destY = -2;
 
 /** @file
  *
@@ -28,8 +28,6 @@ void Automation1::automate(){
         setDestPosition(destX, destY);
         auto start = std::chrono::high_resolution_clock::now();
         setStartTime(start);
-        //setArmPosition(330);
-        //setBucketPosition(410);
         setArmTarget(330);
         setBucketTarget(410);
         setArmSpeed(1.0);
@@ -272,8 +270,22 @@ void Automation1::automate(){
                 // Raise arm by 10
                 setArmPosition(linear1.potentiometer + 10);
             }
+            if(abs(this->position.x) > abs(this->destX)){
+                changeSpeed(0, 0);
+                setArmTarget(900);
+                setBucketTarget(850);
+                setArmSpeed(1.0);
+                setBucketSpeed(1.0);
+                robotState = DUMP;
+            }
+            else if(abs(this->position.x) > abs(this->destX) - 0.1){
+                changeSpeed(0.1, 0.1);
+            }
+            else if(abs(this->position.x) > abs(this->destX) - 0.25){
+                changeSpeed(0.15, 0.15);
+            }
             else{
-                
+                changeSpeed(0.25, 0.25);
             }
         }
         if(excavationState == RAISE_BUCKET){
@@ -282,9 +294,6 @@ void Automation1::automate(){
         if(excavationState == LOWER_ARM){
 
         }
-        if(excavationState == LOWER_ARM){
-        }
-
         if(excavationState == LOWER_BUCKET){
 
         }
@@ -332,31 +341,18 @@ void Automation1::automate(){
 
     // After reaching start position, dock at dump bin
     if(robotState==DOCK){
-        RCLCPP_INFO(this->node->get_logger(), "linear1.potentiometer: %d", linear1.potentiometer);
-        RCLCPP_INFO(this->node->get_logger(), "linear3.potentiometer: %d", linear3.potentiometer);
 
-        if(checkArmPosition(20)){
-            setArmSpeed(0.0);
-        }
-        if(checkBucketPosition(20)){
-            setBucketSpeed(0.0);
-        }
-        if(checkArmPosition(30) && checkBucketPosition(30)){
-            robotState = DUMP;
-            setBucketSpeed(1.0);
-            setArmSpeed(1.0);
-        }
     }
 
     // Dump the collected rocks in the dump bin
     if(robotState==DUMP){
-        if(linear1.potentiometer > 820){
+        if(checkArmPosition(30)){
             setArmSpeed(0.0);
         }
-        if(linear3.potentiometer > 850){
+        if(checkBucketPosition(30)){
             setBucketSpeed(0.0);
         }
-        if(linear1.potentiometer > 820 && (linear3.potentiometer > 850)){
+        if(checkArmPosition(30) && checkBucketPosition(30)){
             robotState = INITIAL;
             setBucketSpeed(-1.0);
             setArmSpeed(-1.0);
