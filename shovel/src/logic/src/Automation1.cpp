@@ -277,7 +277,7 @@ void Automation1::automate(){
             else{
                 stillCounter = 0;
             }
-            if(deltaX > falcon.outputPercentage * 0.25 || deltaZ > falcon1.outputPercentage * 0.25){
+            if(deltaX > falcon1.outputPercentage * 0.25 || deltaZ > falcon1.outputPercentage * 0.25){
                 setArmPosition(linear1.potentiometer - 10);
             }
             if(abs(this->position.z) > abs(this->destX)){
