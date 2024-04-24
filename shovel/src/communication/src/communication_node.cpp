@@ -718,8 +718,8 @@ int main(int argc, char **argv){
     if (listen(videoserver_fd, 3) < 0) { 
         perror("listen"); 
         exit(EXIT_FAILURE); 
-    } 
-    if ((new_socket = accept(videoserver_fd, (struct sockaddr *)&videoAddress, (socklen_t*)&videoAddrlen))<0) { 
+    }
+    if ((video_socket = accept(videoserver_fd, (struct sockaddr *)&videoAddress, (socklen_t*)&videoAddrlen))<0) { 
         perror("accept"); 
         exit(EXIT_FAILURE); 
     }
