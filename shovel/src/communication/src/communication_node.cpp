@@ -675,6 +675,10 @@ int main(int argc, char **argv){
         perror("socket failed"); 
         exit(EXIT_FAILURE); 
     }
+    if ((videoserver_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) { 
+        perror("socket failed"); 
+        exit(EXIT_FAILURE); 
+    }
     std::thread broadcastThread(broadcastIP);
 
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) { 
@@ -698,6 +702,11 @@ int main(int argc, char **argv){
         exit(EXIT_FAILURE); 
     }
 
+    if (setsockopt(videoserver_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt2, sizeof(opt2))) { 
+        perror("setsockopt"); 
+        exit(EXIT_FAILURE); 
+    } 
+    
     videoAddress.sin_family = AF_INET;
     videoAddress.sin_addr.s_addr = INADDR_ANY;
     videoAddress.sin_port = htons(VIDEO_PORT);
@@ -710,7 +719,7 @@ int main(int argc, char **argv){
         perror("listen"); 
         exit(EXIT_FAILURE); 
     } 
-    if ((new_socket = accept(videoserver_fd, (struct sockaddr *)&videoAddress, (socklen_t*)&videoAddress))<0) { 
+    if ((new_socket = accept(videoserver_fd, (struct sockaddr *)&videoAddress, (socklen_t*)&videoAddrlen))<0) { 
         perror("accept"); 
         exit(EXIT_FAILURE); 
     }
