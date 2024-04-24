@@ -4,6 +4,9 @@
 #include <sl/Camera.hpp>
 #include "aruco.hpp"
 #include <opencv2/opencv.hpp>
+#include "image_transport/image_transport.h"
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.hpp>
 #include "messages/msg/zed_position.hpp"
 #include <sensor_msgs/msg/image.hpp>
 #include <std_msgs/msg/bool.hpp>
@@ -257,18 +260,12 @@ int main(int argc, char **argv) {
                 zedPositionPublisher->publish(zedPosition);
             }
             if(jetsonStream){
-                sensor_msgs::msg::Image image;
-                image.width = image_zed.getWidth();
-                image.height = image_zed.getHeight();
-                image.data = image_ocv_rgb;
-                zedImagePublisher->publish(image);
+                sensor_msgs::msg::Image image = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", image_ocv_rgb).toImageMsg();
+                zedImagePublisher->publish(*image.get());
             }
             if(laptopStream){
-                sensor_msgs::msg::Image image;
-                image.width = image_zed.getWidth();
-                image.height = image_zed.getHeight();
-                image.data = image_ocv_rgb;
-                zedImagePublisher->publish(image);
+                sensor_msgs::msg::Image::SharedPtr image = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", image_ocv_rgb).toImageMsg();
+                zedImagePublisher->publish(*image.get());
             }
 
         }

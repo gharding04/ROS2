@@ -22,6 +22,8 @@
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/empty.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include "cv_bridge/cv_bridge.h"
+#include "image_transport/image_transport.hpp"
 
 #include <messages/msg/power.hpp>
 #include <messages/msg/key_state.hpp>
@@ -422,7 +424,9 @@ void falcon4Callback(const messages::msg::FalconOut::SharedPtr talonOut){
 void zedImageCallback(const sensor_msgs::msg::Image::SharedPtr inputImage){
     //RCLCPP_INFO(nodeHandle->get_logger(), "Received image");
     BinaryMessage message("Image");
-    
+    cv::Mat outputImage = cv_bridge::toCvCopy(inputImage, "bgr8")->image;
+    outputImage = outputImage.reshape(0,1);
+    #message.addElementUInt8Array(outputImage);
     send(message);
 }
 
