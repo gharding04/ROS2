@@ -5,6 +5,7 @@
 #include "logic/Automation1.hpp"
 
 int destX = 2, destY = 2;
+int stillCounter = 0;
 
 /** @file
  *
@@ -229,9 +230,9 @@ void Automation1::automate(){
     if(robotState==EXCAVATE){
         RCLCPP_INFO(this->node->get_logger(), "EXCAVATE");
         if(excavationState == RAISE_ARM){
-        RCLCPP_INFO(this->node->get_logger(), "RAISE_ARM");
-        RCLCPP_INFO(this->node->get_logger(), "linear1.potentiometer: %d", linear1.potentiometer);
-        RCLCPP_INFO(this->node->get_logger(), "linear3.potentiometer: %d", linear3.potentiometer);
+            RCLCPP_INFO(this->node->get_logger(), "RAISE_ARM");
+            RCLCPP_INFO(this->node->get_logger(), "linear1.potentiometer: %d", linear1.potentiometer);
+            RCLCPP_INFO(this->node->get_logger(), "linear3.potentiometer: %d", linear3.potentiometer);
             int armPosition = checkArmPosition(20);
             if(armPosition == 0){
                 RCLCPP_INFO(this->node->get_logger(), "RAISE ARM");
@@ -260,15 +261,24 @@ void Automation1::automate(){
             }
             if(armPosition == 1 && bucketPosition == 1){
                 changeSpeed(0.2, 0.2);
-                excavationState = EXCAVATION_IDLE;
+                excavationState = COLLECT;
                 auto start = std::chrono::high_resolution_clock::now();
                 setStartTime(start);
             }
         }
         if(excavationState == COLLECT){
             if(deltaX < falcon1.outputPercentage * 0.05 || deltaZ < falcon1.outputPercentage * 0.05){
-                // Raise arm by 10
                 setArmPosition(linear1.potentiometer + 10);
+                stillCounter += 1;
+                if(stillCounter > 5 || position.pitch > 5){
+                    excavationState = EXCAVATION_ERROR_RECOVERY;
+                }
+            }
+            else{
+                stillCounter = 0;
+            }
+            if(deltaX > falcon.outputPercentage * 0.25 || deltaZ > falcon1.outputPercentage * 0.25){
+                setArmPosition(linear1.potentiometer - 10);
             }
             if(abs(this->position.z) > abs(this->destX)){
                 changeSpeed(0, 0);
@@ -276,6 +286,7 @@ void Automation1::automate(){
                 setBucketTarget(850);
                 setArmSpeed(1.0);
                 setBucketSpeed(1.0);
+                excavationState = EXCAVATION_IDLE;
                 robotState = DUMP;
             }
             else if(abs(this->position.z) > abs(this->destX) - 0.1){
@@ -353,7 +364,7 @@ void Automation1::automate(){
             setBucketSpeed(0.0);
         }
         if(checkArmPosition(30) && checkBucketPosition(30)){
-            robotState = INITIAL;
+            robotState = ROBOT_IDLE;
             setBucketSpeed(-1.0);
             setArmSpeed(-1.0);
         }

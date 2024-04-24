@@ -59,5 +59,6 @@ ament_target_dependencies(${PROJECT_NAME}_node
         rclcpp
         std_msgs
         messages
+        sensor_msgs
 )
 

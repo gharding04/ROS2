@@ -67,6 +67,7 @@
 
 std_msgs::msg::Empty empty;
 bool silentRunning=true;
+bool videoStreaming=false;
 int new_socket;
 rclcpp::Node::SharedPtr nodeHandle;
 int total = 0;
@@ -131,18 +132,23 @@ int parseInt(uint8_t* array){
  
 void send(BinaryMessage message){
     //RCLCPP_INFO(nodeHandle->get_logger(), "send message");
-    std::shared_ptr<std::list<uint8_t>> byteList = message.getBytes();
+    try{
+        std::shared_ptr<std::list<uint8_t>> byteList = message.getBytes();
 
-    std::vector<uint8_t> bytes(byteList->size());
-    int index = 0;
-    for(auto byteIterator = byteList->begin(); byteIterator != byteList->end(); byteIterator++, index++){
-        bytes.at(index) = *byteIterator;
+        std::vector<uint8_t> bytes(byteList->size());
+        int index = 0;
+        for(auto byteIterator = byteList->begin(); byteIterator != byteList->end(); byteIterator++, index++){
+            bytes.at(index) = *byteIterator;
+        }
+        total += byteList->size();
+        //RCLCPP_INFO(nodeHandle->get_logger(), "sending %s   bytes = %ld", message.getLabel().c_str(), byteList->size());
+        //RCLCPP_INFO(nodeHandle->get_logger(), "Total Bytes Sent: %d", total);
+        if(send(new_socket, bytes.data(), byteList->size(), 0)== -1){
+            RCLCPP_INFO(nodeHandle->get_logger(), "Failed to send message.");   
+        }
     }
-    total += byteList->size();
-    //RCLCPP_INFO(nodeHandle->get_logger(), "sending %s   bytes = %ld", message.getLabel().c_str(), byteList->size());
-    //RCLCPP_INFO(nodeHandle->get_logger(), "Total Bytes Sent: %d", total);
-    if(send(new_socket, bytes.data(), byteList->size(), 0)== -1){
-        RCLCPP_INFO(nodeHandle->get_logger(), "Failed to send message.");   
+    catch(...){
+        RCLCPP_INFO(nodeHandle->get_logger(), "EXCEPTION HANDLED.");
     }
 }
 
@@ -415,6 +421,9 @@ void falcon4Callback(const messages::msg::FalconOut::SharedPtr talonOut){
  */
 void zedImageCallback(const sensor_msgs::msg::Image::SharedPtr inputImage){
     //RCLCPP_INFO(nodeHandle->get_logger(), "Received image");
+    BinaryMessage message("Image");
+    
+    send(message);
 }
 
 
@@ -620,6 +629,8 @@ int main(int argc, char **argv){
     auto keyPublisher = nodeHandle->create_publisher<messages::msg::KeyState>("key",1);
     auto stopPublisher = nodeHandle->create_publisher<std_msgs::msg::Empty>("STOP",1);
     auto goPublisher=nodeHandle->create_publisher<std_msgs::msg::Empty>("GO",1);
+    auto laptopStreamPublisher=nodeHandle->create_publisher<std_msgs::msg::Bool>("laptop_stream",1);
+    auto jetsonStreamPublisher=nodeHandle->create_publisher<std_msgs::msg::Bool>("jetson_stream",1);
 
     auto powerSubscriber = nodeHandle->create_subscription<messages::msg::Power>("power",1,powerCallback);
     auto talon1Subscriber = nodeHandle->create_subscription<messages::msg::TalonOut>("talon_14_info",1,talon1Callback);
@@ -726,7 +737,9 @@ int main(int argc, char **argv){
             // 5: Joystick button values
             // 6: Joystick hat values
             // 7: GUI silent running button
-            // 8: GUI reboot button
+            // 8: GUI video streaming button on laptop
+            // 9: GUI video streaming button on Jetson
+            // 10: GUI reboot button
             uint8_t command=message[0];
             if(command==1){
                 messages::msg::AxisState axisState;
@@ -772,6 +785,22 @@ int main(int argc, char **argv){
                 std::cout << "silentRunning " << silentRunning << std::endl;
             }
             if(command==8){
+                std_msgs::msg::Bool videoStream;
+                videoStreaming=message[1];
+                videoStream.data = videoStreaming;
+                laptopStreamPublisher->publish(videoStream);
+                
+                std::cout << "videoStreaming " << videoStreaming << std::endl;
+            }
+            if(command==9){
+                std_msgs::msg::Bool videoStream;
+                videoStreaming=message[1];
+                videoStream.data = videoStreaming;
+                jetsonStreamPublisher->publish(videoStream);
+
+                std::cout << "videoStreaming " << videoStreaming << std::endl;
+            }
+            if(command==10){
                 reboot();
                 std::cout << "reboot " << silentRunning << std::endl;
             }

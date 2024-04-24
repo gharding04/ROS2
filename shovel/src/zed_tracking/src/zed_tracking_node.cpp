@@ -5,8 +5,12 @@
 #include "aruco.hpp"
 #include <opencv2/opencv.hpp>
 #include "messages/msg/zed_position.hpp"
+#include <sensor_msgs/msg/image.hpp>
+#include <std_msgs/msg/bool.hpp>
 
 #define ROW_COUNT 10
+bool jetsonStream = false;
+bool laptopStream = false;
 //using namespace sl;
 //using namespace std;
 
@@ -40,6 +44,15 @@
  * 
  * */
 
+void jetsonStreamCallback(const std_msgs::msg::Bool::SharedPtr msg){
+    jetsonStream = msg->data;
+}
+
+void laptopStreamCallback(const std_msgs::msg::Bool::SharedPtr msg){
+    laptopStream = msg->data;
+}
+
+
 int main(int argc, char **argv) {
     rclcpp::init(argc,argv);
     rclcpp::Node::SharedPtr nodeHandle = rclcpp::Node::make_shared("zed_tracking");
@@ -48,7 +61,11 @@ int main(int argc, char **argv) {
 
     messages::msg::ZedPosition zedPosition;
     auto zedPositionPublisher=nodeHandle->create_publisher<messages::msg::ZedPosition>("zed_position",1);
+    auto zedImagePublisher = nodeHandle->create_publisher<sensor_msgs::msg::Image>("zed_image",1);
 
+    auto jetsonStreamSubscriber = nodeHandle->create_subscriber<std_msgs::msg::Bool>("jetson_stream",1,jetsonStreamCallback);
+    auto laptopStreamSubscriber = nodeHandle->create_subscriber<std_msgs::msg::Bool>("laptop_stream",1,laptopStreamCallback);
+    
     // Create a ZED camera object
     sl::Camera zed;
 
@@ -238,6 +255,20 @@ int main(int argc, char **argv) {
                 zedPosition.y_vel = y_vel;
                 zedPosition.z_vel = z_vel;
                 zedPositionPublisher->publish(zedPosition);
+            }
+            if(jetsonStream){
+                sensor_msgs::msg::Image image;
+                image->width = image_zed.getWidth();
+                image->height = image_zed.getHeight();
+                image->data = image_ocv_rgb;
+                zedImagePublisher->publish(image);
+            }
+            if(laptopStream){
+                sensor_msgs::msg::Image image;
+                image->width = image_zed.getWidth();
+                image->height = image_zed.getHeight();
+                image->data = image_ocv_rgb;
+                zedImagePublisher->publish(image);
             }
 
         }

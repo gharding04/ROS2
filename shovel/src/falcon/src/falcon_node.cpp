@@ -128,10 +128,10 @@ void speedCallback(const std_msgs::msg::Float32::SharedPtr speed){
 	//std::cout << "---------->>>  " << speed->data << std::endl;
 
 	if(useVelocity){
-        	talonFX->Set(ControlMode::Velocity, int(speed->data*velocityMultiplier));
+		talonFX->Set(ControlMode::Velocity, int(speed->data*velocityMultiplier));
 	}
 	else{
-        	talonFX->Set(ControlMode::PercentOutput, speed->data);
+		talonFX->Set(ControlMode::PercentOutput, speed->data);
 	}
 }
 

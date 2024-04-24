@@ -3,8 +3,8 @@
   <name>zed_tracking</name>
   <version>1.0.0</version>
   <description>The ZED tracking package</description>
-  <maintainer email="wgjohns@uark.edu">William Johnston</maintainer>
-  <author>William Johnston</author>
+  <maintainer email="andrewburroughs17@gmail.com">Andrew Burroughs</maintainer>
+  <author>Andrew Burroughs</author>
   <license>none</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
@@ -15,6 +15,7 @@
 
   <exec_depend>rclcpp</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
 
   <export>
 	<build_type>ament_cmake</build_type>
