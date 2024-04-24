@@ -260,12 +260,12 @@ int main(int argc, char **argv) {
                 zedPositionPublisher->publish(zedPosition);
             }
             if(jetsonStream){
-                sensor_msgs::msg::Image image = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", image_ocv_rgb).toImageMsg();
-                zedImagePublisher->publish(*image.get());
+                sensor_msgs::msg::Image::SharedPtr image = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", image_ocv_rgb).toImageMsg();
+                zedImagePublisher->publish(image);
             }
             if(laptopStream){
                 sensor_msgs::msg::Image::SharedPtr image = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", image_ocv_rgb).toImageMsg();
-                zedImagePublisher->publish(*image.get());
+                zedImagePublisher->publish(image);
             }
 
         }
