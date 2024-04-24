@@ -63,8 +63,8 @@ int main(int argc, char **argv) {
     auto zedPositionPublisher=nodeHandle->create_publisher<messages::msg::ZedPosition>("zed_position",1);
     auto zedImagePublisher = nodeHandle->create_publisher<sensor_msgs::msg::Image>("zed_image",1);
 
-    auto jetsonStreamSubscriber = nodeHandle->create_subscriber<std_msgs::msg::Bool>("jetson_stream",1,jetsonStreamCallback);
-    auto laptopStreamSubscriber = nodeHandle->create_subscriber<std_msgs::msg::Bool>("laptop_stream",1,laptopStreamCallback);
+    auto jetsonStreamSubscriber = nodeHandle->create_subscription<std_msgs::msg::Bool>("jetson_stream",1,jetsonStreamCallback);
+    auto laptopStreamSubscriber = nodeHandle->create_subscription<std_msgs::msg::Bool>("laptop_stream",1,laptopStreamCallback);
     
     // Create a ZED camera object
     sl::Camera zed;
@@ -258,16 +258,16 @@ int main(int argc, char **argv) {
             }
             if(jetsonStream){
                 sensor_msgs::msg::Image image;
-                image->width = image_zed.getWidth();
-                image->height = image_zed.getHeight();
-                image->data = image_ocv_rgb;
+                image.width = image_zed.getWidth();
+                image.height = image_zed.getHeight();
+                image.data = image_ocv_rgb;
                 zedImagePublisher->publish(image);
             }
             if(laptopStream){
                 sensor_msgs::msg::Image image;
-                image->width = image_zed.getWidth();
-                image->height = image_zed.getHeight();
-                image->data = image_ocv_rgb;
+                image.width = image_zed.getWidth();
+                image.height = image_zed.getHeight();
+                image.data = image_ocv_rgb;
                 zedImagePublisher->publish(image);
             }
 
