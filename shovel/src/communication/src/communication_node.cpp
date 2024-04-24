@@ -39,6 +39,7 @@
 #include <BinaryMessage.hpp>
 
 #define PORT 31337
+#define VIDEO_PORT 31338
 
 /** @file
  * @brief Node for handling communication between the client and the rover.
@@ -71,6 +72,7 @@ std_msgs::msg::Empty empty;
 bool silentRunning=true;
 bool videoStreaming=false;
 int new_socket;
+int video_socket;
 rclcpp::Node::SharedPtr nodeHandle;
 int total = 0;
 /** @brief Inserts topic into a payload to be sent.
@@ -426,8 +428,11 @@ void zedImageCallback(const sensor_msgs::msg::Image::SharedPtr inputImage){
     BinaryMessage message("Image");
     cv::Mat outputImage = cv_bridge::toCvCopy(inputImage, "bgr8")->image;
     outputImage = outputImage.reshape(0,1);
+    int  imgSize = frame.total()*frame.elemSize();
     //message.addElementUInt8Array(outputImage);
-    send(message);
+    if(send(video_socket, outputImage.data, imgSize, 0)== -1){
+        RCLCPP_INFO(nodeHandle->get_logger(), "Failed to send message.");   
+    }
 }
 
 
@@ -659,6 +664,10 @@ int main(int argc, char **argv){
     int addrlen = sizeof(address); 
     uint8_t buffer[1024] = {0}; 
     std::string hello("Hello from server");
+    int videoserver_fd;
+    struct sockaddr_in videoAddress;
+    int opt2 = 1;
+    int videoAddrlen = sizeof(videoAddress);
 
 
     // Creating socket file descriptor
@@ -688,12 +697,32 @@ int main(int argc, char **argv){
         perror("accept"); 
         exit(EXIT_FAILURE); 
     }
+
+    videoAddress.sin_family = AF_INET;
+    videoAddress.sin_addr.s_addr = INADDR_ANY;
+    videoAddress.sin_port = htons(VIDEO_PORT);
+
+    if (bind(videoserver_fd, (struct sockaddr *)&videoAddress, sizeof(videoAddress))<0) { 
+        perror("bind failed"); 
+        exit(EXIT_FAILURE); 
+    } 
+    if (listen(videoserver_fd, 3) < 0) { 
+        perror("listen"); 
+        exit(EXIT_FAILURE); 
+    } 
+    if ((new_socket = accept(videoserver_fd, (struct sockaddr *)&videoAddress, (socklen_t*)&videoAddress))<0) { 
+        perror("accept"); 
+        exit(EXIT_FAILURE); 
+    }
+
     broadcast=false;
     bytesRead = read(new_socket, buffer, 1024); 
     send(new_socket, hello.c_str(), strlen(hello.c_str()), 0); 
     silentRunning=true;
 
     fcntl(new_socket, F_SETFL, O_NONBLOCK);
+    fcntl(video_socket, F_SETFL, O_NONBLOCK);
+    
 
     std::list<uint8_t> messageBytesList;
     uint8_t message[256];
@@ -706,7 +735,7 @@ int main(int argc, char **argv){
 
         if(bytesRead==0){
             stopPublisher->publish(empty);
-	    RCLCPP_INFO(nodeHandle->get_logger(),"Lost Connection");
+	        RCLCPP_INFO(nodeHandle->get_logger(),"Lost Connection");
             broadcast=true;
             //wait for reconnect
             if (listen(server_fd, 3) < 0) { 
