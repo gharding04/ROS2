@@ -27,34 +27,7 @@
 
 #define PORT 31338
 
-/** @file
- * @brief Node for handling communication between the client and the rover.
- *  
- * This node receives information published by the power_distribution_panel node, motor nodes, and the logic node
- * wraps the information into topics, then publishes the topics.  
- * Currently this node is missing the callback functions for the motors. 
- * The topics that the node subscribes to are as follows:
- * \li \b power
- * \li \b talon_14_info
- * \li \b talon_15_info
- * \li \b zed_position
- * \li \b zed_image
- * 
- * The topics that are being published are as follows:
- * \li \b joystick_axis
- * \li \b joystick_button
- * \li \b joystick_hat
- * \li \b key
- * \li \b STOP
- * \li \b GO
- * 
- * To read more about the nodes that subscribe to this one
- * \see logic_node.cpp
- * 
- * 
- * */
-
-bool videoStreaming=false;
+bool videoStreaming=true;
 int new_socket;
 rclcpp::Node::SharedPtr nodeHandle;
 int total = 0;
@@ -67,7 +40,13 @@ int total = 0;
  */
 void zedImageCallback(const sensor_msgs::msg::Image::SharedPtr inputImage){
     if(videoStreaming){
-
+        cv::Mat outputImage = cv_bridge::toCvCopy(inputImage, "bgr8")->image;
+        RCLCPP_INFO(nodeHandle->get_logger(), "Image width: %d, image height: %d", image.width, image.height);
+        outputImage = outputImage.reshape(0,1);
+        int imgSize = outputImage.total()*outputImage.elemSize();
+        if(send(new_socket, outputImage.data, imgSize, 0)== -1){
+            RCLCPP_INFO(nodeHandle->get_logger(), "Failed to send message.");   
+        }
     }
 }
 
