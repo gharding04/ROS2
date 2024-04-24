@@ -428,7 +428,7 @@ void zedImageCallback(const sensor_msgs::msg::Image::SharedPtr inputImage){
     BinaryMessage message("Image");
     cv::Mat outputImage = cv_bridge::toCvCopy(inputImage, "bgr8")->image;
     outputImage = outputImage.reshape(0,1);
-    int  imgSize = frame.total()*frame.elemSize();
+    int  imgSize = outputImage.total()*outputImage.elemSize();
     //message.addElementUInt8Array(outputImage);
     if(send(video_socket, outputImage.data, imgSize, 0)== -1){
         RCLCPP_INFO(nodeHandle->get_logger(), "Failed to send message.");   
@@ -706,7 +706,7 @@ int main(int argc, char **argv){
         perror("setsockopt"); 
         exit(EXIT_FAILURE); 
     } 
-    
+
     videoAddress.sin_family = AF_INET;
     videoAddress.sin_addr.s_addr = INADDR_ANY;
     videoAddress.sin_port = htons(VIDEO_PORT);
