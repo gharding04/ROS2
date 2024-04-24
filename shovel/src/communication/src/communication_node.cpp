@@ -21,9 +21,6 @@
 #include <std_msgs/msg/float32.hpp>
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/empty.hpp>
-#include <sensor_msgs/msg/image.hpp>
-#include "cv_bridge/cv_bridge.h"
-#include "image_transport/image_transport.hpp"
 
 #include <messages/msg/power.hpp>
 #include <messages/msg/key_state.hpp>
@@ -39,7 +36,6 @@
 #include <BinaryMessage.hpp>
 
 #define PORT 31337
-#define VIDEO_PORT 31338
 
 /** @file
  * @brief Node for handling communication between the client and the rover.
@@ -72,7 +68,6 @@ std_msgs::msg::Empty empty;
 bool silentRunning=true;
 bool videoStreaming=false;
 int new_socket;
-int video_socket;
 rclcpp::Node::SharedPtr nodeHandle;
 int total = 0;
 /** @brief Inserts topic into a payload to be sent.
@@ -417,24 +412,6 @@ void falcon4Callback(const messages::msg::FalconOut::SharedPtr talonOut){
     send("Falcon 4",talonOut);
 }
 
-/** @brief Receives the ZED camera image
- * 
- * This function hasn't been fully implemented yet.  In the future, this
- * will send the received image to the client-side GUI.
- * @param inputImage 
- */
-void zedImageCallback(const sensor_msgs::msg::Image::SharedPtr inputImage){
-    //RCLCPP_INFO(nodeHandle->get_logger(), "Received image");
-    BinaryMessage message("Image");
-    cv::Mat outputImage = cv_bridge::toCvCopy(inputImage, "bgr8")->image;
-    outputImage = outputImage.reshape(0,1);
-    int  imgSize = outputImage.total()*outputImage.elemSize();
-    //message.addElementUInt8Array(outputImage);
-    if(send(video_socket, outputImage.data, imgSize, 0)== -1){
-        RCLCPP_INFO(nodeHandle->get_logger(), "Failed to send message.");   
-    }
-}
-
 
 /** @brief Callback function for the LinearOut topic
  * 
@@ -655,7 +632,6 @@ int main(int argc, char **argv){
     auto linearOut3Subscriber = nodeHandle->create_subscription<messages::msg::LinearOut>("linearOut3",1,linearOut3Callback);
     auto linearOut4Subscriber = nodeHandle->create_subscription<messages::msg::LinearOut>("linearOut4",1,linearOut4Callback);
     auto zedPositionSubscriber = nodeHandle->create_subscription<messages::msg::ZedPosition>("zed_position",1,zedPositionCallback);
-    auto zedImageSubscriber = nodeHandle->create_subscription<sensor_msgs::msg::Image>("zed_image", 10, zedImageCallback);
     auto autonomyOutSubscriber = nodeHandle->create_subscription<messages::msg::AutonomyOut>("autonomy_out", 10, autonomyOutCallback);
 
     int server_fd, bytesRead; 
@@ -664,18 +640,10 @@ int main(int argc, char **argv){
     int addrlen = sizeof(address); 
     uint8_t buffer[1024] = {0}; 
     std::string hello("Hello from server");
-    int videoserver_fd;
-    struct sockaddr_in videoAddress;
-    int opt2 = 1;
-    int videoAddrlen = sizeof(videoAddress);
 
 
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) { 
-        perror("socket failed"); 
-        exit(EXIT_FAILURE); 
-    }
-    if ((videoserver_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) { 
         perror("socket failed"); 
         exit(EXIT_FAILURE); 
     }
@@ -702,35 +670,12 @@ int main(int argc, char **argv){
         exit(EXIT_FAILURE); 
     }
 
-    if (setsockopt(videoserver_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt2, sizeof(opt2))) { 
-        perror("setsockopt"); 
-        exit(EXIT_FAILURE); 
-    } 
-
-    videoAddress.sin_family = AF_INET;
-    videoAddress.sin_addr.s_addr = INADDR_ANY;
-    videoAddress.sin_port = htons(VIDEO_PORT);
-
-    if (bind(videoserver_fd, (struct sockaddr *)&videoAddress, sizeof(videoAddress))<0) { 
-        perror("bind failed"); 
-        exit(EXIT_FAILURE); 
-    } 
-    if (listen(videoserver_fd, 3) < 0) { 
-        perror("listen"); 
-        exit(EXIT_FAILURE); 
-    }
-    if ((video_socket = accept(videoserver_fd, (struct sockaddr *)&videoAddress, (socklen_t*)&videoAddrlen))<0) { 
-        perror("accept"); 
-        exit(EXIT_FAILURE); 
-    }
-
     broadcast=false;
     bytesRead = read(new_socket, buffer, 1024); 
     send(new_socket, hello.c_str(), strlen(hello.c_str()), 0); 
     silentRunning=true;
 
     fcntl(new_socket, F_SETFL, O_NONBLOCK);
-    fcntl(video_socket, F_SETFL, O_NONBLOCK);
     
 
     std::list<uint8_t> messageBytesList;

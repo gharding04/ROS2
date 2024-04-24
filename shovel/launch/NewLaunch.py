@@ -8,12 +8,6 @@ from launch_ros.actions import Node
 def generate_launch_description():
     return LaunchDescription([
         Node(
-            package='arduino',
-            name='arduino',
-            executable='arduino_node'
-        )
-        ,
-        Node(
             package='logic',
             name='logic',
             executable='logic_node',
@@ -21,11 +15,11 @@ def generate_launch_description():
         )
         ,
         Node(
-            package='communication2',
-            name='communication2',
-            executable='communication2_node',
+            package='communication',
+            name='communication',
+            executable='communication_node',
             parameters=[
-                {"robot_name": "Scoop"}
+                {"robot_name": "Shovel"}
             ],
             output={'stderr': 'screen', 'stdout': 'screen'}
         )
@@ -130,14 +124,9 @@ def generate_launch_description():
         )
         ,
         Node(
-            package='neo',
-            name='neo',
-            executable='neo_node',
-            parameters=[
-                {"motor_number": 18},
-                {"info_topic": "neoOut"},
-                {"speed_topic": "neo_speed"}
-            ]
+            package='video_streaming',
+            name='video_streaming',
+            executable='video_streaming_node'
         )
     ]
 )

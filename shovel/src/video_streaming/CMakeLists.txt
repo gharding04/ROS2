@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(communication)
+project(video_streaming)
 
 if(NOT CMAKE_CXX_STANDARD)
     set(CMAKE_CXX_STANDARD 14)
@@ -12,15 +12,16 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(messages REQUIRED)
+find_package(cv_bridge REQUIRED)
+find_package(image_transport)
 
 include_directories(
-        include
 )
 
 add_executable(${PROJECT_NAME}_node
-	src/BinaryMessage.cpp
-        src/communication_node.cpp
+        src/video_streaming_node.cpp
 )
 
 install(TARGETS ${PROJECT_NAME}_node
@@ -31,6 +32,9 @@ ament_package()
 ament_target_dependencies(${PROJECT_NAME}_node 
 	rclcpp 
 	std_msgs 
+        sensor_msgs
 	messages
+        cv_bridge
+        image_transport
 )
 
