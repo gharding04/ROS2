@@ -12,7 +12,7 @@
 #include <std_msgs/msg/bool.hpp>
 
 #define ROW_COUNT 10
-bool jetsonStream = false;
+bool jetsonStream = true;
 bool laptopStream = false;
 //using namespace sl;
 //using namespace std;
@@ -260,6 +260,7 @@ int main(int argc, char **argv) {
                 zedPositionPublisher->publish(zedPosition);
             }
             if(jetsonStream){
+                RCLCPP_INFO(nodeHandle->get_logger(), "Published image");
                 sensor_msgs::msg::Image::SharedPtr image = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", image_ocv_rgb).toImageMsg();
                 zedImagePublisher->publish(image);
             }

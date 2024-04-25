@@ -39,6 +39,7 @@ int total = 0;
  * @param inputImage 
  */
 void zedImageCallback(const sensor_msgs::msg::Image::SharedPtr inputImage){
+    RCLCPP_INFO(nodeHandle->get_logger(), "Received image.");
     if(videoStreaming){
         cv::Mat outputImage = cv_bridge::toCvCopy(inputImage, "bgr8")->image;
         RCLCPP_INFO(nodeHandle->get_logger(), "Image width: %d, image height: %d", outputImage.cols, outputImage.rows);
