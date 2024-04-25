@@ -41,7 +41,7 @@ int total = 0;
 void zedImageCallback(const sensor_msgs::msg::Image::SharedPtr inputImage){
     if(videoStreaming){
         cv::Mat outputImage = cv_bridge::toCvCopy(inputImage, "bgr8")->image;
-        RCLCPP_INFO(nodeHandle->get_logger(), "Image width: %d, image height: %d", outputImage.width, outputImage.height);
+        RCLCPP_INFO(nodeHandle->get_logger(), "Image width: %d, image height: %d", outputImage.cols, outputImage.rows);
         outputImage = outputImage.reshape(0,1);
         int imgSize = outputImage.total()*outputImage.elemSize();
         if(send(new_socket, outputImage.data, imgSize, 0)== -1){
