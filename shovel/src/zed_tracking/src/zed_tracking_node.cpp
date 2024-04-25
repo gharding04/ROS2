@@ -262,11 +262,11 @@ int main(int argc, char **argv) {
             if(jetsonStream){
                 RCLCPP_INFO(nodeHandle->get_logger(), "Published image");
                 sensor_msgs::msg::Image::SharedPtr image = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", image_ocv_rgb).toImageMsg();
-                zedImagePublisher->publish(image);
+                zedImagePublisher->publish(*image);
             }
             if(laptopStream){
                 sensor_msgs::msg::Image::SharedPtr image = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", image_ocv_rgb).toImageMsg();
-                zedImagePublisher->publish(image);
+                zedImagePublisher->publish(*image);
             }
 
         }
