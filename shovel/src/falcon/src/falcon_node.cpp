@@ -73,6 +73,8 @@ using namespace ctre::phoenix::motorcontrol::can;
 
 rclcpp::Node::SharedPtr nodeHandle;
 bool GO=false;
+std::chrono::time_point<std::chrono::high_resolution_clock> commPrevious;
+std::chrono::time_point<std::chrono::high_resolution_clock> logicPrevious;
 TalonFX* talonFX;
 bool useVelocity=false;
 
@@ -258,7 +260,7 @@ int main(int argc,char** argv){
 
 	auto stopSubscriber=nodeHandle->create_subscription<std_msgs::msg::Empty>("STOP",1,stopCallback);
 	auto goSubscriber=nodeHandle->create_subscription<std_msgs::msg::Empty>("GO",1,goCallback);
-	auto commHeartbeatSubscriber = nodeHandle->create_subscription<std_msgs::msg::Emtpy>("comm_heartbeat",1,commHeartbeatCallback);
+	auto commHeartbeatSubscriber = nodeHandle->create_subscription<std_msgs::msg::Empty>("comm_heartbeat",1,commHeartbeatCallback);
 	auto logicHeartbeatSubscriber = nodeHandle->create_subscription<std_msgs::msg::Empty>("logic_heartbeat",1,logicHeartbeatCallback);
 	
 	RCLCPP_INFO(nodeHandle->get_logger(),"set subscribers");
@@ -301,11 +303,11 @@ int main(int argc,char** argv){
 	}
 
 	if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-commPrevious).count() > 100){
-		talonSRX->Set(ControlMode::PercentOutput, 0.0);
+		talonFX->Set(ControlMode::PercentOutput, 0.0);
 		GO = false;
 	}
 	if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-logicPrevious).count() > 100){
-		talonSRX->Set(ControlMode::PercentOutput, 0.0);
+		talonFX->Set(ControlMode::PercentOutput, 0.0);
 		GO = false;
 	}
 	rate.sleep();

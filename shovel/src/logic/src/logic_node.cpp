@@ -496,7 +496,7 @@ int main(int argc, char **argv){
     armSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("arm_speed",1);
     bucketSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("bucket_speed",1);
     automationGoPublisher = nodeHandle->create_publisher<std_msgs::msg::Bool>("automationGo",1);
-    auto logicHeartbeatPublisher = nodeHandle->create_publisher<std_msgs::Empty>("logic_heartbeat",1);
+    auto logicHeartbeatPublisher = nodeHandle->create_publisher<std_msgs::msg::Empty>("logic_heartbeat",1);
 
     initSetSpeed();
 

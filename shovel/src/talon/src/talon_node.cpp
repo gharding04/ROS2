@@ -259,7 +259,7 @@ int main(int argc,char** argv){
 
 	auto stopSubscriber=nodeHandle->create_subscription<std_msgs::msg::Empty>("STOP",1,stopCallback);
 	auto goSubscriber=nodeHandle->create_subscription<std_msgs::msg::Empty>("GO",1,goCallback);
-	auto commHeartbeatSubscriber = nodeHandle->create_subscription<std_msgs::msg::Emtpy>("comm_heartbeat",1,commHeartbeatCallback);
+	auto commHeartbeatSubscriber = nodeHandle->create_subscription<std_msgs::msg::Empty>("comm_heartbeat",1,commHeartbeatCallback);
 	auto logicHeartbeatSubscriber = nodeHandle->create_subscription<std_msgs::msg::Empty>("logic_heartbeat",1,logicHeartbeatCallback);
 	
 	RCLCPP_INFO(nodeHandle->get_logger(),"set subscribers");
