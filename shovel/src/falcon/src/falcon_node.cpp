@@ -110,6 +110,14 @@ void goCallback(std_msgs::msg::Empty::SharedPtr empty){
 	GO=true;
 }
 
+void commHeartbeatCallback(std_msgs::msg::Empty::SharedPtr empty){
+	commPrevious = std::chrono::high_resolution_clock::now();
+}
+
+void logicHeartbeatCallback(std_msgs::msg::Empty::SharedPtr empty){
+	logicPrevious = std::chrono::high_resolution_clock::now();
+}
+
 int velocityMultiplier=0;
 int testSpeed=0;
 
@@ -250,6 +258,9 @@ int main(int argc,char** argv){
 
 	auto stopSubscriber=nodeHandle->create_subscription<std_msgs::msg::Empty>("STOP",1,stopCallback);
 	auto goSubscriber=nodeHandle->create_subscription<std_msgs::msg::Empty>("GO",1,goCallback);
+	auto commHeartbeatSubscriber = nodeHandle->create_subscription<std_msgs::msg::Emtpy>("comm_heartbeat",1,commHeartbeatCallback);
+	auto logicHeartbeatSubscriber = nodeHandle->create_subscription<std_msgs::msg::Empty>("logic_heartbeat",1,logicHeartbeatCallback);
+	
 	RCLCPP_INFO(nodeHandle->get_logger(),"set subscribers");
 
 	rclcpp::Rate rate(20);
@@ -289,6 +300,14 @@ int main(int argc,char** argv){
 
 	}
 
+	if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-commPrevious).count() > 100){
+		talonSRX->Set(ControlMode::PercentOutput, 0.0);
+		GO = false;
+	}
+	if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-logicPrevious).count() > 100){
+		talonSRX->Set(ControlMode::PercentOutput, 0.0);
+		GO = false;
+	}
 	rate.sleep();
 	rclcpp::spin_some(nodeHandle);
 	}

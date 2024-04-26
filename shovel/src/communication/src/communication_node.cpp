@@ -69,6 +69,7 @@ bool silentRunning=true;
 bool videoStreaming=false;
 int new_socket;
 rclcpp::Node::SharedPtr nodeHandle;
+std_msgs::msg::Empty heartbeat;
 int total = 0;
 /** @brief Inserts topic into a payload to be sent.
  * 
@@ -617,6 +618,7 @@ int main(int argc, char **argv){
     auto goPublisher=nodeHandle->create_publisher<std_msgs::msg::Empty>("GO",1);
     auto laptopStreamPublisher=nodeHandle->create_publisher<std_msgs::msg::Bool>("laptop_stream",1);
     auto jetsonStreamPublisher=nodeHandle->create_publisher<std_msgs::msg::Bool>("jetson_stream",1);
+    auto commHeartbeatPublisher = nodeHandle->create_publisher<std_msgs::msg::Empty>("comm_heartbeat",1);
 
     auto powerSubscriber = nodeHandle->create_subscription<messages::msg::Power>("power",1,powerCallback);
     auto talon1Subscriber = nodeHandle->create_subscription<messages::msg::TalonOut>("talon_14_info",1,talon1Callback);
@@ -680,7 +682,7 @@ int main(int argc, char **argv){
 
     std::list<uint8_t> messageBytesList;
     uint8_t message[256];
-    rclcpp::Rate rate(20);
+    rclcpp::Rate rate(30);
     while(rclcpp::ok()){
         bytesRead = recv(new_socket, buffer, 1024, 0);
         for(int index=0;index<bytesRead;index++){
@@ -794,6 +796,7 @@ int main(int argc, char **argv){
         }
 
         rclcpp::spin_some(nodeHandle);
+        commHeartbeatPublisher->publish(heartbeat);
         rate.sleep();
     }
 

@@ -6,6 +6,7 @@
 #include <std_msgs/msg/int8.hpp>
 #include <std_msgs/msg/u_int8.hpp>
 #include <std_msgs/msg/float32_multi_array.hpp>
+#include <std_msgs/msg/empty.hpp>
 
 #include <messages/msg/button_state.hpp>
 #include <messages/msg/hat_state.hpp>
@@ -69,6 +70,8 @@ std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > bucketSpeedPublisher;
 
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Bool_<std::allocator<void> >, std::allocator<void> > > automationGoPublisher;
+
+std_msgs::msg::Empty heartbeat;
 
 /** @brief Function to initialize the motors to zero
  * 
@@ -493,6 +496,7 @@ int main(int argc, char **argv){
     armSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("arm_speed",1);
     bucketSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("bucket_speed",1);
     automationGoPublisher = nodeHandle->create_publisher<std_msgs::msg::Bool>("automationGo",1);
+    auto logicHeartbeatPublisher = nodeHandle->create_publisher<std_msgs::Empty>("logic_heartbeat",1);
 
     initSetSpeed();
 
@@ -503,6 +507,7 @@ int main(int argc, char **argv){
             automation->publishAutomationOut();
         } 
         rclcpp::spin_some(nodeHandle);
+        logicHeartbeatPublisher->publish(heartbeat);
         rate.sleep();
     }
 }
