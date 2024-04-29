@@ -28,14 +28,11 @@ class Search{
 
     int Row, Col;
 
-    Search(int row, int col){
-        Row = row;
-        Col = col;
-    }
-
     int startX, startY, destX, destY;
     double newCost, newH, newTotal;
 
+    void setRowCol(int row, int col);
+    
     void initializeMap();
 
     void initializeMap(float width);

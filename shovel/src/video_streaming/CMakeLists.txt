@@ -14,8 +14,6 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(messages REQUIRED)
-find_package(cv_bridge REQUIRED)
-find_package(image_transport)
 
 include_directories(
 )
@@ -34,7 +32,5 @@ ament_target_dependencies(${PROJECT_NAME}_node
 	std_msgs 
         sensor_msgs
 	messages
-        cv_bridge
-        image_transport
 )
 

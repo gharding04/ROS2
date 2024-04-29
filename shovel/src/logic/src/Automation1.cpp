@@ -171,7 +171,7 @@ void Automation1::automate(){
         } 
         else {
             changeSpeed(0, 0);
-            setStartPosition(this->search.row - std::ceil(position.z * 10), std::ceil(position.x * 10));
+            setStartPosition(this->search.Row - std::ceil(position.z * 10), std::ceil(position.x * 10));
             aStar();
             RCLCPP_INFO(this->node->get_logger(), "Current Position: %d, %d", this->search.startX, this->search.startY);
             setGo();
@@ -378,8 +378,8 @@ void Automation1::automate(){
     }
 
     if(robotState == OBSTACLE){
-        setStartPosition(this->search.row - std::ceil(position.z * 10), std::ceil(position.x * 10));
-        int x = this->search.row - std::ceil(position.z * 10);
+        setStartPosition(this->search.Row - std::ceil(position.z * 10), std::ceil(position.x * 10));
+        int x = this->search.Row - std::ceil(position.z * 10);
         int y = std::ceil(position.x * 10);
         this->search.setObstacle(x, y, 2);
         aStar();

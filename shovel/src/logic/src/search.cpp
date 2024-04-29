@@ -1,6 +1,11 @@
-#include "search.hpp"
+#include "logic/search.hpp"
 #include <cmath>
 #include <stdexcept>
+
+void Search::setRowCol(int row, int col){
+	Row = row;
+	Col = col;
+}
 
 void Search::initializeMap(){
 	for(int i = 0; i < Row; i++){

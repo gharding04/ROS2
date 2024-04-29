@@ -424,12 +424,12 @@ void Automation::setBucketPosition(int potent){
 
 void Automation::setMap(std::string mapUsed){
     if(mapUsed == "NASA"){
-        this->search = Search(NASA.height, NASA.width);
+        this->search.setRowCol(NASA.height, NASA.width);
     }
     if(mapUsed == "UCF_1"){
-        this->search = Search(UCF_1.height, UCF_1.width);
+        this->search.setRowCol(UCF_1.height, UCF_1.width);
     }
     if(mapUsed == "UCF_2"){
-        this->search = Search(UCF_2.height, UCF_2.width);
+        this->search.setRowCol(UCF_2.height, UCF_2.width);
     }
 }

@@ -43,7 +43,7 @@ class Automation{
     std::stack<Coord> currentPath;
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
     std::chrono::time_point<std::chrono::high_resolution_clock> startBackupTime;
-    Search search;
+    Search search = Search();
     bool holes = false;
 
     bool runSensorlessly = false;

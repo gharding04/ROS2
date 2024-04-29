@@ -4,9 +4,6 @@
 #include <sl/Camera.hpp>
 #include "aruco.hpp"
 #include <opencv2/opencv.hpp>
-#include "image_transport/image_transport.h"
-#include <cv_bridge/cv_bridge.h>
-#include <sensor_msgs/image_encodings.hpp>
 #include "messages/msg/zed_position.hpp"
 #include <sensor_msgs/msg/image.hpp>
 #include <std_msgs/msg/bool.hpp>
@@ -106,7 +103,7 @@ int main(int argc, char **argv) {
 //    init_params.coordinate_system = sl::COORDINATE_SYSTEM::LEFT_HANDED_Y_UP;
 //    init_params.coordinate_system = sl::COORDINATE_SYSTEM::LEFT_HANDED_Z_UP;
 //    init_params.coordinate_system = sl::COORDINATE_SYSTEM::RIGHT_HANDED_Z_UP_X_FWD;
-    init_params.sensors_required = false;
+    init_params.sensors_required = true;
 
     // Open the camera
     sl::ERROR_CODE err = zed.open(init_params);
@@ -132,7 +129,7 @@ int main(int argc, char **argv) {
 
     cv::Matx<float, 4, 1> dist_coeffs = cv::Vec4f::zeros();
 
-    float actual_marker_size_meters = 0.127; // real marker size in meters
+    float actual_marker_size_meters = 0.18891; // real marker size in meters
    // float actual_marker_size_meters = 0.16f; //fake marker size in meters
     auto dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_100);
 
@@ -261,12 +258,24 @@ int main(int argc, char **argv) {
             }
             if(jetsonStream){
                 RCLCPP_INFO(nodeHandle->get_logger(), "Published image");
-                sensor_msgs::msg::Image::SharedPtr image = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", image_ocv_rgb).toImageMsg();
-                zedImagePublisher->publish(*image);
+                sensor_msgs::msg::Image::UniquePtr outImage(new sensor_msgs::msg::Image());
+                outImage->height = image_ocv.rows;
+                outImage->width = image_ocv.cols;
+                outImage->encoding = "rgb";
+                outImage->is_bigendian = false;
+                outImage->step = static_cast<sensor_msgs::msg::Image::_step_type>(image_ocv.step);
+                outImage->data.assign(image_ocv.datastart, image_ocv.dataend);
+                zedImagePublisher->publish(std::move(outImage));
             }
             if(laptopStream){
-                sensor_msgs::msg::Image::SharedPtr image = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", image_ocv_rgb).toImageMsg();
-                zedImagePublisher->publish(*image);
+                sensor_msgs::msg::Image::UniquePtr outImage(new sensor_msgs::msg::Image());
+                outImage->height = image_ocv.rows;
+                outImage->width = image_ocv.cols;
+                outImage->encoding = "rgb";
+                outImage->is_bigendian = false;
+                outImage->step = static_cast<sensor_msgs::msg::Image::_step_type>(image_ocv.step);
+                outImage->data.assign(image_ocv.datastart, image_ocv.dataend);
+                zedImagePublisher->publish(std::move(outImage));
             }
 
         }
