@@ -432,4 +432,5 @@ void Automation::setMap(std::string mapUsed){
     if(mapUsed == "UCF_2"){
         this->search.setRowCol(UCF_2.height, UCF_2.width);
     }
+    this->search.initializeMap(this->robotWidth);
 }

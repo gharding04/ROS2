@@ -248,3 +248,12 @@ std::stack<Coord> getSimplifiedPath(std::stack<Coord> rpath){
 	}
 	return simplifiedPath;
 }
+
+void Search::printMap(){
+	for(int i = 0; i < Row; i++){
+		for(int j = 0; j < Col; j++){
+			std::cout << map[i][j] << " ";
+		}
+		std::cout << std::endl;
+	}
+}

@@ -102,7 +102,7 @@ void broadcastIP(){
                 struct sockaddr_in socketAddress;
                 socketAddress.sin_family=AF_INET;
                 socketAddress.sin_addr.s_addr = inet_addr("226.1.1.1");
-                socketAddress.sin_port = htons(4321);
+                socketAddress.sin_port = htons(4322);
 
                 struct in_addr localInterface;
                 localInterface.s_addr = inet_addr(addressString.c_str());

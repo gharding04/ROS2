@@ -72,4 +72,6 @@ class Search{
     std::stack<Coord> getSimplifiedPath(std::stack<Coord> rpath);
 
     float getAngle(int destX, int destY, int startX, int startY);
+
+    void printMap();
 };
