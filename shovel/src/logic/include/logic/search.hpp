@@ -1,7 +1,6 @@
-#define ROW 9
-#define COL 10
-
 #include <bits/stdc++.h>
+#define COL 82
+#define ROW 50
 
 struct Point{
     int x;
@@ -19,9 +18,6 @@ typedef std::pair<double, std::pair<int, int> > Node;
  
 class Search{
     public:
-
-    int row = ROW, col = COL;
-
     cell cells[ROW][COL];
 
     bool closedList[ROW][COL];
@@ -29,6 +25,14 @@ class Search{
 	std::set<Node> openList;
 
     int map[ROW][COL];
+
+    int Row, Col;
+
+    Search(int row, int col){
+        Row = row;
+        Col = col;
+    }
+
     int startX, startY, destX, destY;
     double newCost, newH, newTotal;
 
@@ -36,7 +40,7 @@ class Search{
 
     void initializeMap(float width);
 
-    void setMap(int map[][COL]);
+    void setMap(int map[][82]);
 
     void setObstacle(int x, int y, int type);
 
@@ -69,4 +73,6 @@ class Search{
     std::stack<Coord> aStar(int grid[][COL], Point src, Point dest, bool includeHoles = false);
 
     std::stack<Coord> getSimplifiedPath(std::stack<Coord> rpath);
+
+    float getAngle(int destX, int destY, int startX, int startY);
 };

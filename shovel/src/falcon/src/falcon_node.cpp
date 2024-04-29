@@ -74,7 +74,6 @@ using namespace ctre::phoenix::motorcontrol::can;
 rclcpp::Node::SharedPtr nodeHandle;
 bool GO=false;
 std::chrono::time_point<std::chrono::high_resolution_clock> commPrevious;
-std::chrono::time_point<std::chrono::high_resolution_clock> logicPrevious;
 TalonFX* talonFX;
 bool useVelocity=false;
 
@@ -114,10 +113,6 @@ void goCallback(std_msgs::msg::Empty::SharedPtr empty){
 
 void commHeartbeatCallback(std_msgs::msg::Empty::SharedPtr empty){
 	commPrevious = std::chrono::high_resolution_clock::now();
-}
-
-void logicHeartbeatCallback(std_msgs::msg::Empty::SharedPtr empty){
-	logicPrevious = std::chrono::high_resolution_clock::now();
 }
 
 int velocityMultiplier=0;
@@ -261,57 +256,52 @@ int main(int argc,char** argv){
 	auto stopSubscriber=nodeHandle->create_subscription<std_msgs::msg::Empty>("STOP",1,stopCallback);
 	auto goSubscriber=nodeHandle->create_subscription<std_msgs::msg::Empty>("GO",1,goCallback);
 	auto commHeartbeatSubscriber = nodeHandle->create_subscription<std_msgs::msg::Empty>("comm_heartbeat",1,commHeartbeatCallback);
-	auto logicHeartbeatSubscriber = nodeHandle->create_subscription<std_msgs::msg::Empty>("logic_heartbeat",1,logicHeartbeatCallback);
 	
 	RCLCPP_INFO(nodeHandle->get_logger(),"set subscribers");
 
 	rclcpp::Rate rate(20);
 	auto start = std::chrono::high_resolution_clock::now();
 	while(rclcpp::ok()){
-	if(GO)ctre::phoenix::unmanaged::FeedEnable(100);
-	auto finish = std::chrono::high_resolution_clock::now();
+		if(GO)ctre::phoenix::unmanaged::FeedEnable(100);
+		auto finish = std::chrono::high_resolution_clock::now();
 
-	if(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count() > 250000000){
-		int deviceID=talonFX->GetDeviceID();
-		double busVoltage=talonFX->GetBusVoltage();
-		double outputCurrent=talonFX->GetOutputCurrent();
-		bool isInverted=talonFX->GetInverted();
-		double motorOutputVoltage=talonFX->GetMotorOutputVoltage();
-		double motorOutputPercent=talonFX->GetMotorOutputPercent();
-		double temperature=talonFX->GetTemperature();
-		int sensorPosition0=talonFX->GetSelectedSensorPosition(0);
-		int sensorVelocity0=talonFX->GetSelectedSensorVelocity(0);
-		int closedLoopError0=talonFX->GetClosedLoopError(0);
-		double integralAccumulator0=talonFX->GetIntegralAccumulator(0);
-		double errorDerivative0=talonFX->GetErrorDerivative(0);
-	
-		falconOut.device_id=deviceID;	
-		falconOut.bus_voltage=busVoltage;
-		falconOut.output_current=outputCurrent;
-		falconOut.output_voltage=motorOutputVoltage;
-		falconOut.output_percent=motorOutputPercent;
-		falconOut.temperature=temperature;
-		falconOut.sensor_position=sensorPosition0;
-		falconOut.sensor_velocity=sensorVelocity0;
-		falconOut.closed_loop_error=closedLoopError0;
-		falconOut.integral_accumulator=integralAccumulator0;
-		falconOut.error_derivative=errorDerivative0;
+		if(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count() > 250000000){
+			int deviceID=talonFX->GetDeviceID();
+			double busVoltage=talonFX->GetBusVoltage();
+			double outputCurrent=talonFX->GetOutputCurrent();
+			bool isInverted=talonFX->GetInverted();
+			double motorOutputVoltage=talonFX->GetMotorOutputVoltage();
+			double motorOutputPercent=talonFX->GetMotorOutputPercent();
+			double temperature=talonFX->GetTemperature();
+			int sensorPosition0=talonFX->GetSelectedSensorPosition(0);
+			int sensorVelocity0=talonFX->GetSelectedSensorVelocity(0);
+			int closedLoopError0=talonFX->GetClosedLoopError(0);
+			double integralAccumulator0=talonFX->GetIntegralAccumulator(0);
+			double errorDerivative0=talonFX->GetErrorDerivative(0);
+		
+			falconOut.device_id=deviceID;	
+			falconOut.bus_voltage=busVoltage;
+			falconOut.output_current=outputCurrent;
+			falconOut.output_voltage=motorOutputVoltage;
+			falconOut.output_percent=motorOutputPercent;
+			falconOut.temperature=temperature;
+			falconOut.sensor_position=sensorPosition0;
+			falconOut.sensor_velocity=sensorVelocity0;
+			falconOut.closed_loop_error=closedLoopError0;
+			falconOut.integral_accumulator=integralAccumulator0;
+			falconOut.error_derivative=errorDerivative0;
 
-		falconOutPublisher->publish(falconOut);
-		start = std::chrono::high_resolution_clock::now();
+			falconOutPublisher->publish(falconOut);
+			start = std::chrono::high_resolution_clock::now();
 
-	}
+		}
 
-	if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-commPrevious).count() > 100){
-		talonFX->Set(ControlMode::PercentOutput, 0.0);
-		GO = false;
-	}
-	if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-logicPrevious).count() > 100){
-		talonFX->Set(ControlMode::PercentOutput, 0.0);
-		GO = false;
-	}
-	rate.sleep();
-	rclcpp::spin_some(nodeHandle);
+		if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-commPrevious).count() > 100){
+			talonFX->Set(ControlMode::PercentOutput, 0.0);
+			GO = false;
+		}
+		rate.sleep();
+		rclcpp::spin_some(nodeHandle);
 	}
 }
 

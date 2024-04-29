@@ -71,8 +71,6 @@ std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >
 
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Bool_<std::allocator<void> >, std::allocator<void> > > automationGoPublisher;
 
-std_msgs::msg::Empty heartbeat;
-
 /** @brief Function to initialize the motors to zero
  * 
  * This function is called on start of the node and
@@ -467,9 +465,37 @@ void falcon4Callback(const messages::msg::FalconOut::SharedPtr falconOut){
 }
 
 
+/** @brief String parameter function
+ * 
+ * Function that takes a string as a parameter containing the
+ * name of the parameter that is being parsed from the launch
+ * file and the initial value of the parameter as inputs, then
+ * gets the parameter, casts it as a string, displays the value
+ * of the parameter on the command line and the log file, then
+ * returns the parsed value of the parameter.
+ * @param parametername String of the name of the parameter
+ * @param initialValue Initial value of the parameter
+ * @return value Value of the parameter
+ * */
+template <typename T>
+T getParameter(std::string parameterName, std::string initialValue){
+	nodeHandle->declare_parameter<T>(parameterName, initialValue);
+	rclcpp::Parameter param = nodeHandle->get_parameter(parameterName);
+	T value = param.as_string();
+	std::cout << parameterName << ": " << value << std::endl;
+	std::string output = parameterName + ": " + value;
+	RCLCPP_INFO(nodeHandle->get_logger(), output.c_str());
+	return value;
+}
+
+
 int main(int argc, char **argv){
     rclcpp::init(argc,argv);
     nodeHandle = rclcpp::Node::make_shared("logic");
+
+    std::string mapUsed = getParameter<std::string>("map", "unset");
+
+    automation->setMap(mapUsed);
     automation->setNode(nodeHandle);
 
     auto joystickAxisSubscriber= nodeHandle->create_subscription<messages::msg::AxisState>("joystick_axis",1,joystickAxisCallback);
@@ -496,7 +522,6 @@ int main(int argc, char **argv){
     armSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("arm_speed",1);
     bucketSpeedPublisher= nodeHandle->create_publisher<std_msgs::msg::Float32>("bucket_speed",1);
     automationGoPublisher = nodeHandle->create_publisher<std_msgs::msg::Bool>("automationGo",1);
-    auto logicHeartbeatPublisher = nodeHandle->create_publisher<std_msgs::msg::Empty>("logic_heartbeat",1);
 
     initSetSpeed();
 
@@ -507,7 +532,6 @@ int main(int argc, char **argv){
             automation->publishAutomationOut();
         } 
         rclcpp::spin_some(nodeHandle);
-        logicHeartbeatPublisher->publish(heartbeat);
         rate.sleep();
     }
 }

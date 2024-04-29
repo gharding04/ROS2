@@ -1,10 +1,10 @@
-#include "logic/search.hpp"
+#include "search.hpp"
 #include <cmath>
 #include <stdexcept>
 
 void Search::initializeMap(){
-	for(int i = 0; i < ROW; i++){
-		for(int j = 0; j < COL; j++){
+	for(int i = 0; i < Row; i++){
+		for(int j = 0; j < Col; j++){
 			this->map[i][j] = 0;
 		}
 	}
@@ -12,9 +12,9 @@ void Search::initializeMap(){
 
 void Search::initializeMap(float width){
 	int buffer = std::ceil(width / 2);
-	for(int i = 0; i < ROW; i++){
-		for(int j = 0; j < COL; j++){
-			if(i >= buffer && i <= ROW - buffer && j >= buffer && j <= COL - buffer){
+	for(int i = 0; i < Col; i++){
+		for(int j = 0; j < Col; j++){
+			if(i >= buffer && i <= Row - buffer && j >= buffer && j <= Col - buffer){
 				this->map[i][j] = 0;
 			}
 			else{
@@ -25,8 +25,8 @@ void Search::initializeMap(float width){
 }
 
 void Search::setMap(int map[][COL]){
-	for(int i = 0; i < ROW; i++){
-		for(int j = 0; j < COL; j++){
+	for(int i = 0; i < Row; i++){
+		for(int j = 0; j < Col; j++){
 			this->map[i][j] = map[i][j];
 		}
 	}
@@ -41,7 +41,7 @@ void Search::setOpen(int x, int y){
 }
 
 bool Search::isValid(int x, int y){
-    return (x >= 0) && (x < ROW) && (y >= 0) && (y < COL);
+    return (x >= 0) && (x < Row) && (y >= 0) && (y < Col);
 }
 
 bool Search::isOpen(int x, int y, bool includeHoles){
@@ -99,8 +99,8 @@ std::stack<Coord> Search::getPath(){
 }
 
 void Search::initializeCells(){
-	for (int i = 0; i < ROW; i++) {
-		for (int j = 0; j < COL; j++) {
+	for (int i = 0; i < Row; i++) {
+		for (int j = 0; j < Col; j++) {
 			this->cells[i][j].totalCost = FLT_MAX;
 			this->cells[i][j].cost = FLT_MAX;
 			this->cells[i][j].heuristic = FLT_MAX;

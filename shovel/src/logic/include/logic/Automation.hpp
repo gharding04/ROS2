@@ -33,6 +33,9 @@ class Automation{
     float currentRightSpeed=0;
     Linear linear1, linear2, linear3, linear4;
     MotorOut talon1, talon2, talon3, talon4, falcon1, falcon2, falcon3, falcon4;
+    Arena NASA{69, 50, 20, 39, {0, 0, 0, 0}};
+    Arena UCF_1{46, 82, 1, 41, {0, 0, 0, 0}};
+    Arena UCF_2{46, 82, 1, 41, {0, 0, 0, 0}};
     float destX = 0, destZ = 0, destAngle=0;
     float prevX = 0.0, prevY = 0.0, prevZ = 0.0;
     float deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0;
@@ -40,7 +43,7 @@ class Automation{
     std::stack<Coord> currentPath;
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
     std::chrono::time_point<std::chrono::high_resolution_clock> startBackupTime;
-    Search search = Search();
+    Search search;
     bool holes = false;
 
     bool runSensorlessly = false;
@@ -134,4 +137,6 @@ class Automation{
     void setArmPosition(int potent);
 
     void setBucketPosition(int potent);
+
+    void setMap(std::string mapUsed);
 };

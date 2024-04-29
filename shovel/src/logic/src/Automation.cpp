@@ -421,3 +421,15 @@ void Automation::setBucketPosition(int potent){
     while(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()-start).count() < timeToRun){}
     setBucketSpeed(0.0);
 }
+
+void Automation::setMap(std::string mapUsed){
+    if(mapUsed == "NASA"){
+        this->search = Search(NASA.height, NASA.width);
+    }
+    if(mapUsed == "UCF_1"){
+        this->search = Search(UCF_1.height, UCF_1.width);
+    }
+    if(mapUsed == "UCF_2"){
+        this->search = Search(UCF_2.height, UCF_2.width);
+    }
+}

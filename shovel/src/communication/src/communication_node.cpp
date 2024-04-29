@@ -640,7 +640,7 @@ int main(int argc, char **argv){
     struct sockaddr_in address; 
     int opt = 1; 
     int addrlen = sizeof(address); 
-    uint8_t buffer[1024] = {0}; 
+    uint8_t buffer[2048] = {0}; 
     std::string hello("Hello from server");
 
 
@@ -673,7 +673,7 @@ int main(int argc, char **argv){
     }
 
     broadcast=false;
-    bytesRead = read(new_socket, buffer, 1024); 
+    bytesRead = read(new_socket, buffer, 2048); 
     send(new_socket, hello.c_str(), strlen(hello.c_str()), 0); 
     silentRunning=true;
 
@@ -684,7 +684,7 @@ int main(int argc, char **argv){
     uint8_t message[256];
     rclcpp::Rate rate(30);
     while(rclcpp::ok()){
-        bytesRead = recv(new_socket, buffer, 1024, 0);
+        bytesRead = recv(new_socket, buffer, 2048, 0);
         for(int index=0;index<bytesRead;index++){
             messageBytesList.push_back(buffer[index]);
         }
@@ -703,7 +703,7 @@ int main(int argc, char **argv){
                 exit(EXIT_FAILURE); 
             }
             broadcast=false;
-            bytesRead = read(new_socket, buffer, 1024); 
+            bytesRead = read(new_socket, buffer, 2048); 
             send(new_socket, hello.c_str(), strlen(hello.c_str()), 0); 
             fcntl(new_socket, F_SETFL, O_NONBLOCK);
     

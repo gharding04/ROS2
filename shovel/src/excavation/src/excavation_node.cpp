@@ -718,6 +718,7 @@ int main(int argc, char **argv){
 
     auto start = std::chrono::high_resolution_clock::now();
     auto finish = std::chrono::high_resolution_clock::now();
+    rclcpp::Rate rate(20);
     while(rclcpp::ok()){
         finish = std::chrono::high_resolution_clock::now();
         if(std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() > 33){
@@ -735,7 +736,7 @@ int main(int argc, char **argv){
             linearOut4Publisher->publish(linearOut4);
             start = std::chrono::high_resolution_clock::now();
         }
-            
+        rate.sleep();
         rclcpp:spin_some(nodeHandle);
     }
 }

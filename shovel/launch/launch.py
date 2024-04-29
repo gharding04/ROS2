@@ -11,6 +11,9 @@ def generate_launch_description():
             package='logic',
             name='logic',
             executable='logic_node',
+            parameters=[
+                {"map": "NASA"}
+            ],
             output={'stderr': 'screen', 'stdout': 'screen'}
         )
         ,

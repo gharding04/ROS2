@@ -37,3 +37,11 @@ struct MotorOut{
     float outputPercentage;
     float maxCurrent = 0.0;
 };
+
+struct Arena{
+    int height;
+    int width;
+    int excavationArea;
+    int obstacleArea;
+    int targetArea [4];
+};
