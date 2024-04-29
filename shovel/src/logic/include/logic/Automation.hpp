@@ -12,6 +12,8 @@
 #include "AutomationTypes.hpp"
 #include "search.hpp"
 
+// Width of the bucket in decimeters
+#define BUCKET_WIDTH 7.5
 
 class Automation{
     private:
@@ -41,6 +43,8 @@ class Automation{
     float deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0;
     int target1 = 0, target3 = 0;
     float robotWidth = 7.5;
+    int targetTracking[4][int(std::floor(20/BUCKET_WIDTH))] = {0};
+    int dumpCounter = 0, xCounter = 0, yCounter = 0;
     std::stack<Coord> currentPath;
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
     std::chrono::time_point<std::chrono::high_resolution_clock> startBackupTime;

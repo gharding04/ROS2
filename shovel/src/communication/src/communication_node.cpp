@@ -66,7 +66,6 @@
 
 std_msgs::msg::Empty empty;
 bool silentRunning=true;
-bool videoStreaming=false;
 int new_socket;
 rclcpp::Node::SharedPtr nodeHandle;
 std_msgs::msg::Empty heartbeat;
@@ -616,8 +615,6 @@ int main(int argc, char **argv){
     auto keyPublisher = nodeHandle->create_publisher<messages::msg::KeyState>("key",1);
     auto stopPublisher = nodeHandle->create_publisher<std_msgs::msg::Empty>("STOP",1);
     auto goPublisher=nodeHandle->create_publisher<std_msgs::msg::Empty>("GO",1);
-    auto laptopStreamPublisher=nodeHandle->create_publisher<std_msgs::msg::Bool>("laptop_stream",1);
-    auto jetsonStreamPublisher=nodeHandle->create_publisher<std_msgs::msg::Bool>("jetson_stream",1);
     auto commHeartbeatPublisher = nodeHandle->create_publisher<std_msgs::msg::Empty>("comm_heartbeat",1);
 
     auto powerSubscriber = nodeHandle->create_subscription<messages::msg::Power>("power",1,powerCallback);
@@ -726,9 +723,7 @@ int main(int argc, char **argv){
             // 5: Joystick button values
             // 6: Joystick hat values
             // 7: GUI silent running button
-            // 8: GUI video streaming button on laptop
-            // 9: GUI video streaming button on Jetson
-            // 10: GUI reboot button
+            // 8: GUI reboot button
             uint8_t command=message[0];
             if(command==1){
                 messages::msg::AxisState axisState;
@@ -774,22 +769,6 @@ int main(int argc, char **argv){
                 std::cout << "silentRunning " << silentRunning << std::endl;
             }
             if(command==8){
-                std_msgs::msg::Bool videoStream;
-                videoStreaming=message[1];
-                videoStream.data = videoStreaming;
-                laptopStreamPublisher->publish(videoStream);
-                
-                std::cout << "videoStreaming " << videoStreaming << std::endl;
-            }
-            if(command==9){
-                std_msgs::msg::Bool videoStream;
-                videoStreaming=message[1];
-                videoStream.data = videoStreaming;
-                jetsonStreamPublisher->publish(videoStream);
-
-                std::cout << "videoStreaming " << videoStreaming << std::endl;
-            }
-            if(command==10){
                 reboot();
                 std::cout << "reboot " << silentRunning << std::endl;
             }

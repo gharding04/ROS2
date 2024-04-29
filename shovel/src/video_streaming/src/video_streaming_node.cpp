@@ -25,7 +25,7 @@
 
 #define PORT 31338
 
-bool videoStreaming=true;
+bool videoStreaming=false;
 int new_socket;
 rclcpp::Node::SharedPtr nodeHandle;
 int total = 0;
@@ -38,20 +38,11 @@ bool broadcast = true;
  * @param inputImage 
  */
 void zedImageCallback(const sensor_msgs::msg::Image::SharedPtr inputImage){
-    RCLCPP_INFO(nodeHandle->get_logger(), "Received image.");
     if(videoStreaming){
+        RCLCPP_INFO(nodeHandle->get_logger(), "Received image with height: %d and width: %d", inputImage->height, inputImage->width);
     }
 }
 
-
-void laptopStreamCallback(const std_msgs::msg::Bool::SharedPtr msg){
-    videoStreaming = msg->data;
-}
-
-
-void jetsonStreamCallback(const std_msgs::msg::Bool::SharedPtr msg){
-    videoStreaming = msg->data;
-}
 
 std::string getAddressString(int family, std::string interfaceName){
     std::string addressString("");
@@ -123,9 +114,6 @@ int main(int argc, char **argv){
     RCLCPP_INFO(nodeHandle->get_logger(),"Starting video streaming node");
 
 
-    auto laptopStreamSubscriber=nodeHandle->create_subscription<std_msgs::msg::Bool>("laptop_stream",1, laptopStreamCallback);
-    auto jetsonStreamSubscriber=nodeHandle->create_subscription<std_msgs::msg::Bool>("jetson_stream",1, jetsonStreamCallback);
-
     auto zedImageSubscriber = nodeHandle->create_subscription<sensor_msgs::msg::Image>("zed_image", 10, zedImageCallback);
 
     int server_fd, bytesRead; 
@@ -195,6 +183,21 @@ int main(int argc, char **argv){
             bytesRead = read(new_socket, buffer, 2048); 
             send(new_socket, hello.c_str(), strlen(hello.c_str()), 0); 
             fcntl(new_socket, F_SETFL, O_NONBLOCK);
+        }
+        while(messageBytesList.size()>0 && messageBytesList.front()<=messageBytesList.size()){
+	    //RCLCPP_INFO(nodeHandle->get_logger(),"bytes read %d", bytesRead);
+            int messageSize=messageBytesList.front();    
+            messageBytesList.pop_front();
+            messageSize--;
+            for(int index=0;index<messageSize;index++){
+                message[index]=messageBytesList.front();
+                messageBytesList.pop_front();
+            }
+            uint8_t command=message[0];
+            if(command==1){
+                videoStreaming=message[1];
+                std::cout << "videoStreaming " << videoStreaming << std::endl;
+            }
         }
         rclcpp::spin_some(nodeHandle);
         rate.sleep();

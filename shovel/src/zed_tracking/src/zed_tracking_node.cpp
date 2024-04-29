@@ -9,8 +9,6 @@
 #include <std_msgs/msg/bool.hpp>
 
 #define ROW_COUNT 10
-bool jetsonStream = true;
-bool laptopStream = false;
 //using namespace sl;
 //using namespace std;
 
@@ -44,15 +42,6 @@ bool laptopStream = false;
  * 
  * */
 
-void jetsonStreamCallback(const std_msgs::msg::Bool::SharedPtr msg){
-    jetsonStream = msg->data;
-}
-
-void laptopStreamCallback(const std_msgs::msg::Bool::SharedPtr msg){
-    laptopStream = msg->data;
-}
-
-
 int main(int argc, char **argv) {
     rclcpp::init(argc,argv);
     rclcpp::Node::SharedPtr nodeHandle = rclcpp::Node::make_shared("zed_tracking");
@@ -63,9 +52,6 @@ int main(int argc, char **argv) {
     auto zedPositionPublisher=nodeHandle->create_publisher<messages::msg::ZedPosition>("zed_position",1);
     auto zedImagePublisher = nodeHandle->create_publisher<sensor_msgs::msg::Image>("zed_image",1);
 
-    auto jetsonStreamSubscriber = nodeHandle->create_subscription<std_msgs::msg::Bool>("jetson_stream",1,jetsonStreamCallback);
-    auto laptopStreamSubscriber = nodeHandle->create_subscription<std_msgs::msg::Bool>("laptop_stream",1,laptopStreamCallback);
-    
     // Create a ZED camera object
     sl::Camera zed;
 
@@ -256,27 +242,14 @@ int main(int argc, char **argv) {
                 zedPosition.z_vel = z_vel;
                 zedPositionPublisher->publish(zedPosition);
             }
-            if(jetsonStream){
-                RCLCPP_INFO(nodeHandle->get_logger(), "Published image");
-                sensor_msgs::msg::Image::UniquePtr outImage(new sensor_msgs::msg::Image());
-                outImage->height = image_ocv.rows;
-                outImage->width = image_ocv.cols;
-                outImage->encoding = "rgb";
-                outImage->is_bigendian = false;
-                outImage->step = static_cast<sensor_msgs::msg::Image::_step_type>(image_ocv.step);
-                outImage->data.assign(image_ocv.datastart, image_ocv.dataend);
-                zedImagePublisher->publish(std::move(outImage));
-            }
-            if(laptopStream){
-                sensor_msgs::msg::Image::UniquePtr outImage(new sensor_msgs::msg::Image());
-                outImage->height = image_ocv.rows;
-                outImage->width = image_ocv.cols;
-                outImage->encoding = "rgb";
-                outImage->is_bigendian = false;
-                outImage->step = static_cast<sensor_msgs::msg::Image::_step_type>(image_ocv.step);
-                outImage->data.assign(image_ocv.datastart, image_ocv.dataend);
-                zedImagePublisher->publish(std::move(outImage));
-            }
+            sensor_msgs::msg::Image::UniquePtr outImage(new sensor_msgs::msg::Image());
+            outImage->height = image_ocv.rows;
+            outImage->width = image_ocv.cols;
+            outImage->encoding = "rgb";
+            outImage->is_bigendian = false;
+            outImage->step = static_cast<sensor_msgs::msg::Image::_step_type>(image_ocv.step);
+            outImage->data.assign(image_ocv.datastart, image_ocv.dataend);
+            zedImagePublisher->publish(std::move(outImage));
 
         }
 	    rate.sleep();

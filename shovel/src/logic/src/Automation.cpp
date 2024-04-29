@@ -61,12 +61,6 @@ void Automation::setPosition(Position position){
         prevX = position.x;
         prevY = position.y;
         prevZ = position.z;
-        RCLCPP_INFO(this->node->get_logger(), "deltaX: %.6f", deltaX);
-        RCLCPP_INFO(this->node->get_logger(), "deltaY: %.6f", deltaY);
-        RCLCPP_INFO(this->node->get_logger(), "deltaZ: %.6f", deltaZ);
-        RCLCPP_INFO(this->node->get_logger(), "prevX: %.6f", prevX);
-        RCLCPP_INFO(this->node->get_logger(), "prevY: %.6f", prevY);
-        RCLCPP_INFO(this->node->get_logger(), "prevZ: %.6f", prevZ);
     }
 }
 
