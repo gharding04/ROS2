@@ -22,6 +22,9 @@
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/empty.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include <opencv2/opencv.hpp>
+#include "image_transport/image_transport.hpp"
+#include <cv_bridge/cv_bridge.h>
 
 #define PORT 31338
 
@@ -30,6 +33,9 @@ int new_socket;
 rclcpp::Node::SharedPtr nodeHandle;
 int total = 0;
 bool broadcast = true;
+cv::Mat img = cv::Mat::zeros(376, 672, CV_8UC3);
+cv::Mat gray = cv::Mat::zeros(376, 672, CV_8UC1);
+std::vector<uchar> buf;
 
 /** @brief Receives the ZED camera image
  * 
@@ -37,9 +43,18 @@ bool broadcast = true;
  * will send the received image to the client-side GUI.
  * @param inputImage 
  */
-void zedImageCallback(const sensor_msgs::msg::Image::SharedPtr inputImage){
+void zedImageCallback(const sensor_msgs::msg::Image::ConstSharedPtr & inputImage){
     if(videoStreaming){
-        RCLCPP_INFO(nodeHandle->get_logger(), "Received image with height: %d and width: %d", inputImage->height, inputImage->width);
+         img = cv_bridge::toCvCopy(inputImage, "rgb8")->image;
+	 if(!img.isContinuous()){
+		img = img.clone();
+	 }
+	 cv::cvtColor(img, gray, CV_RGB2GRAY);
+	 int imgSize = gray.total()*gray.elemSize();
+	 cv::imshow("Image", img);
+	 cv::imshow("Gray", gray);
+	 cv::waitKey(10);
+	 send(new_socket, gray.data, imgSize, 0);
     }
 }
 
@@ -113,8 +128,8 @@ int main(int argc, char **argv){
     nodeHandle = rclcpp::Node::make_shared("video_streaming");
     RCLCPP_INFO(nodeHandle->get_logger(),"Starting video streaming node");
 
-
-    auto zedImageSubscriber = nodeHandle->create_subscription<sensor_msgs::msg::Image>("zed_image", 10, zedImageCallback);
+    image_transport::ImageTransport it(nodeHandle);
+    image_transport::Subscriber sub = it.subscribe("zed_image", 1, zedImageCallback);
 
     int server_fd, bytesRead; 
     struct sockaddr_in address; 
@@ -160,7 +175,7 @@ int main(int argc, char **argv){
 
     std::list<uint8_t> messageBytesList;
     uint8_t message[256];
-    rclcpp::Rate rate(30);
+    rclcpp::Rate rate(20);
     while(rclcpp::ok()){
         bytesRead = recv(new_socket, buffer, 2048, 0);
         for(int index=0;index<bytesRead;index++){

@@ -7,6 +7,9 @@
 #include "messages/msg/zed_position.hpp"
 #include <sensor_msgs/msg/image.hpp>
 #include <std_msgs/msg/bool.hpp>
+#include <std_msgs/msg/header.hpp>
+#include <cv_bridge/cv_bridge.h>
+#include <image_transport/image_transport.hpp>
 
 #define ROW_COUNT 10
 //using namespace sl;
@@ -50,7 +53,11 @@ int main(int argc, char **argv) {
 
     messages::msg::ZedPosition zedPosition;
     auto zedPositionPublisher=nodeHandle->create_publisher<messages::msg::ZedPosition>("zed_position",1);
-    auto zedImagePublisher = nodeHandle->create_publisher<sensor_msgs::msg::Image>("zed_image",1);
+
+    image_transport::ImageTransport it(nodeHandle);
+    image_transport::Publisher zedImagePublisher = it.advertise("zed_image", 1);
+    std_msgs::msg::Header hdr;
+    sensor_msgs::msg::Image::SharedPtr msg;
 
     // Create a ZED camera object
     sl::Camera zed;
@@ -102,7 +109,7 @@ int main(int argc, char **argv) {
     auto cameraInfo = zed.getCameraInformation().camera_configuration;
     sl::Resolution image_size = cameraInfo.resolution;
     sl::Mat image_zed(image_size, sl::MAT_TYPE::U8_C4);
-    cv::Mat image_ocv = cv::Mat(image_zed.getHeight(), image_zed.getWidth(), CV_8UC4, image_zed.getPtr<sl::uchar1>(sl::MEM::CPU));
+    cv::Mat image_ocv = cv::Mat(image_zed.getHeight(), image_zed.getWidth(), CV_8UC4, image_zed.getPtr<sl::uchar1>(sl::MEM::CPU), image_zed.getStepBytes(sl::MEM::CPU));
     cv::Mat image_ocv_rgb;
     sl::Mat depth, point_cloud;
 
@@ -242,14 +249,10 @@ int main(int argc, char **argv) {
                 zedPosition.z_vel = z_vel;
                 zedPositionPublisher->publish(zedPosition);
             }
-            sensor_msgs::msg::Image::UniquePtr outImage(new sensor_msgs::msg::Image());
-            outImage->height = image_ocv.rows;
-            outImage->width = image_ocv.cols;
-            outImage->encoding = "rgb";
-            outImage->is_bigendian = false;
-            outImage->step = static_cast<sensor_msgs::msg::Image::_step_type>(image_ocv.step);
-            outImage->data.assign(image_ocv.datastart, image_ocv.dataend);
-            zedImagePublisher->publish(std::move(outImage));
+	    if(!image_ocv_rgb.empty()){
+	        msg = cv_bridge::CvImage(hdr, "rgb8", image_ocv_rgb).toImageMsg();
+                zedImagePublisher.publish(msg);
+	    }
 
         }
 	    rate.sleep();
