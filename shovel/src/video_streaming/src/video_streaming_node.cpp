@@ -35,7 +35,6 @@ int total = 0;
 bool broadcast = true;
 cv::Mat img = cv::Mat::zeros(376, 672, CV_8UC3);
 cv::Mat gray = cv::Mat::zeros(376, 672, CV_8UC1);
-std::vector<uchar> buf;
 
 /** @brief Receives the ZED camera image
  * 
@@ -45,16 +44,16 @@ std::vector<uchar> buf;
  */
 void zedImageCallback(const sensor_msgs::msg::Image::ConstSharedPtr & inputImage){
     if(videoStreaming){
-         img = cv_bridge::toCvCopy(inputImage, "rgb8")->image;
-	 if(!img.isContinuous()){
-		img = img.clone();
-	 }
-	 cv::cvtColor(img, gray, CV_RGB2GRAY);
-	 int imgSize = gray.total()*gray.elemSize();
-	 cv::imshow("Image", img);
-	 cv::imshow("Gray", gray);
-	 cv::waitKey(10);
-	 send(new_socket, gray.data, imgSize, 0);
+        img = cv_bridge::toCvCopy(inputImage, "rgb8")->image;
+        cv::cvtColor(img, gray, CV_RGB2GRAY);
+        int imgSize = gray.total()*gray.elemSize();
+        int bytes = 0, total = 0;
+        while(total < imgSize){
+            bytes = send(new_socket, gray.data, imgSize - total, 0);
+            if(bytes != -1){
+                total += bytes;
+            }
+        }
     }
 }
 
@@ -184,6 +183,7 @@ int main(int argc, char **argv){
 
         if(bytesRead==0){
 	        RCLCPP_INFO(nodeHandle->get_logger(),"Lost Connection");
+            videoStreaming = false;
             broadcast=true;
             //wait for reconnect
             if (listen(server_fd, 3) < 0) { 

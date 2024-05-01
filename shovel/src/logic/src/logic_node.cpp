@@ -19,6 +19,7 @@
 #include <messages/msg/linear_out.hpp>
 
 #include "logic/Automation1.hpp"
+#include "logic/Automation2.hpp"
 #include "logic/AutomationTypes.hpp"
 
 
@@ -62,7 +63,7 @@ float maxSpeed=0.4;
 bool automationGo=false;
 bool excavationGo = false;
 
-Automation* automation=new Automation1();
+Automation* automation;
 
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > driveLeftSpeedPublisher;
 std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float32_<std::allocator<void> >, std::allocator<void> > > driveRightSpeedPublisher;
@@ -495,6 +496,12 @@ int main(int argc, char **argv){
 
     std::string mapUsed = getParameter<std::string>("map", "unset");
 
+    if(mapUsed == "NASA"){
+        automation = new Automation1();
+    }
+    else{
+        automation = new Automation2();
+    }
     automation->setMap(mapUsed);
     automation->setNode(nodeHandle);
 
