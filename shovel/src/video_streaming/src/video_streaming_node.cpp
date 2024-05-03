@@ -33,8 +33,9 @@ int new_socket;
 rclcpp::Node::SharedPtr nodeHandle;
 int total = 0;
 bool broadcast = true;
-cv::Mat img = cv::Mat::zeros(376, 672, CV_8UC3);
-cv::Mat gray = cv::Mat::zeros(376, 672, CV_8UC1);
+cv::Mat img;
+cv::Mat gray;
+bool isGray = true;
 
 /** @brief Receives the ZED camera image
  * 
@@ -45,13 +46,25 @@ cv::Mat gray = cv::Mat::zeros(376, 672, CV_8UC1);
 void zedImageCallback(const sensor_msgs::msg::Image::ConstSharedPtr & inputImage){
     if(videoStreaming){
         img = cv_bridge::toCvCopy(inputImage, "rgb8")->image;
-        cv::cvtColor(img, gray, CV_RGB2GRAY);
-        int imgSize = gray.total()*gray.elemSize();
-        int bytes = 0, total = 0;
-        while(total < imgSize){
-            bytes = send(new_socket, gray.data, imgSize - total, 0);
-            if(bytes != -1){
-                total += bytes;
+         if(isGray){
+            cv::cvtColor(img, gray, CV_RGB2GRAY);
+            int imgSize = gray.total()*gray.elemSize();
+            int bytes = 0, total = 0;
+            while(total < imgSize){
+                bytes = send(new_socket, gray.data, imgSize - total, 0);
+                if(bytes != -1){
+                    total += bytes;
+                }
+            }
+        }
+        else{
+            int imgSize = img.total()*img.elemSize();
+            int bytes = 0, total = 0;
+            while(total < imgSize){
+                bytes = send(new_socket, img.data, imgSize - total, 0);
+                if(bytes != -1){
+                    total += bytes;
+                }
             }
         }
     }
@@ -212,6 +225,15 @@ int main(int argc, char **argv){
             if(command==1){
                 videoStreaming=message[1];
                 std::cout << "videoStreaming " << videoStreaming << std::endl;
+            }
+            if(command==2){
+                uint8_t value = message[1];
+                if(value % 2 == 0){
+                    isGray = true;
+                }
+                else{
+                    isGray = false;
+                }
             }
         }
         rclcpp::spin_some(nodeHandle);

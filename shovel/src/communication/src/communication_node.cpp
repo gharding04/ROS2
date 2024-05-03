@@ -131,23 +131,24 @@ int parseInt(uint8_t* array){
  
 void send(BinaryMessage message){
     //RCLCPP_INFO(nodeHandle->get_logger(), "send message");
-    try{
-        std::shared_ptr<std::list<uint8_t>> byteList = message.getBytes();
+    std::shared_ptr<std::list<uint8_t>> byteList = message.getBytes();
 
-        std::vector<uint8_t> bytes(byteList->size());
-        int index = 0;
-        for(auto byteIterator = byteList->begin(); byteIterator != byteList->end(); byteIterator++, index++){
-            bytes.at(index) = *byteIterator;
-        }
-        total += byteList->size();
-        //RCLCPP_INFO(nodeHandle->get_logger(), "sending %s   bytes = %ld", message.getLabel().c_str(), byteList->size());
-        //RCLCPP_INFO(nodeHandle->get_logger(), "Total Bytes Sent: %d", total);
-        if(send(new_socket, bytes.data(), byteList->size(), 0)== -1){
+    std::vector<uint8_t> bytes(byteList->size());
+    int index = 0;
+    for(auto byteIterator = byteList->begin(); byteIterator != byteList->end(); byteIterator++, index++){
+        bytes.at(index) = *byteIterator;
+    }
+    total += byteList->size();
+    int bytesSent = 0, byteTotal = 0;
+    //RCLCPP_INFO(nodeHandle->get_logger(), "sending %s   bytes = %ld", message.getLabel().c_str(), byteList->size());
+    //RCLCPP_INFO(nodeHandle->get_logger(), "Total Bytes Sent: %d", total);
+    while(byteTotal < byteList->size()){
+        if((bytesSent = send(new_socket, bytes.data(), byteList->size(), 0))== -1){
             RCLCPP_INFO(nodeHandle->get_logger(), "Failed to send message.");   
         }
-    }
-    catch(...){
-        RCLCPP_INFO(nodeHandle->get_logger(), "EXCEPTION HANDLED.");
+        else{
+            byteTotal += bytesSent;
+        }
     }
 }
 
