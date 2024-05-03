@@ -123,7 +123,10 @@ def generate_launch_description():
         Node(
             package='zed_tracking',
             name='zed_tracking',
-            executable='zed_tracking_node'
+            executable='zed_tracking_node',
+            parameters=[
+                {"resolution": "HD1080"}
+            ]
         )
         ,
         Node(

@@ -12,6 +12,7 @@
 #include <image_transport/image_transport.hpp>
 
 #define ROW_COUNT 10
+rclcpp::Node::SharedPtr nodeHandle;
 //using namespace sl;
 //using namespace std;
 
@@ -45,12 +46,37 @@
  * 
  * */
 
+/** @brief String parameter function
+ * 
+ * Function that takes a string as a parameter containing the
+ * name of the parameter that is being parsed from the launch
+ * file and the initial value of the parameter as inputs, then
+ * gets the parameter, casts it as a string, displays the value
+ * of the parameter on the command line and the log file, then
+ * returns the parsed value of the parameter.
+ * @param parametername String of the name of the parameter
+ * @param initialValue Initial value of the parameter
+ * @return value Value of the parameter
+ * */
+template <typename T>
+T getParameter(std::string parameterName, std::string initialValue){
+	nodeHandle->declare_parameter<T>(parameterName, initialValue);
+	rclcpp::Parameter param = nodeHandle->get_parameter(parameterName);
+	T value = param.as_string();
+	std::cout << parameterName << ": " << value << std::endl;
+	std::string output = parameterName + ": " + value;
+	RCLCPP_INFO(nodeHandle->get_logger(), output.c_str());
+	return value;
+}
+
+
 int main(int argc, char **argv) {
     rclcpp::init(argc,argv);
-    rclcpp::Node::SharedPtr nodeHandle = rclcpp::Node::make_shared("zed_tracking");
+    nodeHandle = rclcpp::Node::make_shared("zed_tracking");
 
     RCLCPP_INFO(nodeHandle->get_logger(),"Starting zed_tracking");
 
+    std::string resolution = getParameter<std::string>("resolution", "VGA");
     messages::msg::ZedPosition zedPosition;
     auto zedPositionPublisher=nodeHandle->create_publisher<messages::msg::ZedPosition>("zed_position",1);
 
@@ -87,10 +113,28 @@ int main(int argc, char **argv) {
     -available framerates: 15, 30, 60, 100 fps.   
     -FOV: 56(V), 87(H)
     */
-    init_params.camera_resolution = sl::RESOLUTION::VGA;
+    if(resolution == "VGA"){
+        init_params.camera_resolution = sl::RESOLUTION::VGA;
+        init_params.camera_fps = 30;    
+    }
+    else if(resolution == "HD720"){
+        init_params.camera_resolution = sl::RESOLUTION::HD720;
+        init_params.camera_fps = 30; 
+    }
+    else if(resolution == "HD1080"){
+        init_params.camera_resolution = sl::RESOLUTION::HD1080;
+        init_params.camera_fps = 30; 
+    }
+    else if(resolution == "HD2K"){
+        init_params.camera_resolution = sl::RESOLUTION::HD2K;
+        init_params.camera_fps = 30; 
+    }
+    else{
+        init_params.camera_resolution = sl::RESOLUTION::VGA;
+        init_params.camera_fps = 30; 
+    }
     init_params.coordinate_units = sl::UNIT::METER;
     init_params.coordinate_system = sl::COORDINATE_SYSTEM::IMAGE;
-    init_params.camera_fps = 30;    
 //    init_params.coordinate_system = sl::COORDINATE_SYSTEM::RIGHT_HANDED_Y_UP;
 //    init_params.coordinate_system = sl::COORDINATE_SYSTEM::RIGHT_HANDED_Z_UP;
 //    init_params.coordinate_system = sl::COORDINATE_SYSTEM::LEFT_HANDED_Y_UP;
