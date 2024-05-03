@@ -224,15 +224,15 @@ int main(int argc, char **argv) {
                 arucoPose.setTranslation(sl::float3(tvecs[0](0), tvecs[0](1), tvecs[0](2)));
                 arucoPose.setRotationVector(sl::float3(rvecs[0](0), rvecs[0](1), rvecs[0](2)));
                 arucoPose.inverse();
-                if(!initialized){
-                    zed.resetPositionalTracking(arucoPose);
-                    initialized = true;                
-                }
                 angles = zedPose.getEulerAngles(false);
                 zedPosition.aruco_pitch = angles[2];
                 zedPosition.aruco_yaw = angles[1];
                 zedPosition.aruco_roll = angles[0];
 		        zedPosition.aruco_visible=true;
+                if(!initialized && tvecs[0](0) < -0.75){
+                    zed.resetPositionalTracking(arucoPose);
+                    initialized = true;                
+                }
 	        } 
             else {
 	            zedPosition.aruco_visible=false;
@@ -291,11 +291,12 @@ int main(int argc, char **argv) {
                 zedPosition.x_vel = x_vel;
                 zedPosition.y_vel = y_vel;
                 zedPosition.z_vel = z_vel;
+                zedPosition.aruco_initialized = initialized;
                 zedPositionPublisher->publish(zedPosition);
             }
 	    if(!image_ocv_rgb.empty()){
 	        msg = cv_bridge::CvImage(hdr, "rgb8", image_ocv_rgb).toImageMsg();
-                zedImagePublisher.publish(msg);
+            zedImagePublisher.publish(msg);
 	    }
 
         }

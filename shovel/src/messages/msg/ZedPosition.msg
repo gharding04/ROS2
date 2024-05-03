@@ -18,3 +18,4 @@ float32 z_acc
 float32 x_vel
 float32 y_vel
 float32 z_vel
+bool aruco_initialized

@@ -38,6 +38,7 @@ class Automation{
     Arena NASA{69, 50, 20, 39, {0, 0, 0, 0}};
     Arena UCF_1{46, 82, 1, 41, {0, 0, 0, 0}};
     Arena UCF_2{46, 82, 1, 41, {0, 0, 0, 0}};
+    Arena lab{40, 50, 20, 25, {0, 0, 0, 0}};
     float destX = 0, destZ = 0, destAngle=0;
     float prevX = 0.0, prevY = 0.0, prevZ = 0.0;
     float deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0;
@@ -125,9 +126,9 @@ class Automation{
 
     void setRunSensorlessly(bool value);
 
-    void setStartPosition(int x, int y);
+    void setStartPosition(float x, float y);
 
-    void setDestPosition(int x, int y);
+    void setDestPosition(float x, float y);
 
     void aStar(bool includeHoles = false);
 

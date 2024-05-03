@@ -332,14 +332,14 @@ void Automation::setRunSensorlessly(bool value){
     this->runSensorlessly = value;
 }
 
-void Automation::setStartPosition(int x, int y){
-    this->search.startX = x;
-    this->search.startY = y;
+void Automation::setStartPosition(float x, float y){
+    this->search.startX = this->search.Row - int(std::ceil(x * 10));
+    this->search.startY = int(std::ceil(y * 10));
 }
 
-void Automation::setDestPosition(int x, int y){
-    this->search.destX = x;
-    this->search.destY = y;
+void Automation::setDestPosition(float x, float y){
+    this->search.destX = int(std::ceil(x * 10));
+    this->search.destY = int(std::ceil(y * 10));
 }
 
 void Automation::aStar(bool includeHoles){
@@ -425,6 +425,9 @@ void Automation::setMap(std::string mapUsed){
     }
     if(mapUsed == "UCF_2"){
         this->search.setRowCol(UCF_2.height, UCF_2.width);
+    }
+    if(mapUsed == "lab"){
+        this->search.setRowCol(lab.height, lab.width);
     }
     this->search.initializeMap(this->robotWidth);
 }

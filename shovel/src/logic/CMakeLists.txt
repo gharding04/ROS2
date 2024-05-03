@@ -23,6 +23,7 @@ add_executable(${PROJECT_NAME}_node
 	src/Automation.cpp
 	src/Automation1.cpp
 	src/Automation2.cpp
+	src/Automation3.cpp
 	src/search.cpp
 )
 

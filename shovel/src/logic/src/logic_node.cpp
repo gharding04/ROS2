@@ -20,6 +20,7 @@
 
 #include "logic/Automation1.hpp"
 #include "logic/Automation2.hpp"
+#include "logic/Automation3.hpp"
 #include "logic/AutomationTypes.hpp"
 
 
@@ -391,6 +392,7 @@ void zedPositionCallback(const messages::msg::ZedPosition::SharedPtr zedPosition
     position.x_vel = zedPosition->x_vel;
     position.y_vel = zedPosition->y_vel;
     position.z_vel = zedPosition->z_vel;
+    position.arucoInitialized = zedPosition->aruco_initialized;
 
     automation->setPosition(position);
 }
@@ -499,8 +501,14 @@ int main(int argc, char **argv){
     if(mapUsed == "NASA"){
         automation = new Automation1();
     }
-    else{
+    else if(mapUsed == "UCF_1" || mapUsed == "UCF_2"){
         automation = new Automation2();
+    }
+    else if(mapUsed == "lab"){
+        automation = new Automation3();
+    }
+    else{
+        automation = new Automation1();
     }
     automation->setMap(mapUsed);
     automation->setNode(nodeHandle);
