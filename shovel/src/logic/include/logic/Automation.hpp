@@ -110,6 +110,8 @@ class Automation{
 
     float getAngle();
 
+    int checkAngle();
+
     void setDestX(float meters);
 
     void setDestZ(float meters);

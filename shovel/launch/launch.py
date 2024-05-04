@@ -12,7 +12,7 @@ def generate_launch_description():
             name='logic',
             executable='logic_node',
             parameters=[
-                {"map": "NASA"}
+                {"map": "lab"}
             ],
             output={'stderr': 'screen', 'stdout': 'screen'}
         )
@@ -131,8 +131,8 @@ def generate_launch_description():
             parameters=[
                 {"motor_number": 10},
                 {"diagnostics_port": 72340},
-                {"invert_motor": True},
-                {"speed_topic": "drive_left_speed"},
+                {"invert_motor": False},
+                {"speed_topic": "drive_right_speed"},
                 {"info_topic": "talon_10_info"},
                 {"use_velocity": False},
                 {"velocity_multiplier": 3000},
@@ -151,8 +151,8 @@ def generate_launch_description():
             parameters=[
                 {"motor_number": 11},
                 {"diagnostics_port": 72341},
-                {"invert_motor": False},
-                {"speed_topic": "drive_right_speed"},
+                {"invert_motor": True},
+                {"speed_topic": "drive_left_speed"},
                 {"info_topic": "talon_11_info"},
                 {"use_velocity": False},
                 {"velocity_multiplier": 3000},
@@ -171,8 +171,8 @@ def generate_launch_description():
             parameters=[
                 {"motor_number": 12},
                 {"diagnostics_port": 72342},
-                {"invert_motor": True},
-                {"speed_topic": "drive_left_speed"},
+                {"invert_motor": False},
+                {"speed_topic": "drive_right_speed"},
                 {"info_topic": "talon_12_info"},
                 {"use_velocity": False},
                 {"velocity_multiplier": 3000},
@@ -191,8 +191,8 @@ def generate_launch_description():
             parameters=[
                 {"motor_number": 13},
                 {"diagnostics_port": 72343},
-                {"invert_motor": False},
-                {"speed_topic": "drive_right_speed"},
+                {"invert_motor": True},
+                {"speed_topic": "drive_left_speed"},
                 {"info_topic": "talon_13_info"},
                 {"use_velocity": False},
                 {"velocity_multiplier": 3000},
@@ -207,7 +207,16 @@ def generate_launch_description():
         Node(
             package='zed_tracking',
             name='zed_tracking',
-            executable='zed_tracking_node'
+            executable='zed_tracking_node',
+            parameters=[
+                {"resolution": "HD1080"}
+            ]
+        )
+        ,
+        Node(
+            package='video_streaming',
+            name='video_streaming',
+            executable='video_streaming_node'
         )
     ]
 )

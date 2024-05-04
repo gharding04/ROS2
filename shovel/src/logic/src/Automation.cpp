@@ -288,11 +288,33 @@ float Automation::getAngle(){
     float x = this->search.destX - this->search.startX;
     float y = this->search.destY - this->search.startY;
     float angle = std::atan2(y, x) * 180 / M_PI;
-    angle += 90;
-    if(angle < 0){
-		angle += 360;
-	}
+    if(angle > 180){
+        angle -= 360;
+    }
     return angle;
+}
+
+int Automation::checkAngle(){
+    if(abs(this->destAngle) > 177){
+        if(std::abs(position.yaw) < std::abs(this->destAngle) + 2 && std::abs(position.yaw) > std::abs(this->destAngle) - 2){
+            return 1;
+        }
+    }
+    else{
+        if(position.yaw < this->destAngle + 2 && position.yaw > this->destAngle - 2){
+            return 1;
+        }
+    }
+    if(this->destAngle > 0){
+        if(position.yaw - this->destAngle > 0)
+            return 0;
+        return 2;
+    }
+    else{
+        if(position.yaw - this->destAngle > 0)
+            return 2;
+        return 0;
+    }
 }
 
 void Automation::setDestX(float meters){
@@ -338,7 +360,7 @@ void Automation::setStartPosition(float x, float y){
 }
 
 void Automation::setDestPosition(float x, float y){
-    this->search.destX = int(std::ceil(x * 10));
+    this->search.destX = this->search.Row - int(std::ceil(x * 10));
     this->search.destY = int(std::ceil(y * 10));
 }
 

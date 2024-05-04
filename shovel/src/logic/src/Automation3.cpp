@@ -151,13 +151,13 @@ void Automation3::automate(){
 
     // TODO: Change this to align
     if(robotState==LOCATE){
-        changeSpeed(0.15,-0.15);
+        changeSpeed(-0.15,0.15);
         if(position.arucoInitialized==true){
             RCLCPP_INFO(this->node->get_logger(), "Roll: %f Pitch: %f Yaw: %f", position.roll, position.pitch, position.yaw);
             changeSpeed(0,0);
-            setStartPosition(position.z, position.x + 0.75);
+            setStartPosition(position.z, position.x + 1.25);
             RCLCPP_INFO(this->node->get_logger(), "startX: %d, startY: %d", this->search.startX, this->search.startY);
-            setDestAngle(getAngle());
+            setDestAngle(0);
             robotState=ALIGN;
         }
     }
@@ -165,9 +165,13 @@ void Automation3::automate(){
     // After finding the Aruco marker, turn the bot to 
     // align with the arena
     if(robotState==ALIGN){
-        if (!(position.yaw < this->destAngle+2 && position.yaw > this->destAngle-2)) {
+        int ang = checkAngle();
+        if (ang == 0) {
             changeSpeed(0.15, -0.15);
-        } 
+        }
+        else if(ang == 2){
+            changeSpeed(-0.15, 0.15);
+        }
         else {
             changeSpeed(0, 0);
             setStartPosition(position.z, position.x);
@@ -189,14 +193,13 @@ void Automation3::automate(){
         RCLCPP_INFO(this->node->get_logger(), "GO_TO_DIG_SITE");
         RCLCPP_INFO(this->node->get_logger(), "ZedPosition.z: %f", this->position.z);
         //TODO: Take rotation of robot into account
-        if (!(position.yaw < this->destAngle+2 && position.yaw > this->destAngle-2)) {
-            if(position.yaw - this->destAngle > 180 || position.yaw - this->destAngle < 0){
-                changeSpeed(0.15, -0.15);
-            }
-            else{
-                changeSpeed(-0.15, 0.15);
-            }
-        } 
+        int ang = checkAngle();
+        if (ang == 0) {
+            changeSpeed(0.15, -0.15);
+        }
+        else if(ang == 2){
+            changeSpeed(-0.15, 0.15);
+        }
         else{ 
             if(abs(this->position.x) > abs(this->destX)){
                 changeSpeed(0.0, 0.0);
