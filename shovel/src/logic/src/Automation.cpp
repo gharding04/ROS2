@@ -72,8 +72,6 @@ void Automation::setPosition(Position position){
  * @return void
  * */
 void Automation::changeSpeed(float left, float right){
-    RCLCPP_INFO(this->node->get_logger(), "Current left: %f, Current right: %f", currentLeftSpeed, currentRightSpeed);
-    RCLCPP_INFO(this->node->get_logger(), "New left: %f, New right: %f", left, right);
     if(currentLeftSpeed==left && currentRightSpeed==right) return;
     currentLeftSpeed=left;
     currentRightSpeed=right;
@@ -273,10 +271,10 @@ bool Automation::checkErrors(Linear linear){
 }
 
 void Automation::setDestAngle(float degrees){
-    if(degrees < 0){
+    if(degrees < -180){
         this->destAngle = degrees + 360;
     }
-    else if (degrees > 360){
+    else if (degrees > 180){
         this->destAngle = degrees - 360;
     }
     else{
@@ -288,6 +286,7 @@ float Automation::getAngle(){
     float x = this->search.destX - this->search.startX;
     float y = this->search.destY - this->search.startY;
     float angle = std::atan2(y, x) * 180 / M_PI;
+    angle += 90;
     if(angle > 180){
         angle -= 360;
     }
@@ -296,22 +295,22 @@ float Automation::getAngle(){
 
 int Automation::checkAngle(){
     if(abs(this->destAngle) > 177){
-        if(std::abs(position.yaw) < std::abs(this->destAngle) + 2 && std::abs(position.yaw) > std::abs(this->destAngle) - 2){
+        if(std::abs(position.pitch) < std::abs(this->destAngle) + 2 && std::abs(position.pitch) > std::abs(this->destAngle) - 2){
             return 1;
         }
     }
     else{
-        if(position.yaw < this->destAngle + 2 && position.yaw > this->destAngle - 2){
+        if(position.pitch < this->destAngle + 2 && position.pitch > this->destAngle - 2){
             return 1;
         }
     }
     if(this->destAngle > 0){
-        if(position.yaw - this->destAngle > 0)
+        if(position.pitch - this->destAngle > 0)
             return 0;
         return 2;
     }
     else{
-        if(position.yaw - this->destAngle > 0)
+        if(position.pitch - this->destAngle > 0)
             return 2;
         return 0;
     }

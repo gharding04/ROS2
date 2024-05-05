@@ -166,7 +166,7 @@ int main(int argc, char **argv) {
 
     cv::Matx<float, 4, 1> dist_coeffs = cv::Vec4f::zeros();
 
-    float actual_marker_size_meters = 0.18891; // real marker size in meters
+    float actual_marker_size_meters = 0.165f; // real marker size in meters
    // float actual_marker_size_meters = 0.16f; //fake marker size in meters
     auto dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_100);
 
@@ -184,6 +184,12 @@ int main(int argc, char **argv) {
 
     sl::SensorsData sensors_data;
     sl::SensorsData::IMUData imu_data;
+
+    sl::Transform ARUCO_TO_IMAGE_basis_change;
+    ARUCO_TO_IMAGE_basis_change.r00 = -1;
+    ARUCO_TO_IMAGE_basis_change.r11 = -1;
+    sl::Transform IMAGE_TO_ARUCO_basis_change;
+    IMAGE_TO_ARUCO_basis_change = sl::Transform::inverse(ARUCO_TO_IMAGE_basis_change);
 
     bool initialized = false;
 
@@ -215,21 +221,38 @@ int main(int argc, char **argv) {
             zed.retrieveImage(image_zed, sl::VIEW::LEFT, sl::MEM::CPU, image_size);
             // convert to RGB
             cv::cvtColor(image_ocv, image_ocv_rgb, cv::COLOR_RGBA2RGB);
+            
+            cv::Mat grayImage;
+            cv::cvtColor(image_ocv_rgb, grayImage, cv::COLOR_BGR2GRAY);
+
             // detect marker
             cv::aruco::detectMarkers(image_ocv_rgb, dictionary, corners, ids);
+
+            for(size_t i = 0; i < corners.size(); ++i){
+                cv::cornerSubPix(grayImage, corners[i], cv::Size(5, 5), cv::Size(-1, -1), cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::COUNT, 30, 0.1));
+            }
+
+            sl::POSITIONAL_TRACKING_STATE tracking_state = zed.getPosition(zedPose);
+            
             // if at least one marker detected
             if (ids.size() > 0) {
 	        //	int id=ids[0];
                 cv::aruco::estimatePoseSingleMarkers(corners, actual_marker_size_meters, camera_matrix, dist_coeffs, rvecs, tvecs);
                 arucoPose.setTranslation(sl::float3(tvecs[0](0), tvecs[0](1), tvecs[0](2)));
                 arucoPose.setRotationVector(sl::float3(rvecs[0](0), rvecs[0](1), rvecs[0](2)));
+                arucoPose = IMAGE_TO_ARUCO_basis_change * arucoPose;
                 arucoPose.inverse();
-                angles = zedPose.getEulerAngles(false);
-                zedPosition.aruco_pitch = angles[2];
-                zedPosition.aruco_yaw = angles[1];
-                zedPosition.aruco_roll = angles[0];
+                auto user_coordinate_to_image = sl::getCoordinateTransformConversion4f(init_params.coordinate_system, sl::COORDINATE_SYSTEM::IMAGE);
+                sl::Transform user_coordinate_to_aruco = IMAGE_TO_ARUCO_basis_change * user_coordinate_to_image;
+                sl::Transform aruco_to_user_coordinate = sl::Transform::inverse(user_coordinate_to_aruco);
+
+                arucoPose = aruco_to_user_coordinate * arucoPose * user_coordinate_to_aruco;
+
+                zedPosition.aruco_roll = arucoPose.getEulerAngles(false).x;
+                zedPosition.aruco_pitch = arucoPose.getEulerAngles(false).y;
+                zedPosition.aruco_yaw = arucoPose.getEulerAngles(false).z;
 		        zedPosition.aruco_visible=true;
-                if(!initialized && tvecs[0](0) < -0.75){
+                if(!initialized){
                     zed.resetPositionalTracking(arucoPose);
                     initialized = true;                
                 }
@@ -270,30 +293,28 @@ int main(int argc, char **argv) {
                 distance = -1;
             }
 */
-            
-            sl::POSITIONAL_TRACKING_STATE tracking_state = zed.getPosition(zedPose, sl::REFERENCE_FRAME::WORLD);
 
-            if (tracking_state == sl::POSITIONAL_TRACKING_STATE::OK) {
-                angles = zedPose.getEulerAngles(false);
-    	        zedPosition.x=zedPose.getTranslation().x;
-        	    zedPosition.y=zedPose.getTranslation().y;
-    	        zedPosition.z=zedPose.getTranslation().z;
-    	        zedPosition.ox=zedPose.getOrientation().ox;
-    	        zedPosition.oy=zedPose.getOrientation().oy;
-    	        zedPosition.oz=zedPose.getOrientation().oz;
-    	        zedPosition.ow=zedPose.getOrientation().ow;
-                zedPosition.pitch = angles[0];
-                zedPosition.yaw = angles[1];
-                zedPosition.roll = angles[2];
-                zedPosition.x_acc = x_acc;
-                zedPosition.y_acc = y_acc;
-                zedPosition.z_acc = z_acc;
-                zedPosition.x_vel = x_vel;
-                zedPosition.y_vel = y_vel;
-                zedPosition.z_vel = z_vel;
-                zedPosition.aruco_initialized = initialized;
-                zedPositionPublisher->publish(zedPosition);
-            }
+        if (tracking_state == sl::POSITIONAL_TRACKING_STATE::OK) {
+            zedPosition.x=zedPose.getTranslation().x;
+            zedPosition.y=zedPose.getTranslation().y;
+            zedPosition.z=zedPose.getTranslation().z;
+            zedPosition.ox=zedPose.getOrientation().ox;
+            zedPosition.oy=zedPose.getOrientation().oy;
+            zedPosition.oz=zedPose.getOrientation().oz;
+            zedPosition.ow=zedPose.getOrientation().ow;
+            zedPosition.roll = zedPose.getEulerAngles(false).x;
+            zedPosition.pitch = zedPose.getEulerAngles(false).y;
+            zedPosition.yaw = zedPose.getEulerAngles(false).z;
+            zedPosition.x_acc = x_acc;
+            zedPosition.y_acc = y_acc;
+            zedPosition.z_acc = z_acc;
+            zedPosition.x_vel = x_vel;
+            zedPosition.y_vel = y_vel;
+            zedPosition.z_vel = z_vel;
+            zedPosition.aruco_initialized = initialized;
+            zedPositionPublisher->publish(zedPosition);
+        }
+
 	    if(!image_ocv_rgb.empty()){
 	        msg = cv_bridge::CvImage(hdr, "rgb8", image_ocv_rgb).toImageMsg();
             zedImagePublisher.publish(msg);

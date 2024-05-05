@@ -157,7 +157,7 @@ void Automation3::automate(){
             changeSpeed(0,0);
             setStartPosition(position.z, position.x + 1.25);
             RCLCPP_INFO(this->node->get_logger(), "startX: %d, startY: %d", this->search.startX, this->search.startY);
-            setDestAngle(0);
+            setDestAngle(90);
             robotState=ALIGN;
         }
     }
@@ -318,8 +318,8 @@ void Automation3::automate(){
 
     // After mining, return to start position
     if(robotState==GO_TO_HOME){
-        if (!(position.yaw < this->destAngle+5 && position.yaw > this->destAngle-5)) {
-            if(position.yaw - this->destAngle > 180 || position.yaw - this->destAngle < 0){
+        if (!(position.pitch < this->destAngle+5 && position.pitch > this->destAngle-5)) {
+            if(position.pitch - this->destAngle > 180 || position.pitch - this->destAngle < 0){
                 changeSpeed(0.15, -0.15);
             }
             else{
