@@ -151,11 +151,14 @@ void Automation3::automate(){
 
     // TODO: Change this to align
     if(robotState==LOCATE){
-        changeSpeed(-0.15,0.15);
+        if(turnLeft)
+            changeSpeed(-0.15,0.15);
+        else
+            changeSpeed(0.15, -0.15);
         if(position.arucoInitialized==true){
             RCLCPP_INFO(this->node->get_logger(), "Roll: %f Pitch: %f Yaw: %f", position.roll, position.pitch, position.yaw);
             changeSpeed(0,0);
-            setStartPosition(position.z, position.x + 1.25);
+            setStartPositionM(position.z, position.x);
             RCLCPP_INFO(this->node->get_logger(), "startX: %d, startY: %d", this->search.startX, this->search.startY);
             setDestAngle(90);
             robotState=ALIGN;
@@ -167,21 +170,30 @@ void Automation3::automate(){
     if(robotState==ALIGN){
         int ang = checkAngle();
         if (ang == 0) {
-            changeSpeed(0.15, -0.15);
+            changeSpeed(-0.15, 0.15);
         }
         else if(ang == 2){
-            changeSpeed(-0.15, 0.15);
+            changeSpeed(0.15, -0.15);
         }
         else {
             changeSpeed(0, 0);
-            setStartPosition(position.z, position.x);
-            aStar();
+            setStartPositionM(position.z, position.x);
+            std::stack<Coord> points;
+            points.push(Coord(this->search.Row - int(std::ceil(position.z * 10)),int(std::ceil((position.x + this->xOffset) * 10))));
+            points.push(Coord(30,30));
+            points.push(Coord(10,30));
+            points.push(Coord(10,35));
+            points.push(Coord(27,37));
+            points.push(Coord(33,37));
+            aStar(points, false, true);
             RCLCPP_INFO(this->node->get_logger(), "Current Position: %d, %d", this->search.startX, this->search.startY);
             setGo();
+            this->currentPath.pop();
             std::pair<int, int> initial = this->currentPath.top();
             this->currentPath.pop();
             setDestZ(initial.first);
             setDestX(initial.second);
+            RCLCPP_INFO(this->node->get_logger(), "Dest Position: %d, %d", this->search.destX, this->search.destY);
             setDestAngle(getAngle());
             robotState = GO_TO_DIG_SITE;
         }
@@ -200,24 +212,25 @@ void Automation3::automate(){
         else if(ang == 2){
             changeSpeed(-0.15, 0.15);
         }
-        else{ 
-            if(abs(this->position.x) > abs(this->destX)){
+        else{
+            int dist = checkDistance();
+            if(dist == 0){
                 changeSpeed(0.0, 0.0);
                 if(this->currentPath.empty()){
+                    setDestAngle(0);
                     robotState = EXCAVATE;
+                    excavationState = SQUARE_UP;
                 }
                 else{
                     std::pair<int, int> current = this->currentPath.top();
                     this->currentPath.pop();
-                    setDestZ(current.first);
-                    setDestX(current.second);
                     setDestAngle(getAngle());
                 }
             }
-            else if(abs(this->position.x) > abs(this->destX) - 0.1){
+            else if(dist == 1){
                 changeSpeed(0.1, 0.1);
             }
-            else if(abs(this->position.x) > abs(this->destX) - 0.25){
+            else if(dist == 2){
                 changeSpeed(0.15, 0.15);
             }
             else{
@@ -231,6 +244,19 @@ void Automation3::automate(){
     // Check that the potentiometers are in the correct range
     if(robotState==EXCAVATE){
         RCLCPP_INFO(this->node->get_logger(), "EXCAVATE");
+        if(excavationState == SQUARE_UP){
+            int ang = checkAngle();
+            if (ang == 0) {
+                changeSpeed(0.15, -0.15);
+            }
+            else if(ang == 2){
+                changeSpeed(-0.15, 0.15);
+            }
+            else{
+                changeSpeed(0, 0);
+                excavationState = RAISE_ARM;
+            }
+        }
         if(excavationState == RAISE_ARM){
             RCLCPP_INFO(this->node->get_logger(), "RAISE_ARM");
             RCLCPP_INFO(this->node->get_logger(), "linear1.potentiometer: %d", linear1.potentiometer);
@@ -380,7 +406,7 @@ void Automation3::automate(){
     }
 
     if(robotState == OBSTACLE){
-        setStartPosition(this->search.Row - std::ceil(position.z * 10), std::ceil(position.x * 10));
+        setStartPositionM(position.z, position.x);
         int x = this->search.Row - std::ceil(position.z * 10);
         int y = std::ceil(position.x * 10);
         this->search.setObstacle(x, y, 2);

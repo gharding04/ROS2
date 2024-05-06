@@ -361,7 +361,7 @@ void processPotentiometerData(int potentData, LinearActuator *linear){
     }
     if(abs(linear->potentiometer - potentData) > 50 && (potentData >= 100 && potentData <= 110)){
         linear->sensorless = true;
-	linear->error = PotentiometerError;
+	    linear->error = PotentiometerError;
     }
     if(linear->potentiometer >= potentData - 5 && linear->potentiometer <= potentData + 5){
         if(linear->speed != 0.0 && run){
@@ -411,6 +411,11 @@ void processPotentiometerData(int potentData, LinearActuator *linear){
         }
     }
     linear->potentiometer = potentData;
+    if(linear->motorNumber == 16 || linear->motorNumber == 17){
+        if(potentData > 700){
+            linear->atMax = true;
+        }
+    }
 }
 
 
@@ -465,10 +470,10 @@ void setSyncErrors(LinearActuator *linear1, LinearActuator *linear2, float curre
         if(linear1->speed != linear1->previous || linear2->speed != linear2->previous){
             if(linear1->motorNumber == 14){
                 publishSpeeds();
-	    }
-	    else{
-                publishSpeeds2();
-	    }
+            }
+            else{
+                    publishSpeeds2();
+            }
         }
     }
 }

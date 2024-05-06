@@ -12,7 +12,9 @@ def generate_launch_description():
             name='logic',
             executable='logic_node',
             parameters=[
-                {"map": "lab"}
+                {"map": "lab"},
+                {"xOffset": 1.4},
+                {"turnLeft": True}
             ],
             output={'stderr': 'screen', 'stdout': 'screen'}
         )
@@ -209,7 +211,7 @@ def generate_launch_description():
             name='zed_tracking',
             executable='zed_tracking_node',
             parameters=[
-                {"resolution": "HD1080"}
+                {"resolution": "VGA"}
             ]
         )
         ,

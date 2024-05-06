@@ -304,24 +304,34 @@ int Automation::checkAngle(){
             return 1;
         }
     }
-    if(this->destAngle > 0){
-        if(position.pitch - this->destAngle > 0)
-            return 0;
+    if(position.pitch - this->destAngle < 0){
         return 2;
     }
     else{
-        if(position.pitch - this->destAngle > 0)
-            return 2;
         return 0;
     }
 }
 
+int Automation::checkDistance(){
+    int currentZ = this->search.Row - int(std::ceil(position.z * 10));
+    int currentX = int(std::ceil((position.x + this->xOffset) * 10));
+    float dist = sqrt(pow(currentZ - this->search.destX, 2) + pow(currentX - this->search.destY, 2));
+    if(dist == 0)
+        return 0;
+    if(dist < 1.5)
+        return 1;
+    if(dist < 2.5)
+        return 2;
+    return 3;
+    
+}
+
 void Automation::setDestX(float meters){
-    this->destX = meters;
+    this->search.destY = meters;
 }
 
 void Automation::setDestZ(float meters){
-    this->destZ = meters;
+    this->search.destX = meters;
 }
 
 void Automation::publishAutonomyOut(std::string robotStateString, std::string excavationStateString, std::string errorStateString, std::string diagnosticsStateString){
@@ -353,18 +363,32 @@ void Automation::setRunSensorlessly(bool value){
     this->runSensorlessly = value;
 }
 
-void Automation::setStartPosition(float x, float y){
+void Automation::setStartPositionM(float x, float y){
     this->search.startX = this->search.Row - int(std::ceil(x * 10));
-    this->search.startY = int(std::ceil(y * 10));
+    this->search.startY = int(std::ceil((y + this->xOffset) * 10));
 }
 
-void Automation::setDestPosition(float x, float y){
+void Automation::setStartPosition(int x, int y){
+    this->search.startX = x;
+    this->search.startY = y;
+}
+
+void Automation::setDestPositionM(float x, float y){
     this->search.destX = this->search.Row - int(std::ceil(x * 10));
-    this->search.destY = int(std::ceil(y * 10));
+    this->search.destY = int(std::ceil((y + this->xOffset) * 10));
+}
+
+void Automation::setDestPosition(int x, int y){
+    this->search.destX = x;
+    this->search.destY = y;
 }
 
 void Automation::aStar(bool includeHoles){
     this->currentPath = this->search.aStar(includeHoles);
+}
+
+void Automation::aStar(std::stack<Coord> points, bool includeHoles, bool simplify){
+    this->currentPath = this->search.aStar(points, includeHoles, simplify);
 }
 
 void Automation::setArmTarget(int potent){
@@ -451,4 +475,12 @@ void Automation::setMap(std::string mapUsed){
         this->search.setRowCol(lab.height, lab.width);
     }
     this->search.initializeMap(this->robotWidth);
+}
+
+void Automation::setxOffset(float XOffset){
+    this->xOffset = XOffset;
+}
+
+void Automation::setTurnLeft(bool TurnLeft){
+    this->turnLeft = TurnLeft;
 }

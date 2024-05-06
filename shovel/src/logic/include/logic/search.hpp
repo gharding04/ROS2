@@ -5,6 +5,14 @@
 struct Point{
     int x;
     int y;
+    Point(){
+        x = 0;
+        y = 0;
+    }
+    Point(int X, int Y){
+        x = X;
+        y = Y;
+    }
 };
 
 struct cell{
@@ -32,12 +40,12 @@ class Search{
     double newCost, newH, newTotal;
 
     void setRowCol(int row, int col);
-    
+
     void initializeMap();
 
     void initializeMap(float width);
 
-    void setMap(int map[][82]);
+    void setMap(int map[][COL]);
 
     void setObstacle(int x, int y, int type);
 
@@ -65,9 +73,11 @@ class Search{
 
     std::stack<Coord> aStar(bool includeHoles = false);
 
-    std::stack<Coord> aStar(Point src, Point dest, bool includeHoles = false);
+    std::stack<Coord> aStar(Point src, Point dest, bool includeHoles = false, bool simplify = false);
     
-    std::stack<Coord> aStar(int grid[][COL], Point src, Point dest, bool includeHoles = false);
+    std::stack<Coord> aStar(int grid[][COL], Point src, Point dest, bool includeHoles = false, bool simplify = false);
+
+    std::stack<Coord> aStar(std::stack<Coord> points, bool includeHoles = false, bool simplify = false);
 
     std::stack<Coord> getSimplifiedPath(std::stack<Coord> rpath);
 
