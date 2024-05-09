@@ -293,24 +293,28 @@ float Automation::getAngle(){
     return angle;
 }
 
-int Automation::checkAngle(){
-    if(abs(this->destAngle) > 177){
-        if(std::abs(position.pitch) < std::abs(this->destAngle) + 2 && std::abs(position.pitch) > std::abs(this->destAngle) - 2){
-            return 1;
-        }
-    }
-    else{
-        if(position.pitch < this->destAngle + 2 && position.pitch > this->destAngle - 2){
-            return 1;
-        }
-    }
-    if(position.pitch - this->destAngle < 0){
-        return 2;
-    }
-    else{
+int Automation::checkAngle(){ //1 is counter-clockwise, -1 is clockwise
+    int turn = 0;
+    if(this->destAngle - position.pitch = 0){
         return 0;
     }
+    else {
+        if(this->destAngle >= 0 && position.pitch >= 0){
+            return (this->destAngle - position.pitch > 0) ? 1 : ((this->destAngle - position.pitch < 0) ? -1 : 0);
+        }
+        else if (this->destAngle >= 0 && position.pitch <= 0 ){
+            return (this->destAngle - position.pitch <= 180) ? 1 : ((this->destAngle - position.pitch > 180) ? -1 : 0);
+        }
+        else if (this->destAngle <= 0 && position.pitch >= 0){
+            return (abs(this->destAngle - position.pitch) <= 180) ? 1 :((abs(this->destAngle - position.pitch) > 180) ? -1 : 0);
+        } 
+        else if (this->destAngle <= 0 && position.pitch <= 0){
+            return (this->destAngle - position.pitch <= 0) ? 1 : ((this->destAngle - position.pitch > 0) ? -1 : 0 ); 
+        }
+    }
 }
+
+
 
 int Automation::checkDistance(){
     int currentZ = this->search.Row - int(std::ceil(position.z * 10));
